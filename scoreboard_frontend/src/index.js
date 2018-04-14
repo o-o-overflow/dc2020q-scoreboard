@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Challenge from './challenge';
+import ChallengeSection from './challenge_section';
 import './index.css';
 
 ReactDOM.render(
-  React.createElement(Challenge),
+  React.createElement(ChallengeSection),
   document.getElementById('root'),
 );

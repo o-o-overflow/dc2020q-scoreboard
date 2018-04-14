@@ -38,3 +38,10 @@
   padding-right: 2rem;
   width: 100%;
 }
+
+.section-title {
+  color: #9f3942;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 2.25rem;
+  font-weight: bold;
+}
