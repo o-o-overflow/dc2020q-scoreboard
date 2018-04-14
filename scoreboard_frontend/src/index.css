@@ -1,6 +1,61 @@
 @import url(https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i);
 @import url(https://fonts.googleapis.com/css?family=Cormorant+Upright:300,400,500,600,700);
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  margin: 0;
+}
+
+@media screen and (min-width: 576px) {
+  .container {
+    max-width:540px
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .column {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+.center {
+  text-align: center;
+}
+
+.column {
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 .menu-box {
   display: flex;
 }
@@ -30,7 +85,11 @@
   font-family: 'Josefin Sans', sans-serif;
   font-weight: 300;
   font-size: 2.25rem;
-  float: right;
+}
+
+.menu-title {
+  font-size: 3rem;
+  font-weight: 500;
 }
 
 .menu-text {
@@ -39,9 +98,13 @@
   width: 100%;
 }
 
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .section-title {
   color: #9f3942;
-  font-family: 'Josefin Sans', sans-serif;
   font-size: 2.25rem;
   font-weight: bold;
 }
