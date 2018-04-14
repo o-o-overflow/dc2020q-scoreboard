@@ -1,0 +1,40 @@
+@import url(https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i);
+@import url(https://fonts.googleapis.com/css?family=Cormorant+Upright:300,400,500,600,700);
+
+.menu-box {
+  display: flex;
+}
+
+.menu-header {
+  font-size: 1.8rem;
+  margin-bottom: .5rem;
+}
+
+.menu-header-solved {
+  color: green;
+}
+
+.menu-header-solved:after {
+  content: ' (solved)';
+}
+
+.menu-header-solved:before {
+  content: '✨';
+}
+
+.menu-item {
+  font-family: 'Cormorant Upright', serif;
+}
+
+.menu-points {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 300;
+  font-size: 2.25rem;
+  float: right;
+}
+
+.menu-text {
+  font-size: 1.3rem;
+  padding-right: 2rem;
+  width: 100%;
+}
