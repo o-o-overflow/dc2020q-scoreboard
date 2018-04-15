@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 function HiddenChallenge(props) {
@@ -14,4 +15,7 @@ function HiddenChallenge(props) {
     </div>
   );
 }
+HiddenChallenge.propTypes = {
+  id: PropTypes.number.isRequired,
+};
 export default HiddenChallenge;

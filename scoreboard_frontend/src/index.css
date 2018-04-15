@@ -12,35 +12,6 @@
        url(./TheWrittenWord.woff) format("woff");
 }
 
-@media screen and (min-width: 576px) {
-  .container {
-    max-width:540px
-  }
-}
-
-@media screen and (min-width: 768px) {
-  .column {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
-
-  .container {
-    max-width: 720px;
-  }
-}
-
-@media screen and (min-width: 992px) {
-  .container {
-    max-width: 960px;
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  .container {
-    max-width: 1140px;
-  }
-}
-
 * {
   box-sizing: border-box;
 }
@@ -51,10 +22,27 @@ body {
   height: auto;
 }
 
+nav {
+  align-items: center;
+  background: white;
+  display: flex;
+  font-family: 'Cormorant Upright', serif;
+  justify-content: space-between;
+  min-width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1;
+}
+
+#nav-toggle {
+  display: none;
+}
+
 .background {
   background-image: url(./background.jpg);
   background-position: 50% 50%;
   background-size: cover;
+  margin-top: 55px;
   position: relative;
 }
 
@@ -82,8 +70,7 @@ body {
   position: relative;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding: 15px;
 }
 
 .hidden-menu-item {
@@ -137,6 +124,29 @@ body {
   width: 100%;
 }
 
+.label-toggle {
+  display: none;
+  margin: 10px;
+  padding-top: 5px;
+}
+
+.nav-items {
+  font-size: 1.2rem;
+}
+
+.nav-items a {
+  color: black;
+  margin: 10px;
+  text-decoration: none;
+}
+
+.nav-title {
+  display: inline-block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding: 10px;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -146,4 +156,65 @@ body {
   color: #9f3942;
   font-size: 2.25rem;
   font-weight: bold;
+}
+
+@media screen and (max-width: 575px) {
+  .label-toggle {
+    cursor: pointer;
+    display: block;
+    float: right;
+  }
+
+  #nav-toggle:checked ~ .nav-items {
+    height: 100%;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  nav {
+    display: block;
+  }
+
+  .nav-items {
+    background-color: lightgrey;
+    display: block;
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .nav-items a {
+    display: block;
+    margin: 0;
+    padding: 5px;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .container {
+    max-width:540px
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .column {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
 }
