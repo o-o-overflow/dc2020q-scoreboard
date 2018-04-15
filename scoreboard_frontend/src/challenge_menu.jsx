@@ -11,18 +11,21 @@ class ChallengeMenu extends React.Component {
           challenges: [
             {
               category: 'Web',
+              id: 0,
               points: 220,
               solvedBy: 45,
               title: 'Easypisy',
             },
             {
               category: 'Shellcoding',
+              id: 1,
               points: 500,
               solvedBy: 0,
               title: 'Binary Sunny-Side-Up',
             },
             {
               category: 'Shellcoding',
+              id: 2,
               points: 130,
               solvedBy: 1,
               title: 'Technical Support',
@@ -34,10 +37,44 @@ class ChallengeMenu extends React.Component {
           challenges: [
             {
               category: 'Exploitation',
+              id: 3,
               points: 220,
               solvedBy: 23,
               title: 'IoT Skewers',
             },
+          ],
+          column: 'left',
+        },
+        'From the Grill': {
+          challenges: [
+            { id: 4 },
+            { id: 5 },
+            { id: 6 },
+          ],
+          column: 'left',
+        },
+        'Signature Dishes': {
+          challenges: [
+            { id: 7 },
+            { id: 8 },
+            { id: 9 },
+          ],
+          column: 'right',
+        },
+        'Guest Chefs': {
+          challenges: [
+            { id: 10 },
+            { id: 11 },
+            { id: 12 },
+
+          ],
+          column: 'right',
+        },
+        Desserts: {
+          challenges: [
+            { id: 13 },
+            { id: 14 },
+            { id: 15 },
           ],
           column: 'right',
         },

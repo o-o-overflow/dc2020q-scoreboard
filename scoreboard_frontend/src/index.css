@@ -1,6 +1,17 @@
 @import url(https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i);
 @import url(https://fonts.googleapis.com/css?family=Cormorant+Upright:300,400,500,600,700);
 
+@font-face {
+  font-family: "TheWrittenWord";
+  font-stretch: normal;
+  font-style: normal;
+  font-weight: 100;
+  src: url(./TheWrittenWord.eot) format("embedded-opentype"),
+       url(./TheWrittenWord.otf) format("opentype"),
+       url(./TheWrittenWord.svg) format("svg"),
+       url(./TheWrittenWord.woff) format("woff");
+}
+
 @media screen and (min-width: 576px) {
   .container {
     max-width:540px
@@ -75,13 +86,21 @@ body {
   padding-right: 15px;
 }
 
+.hidden-menu-item {
+  font-family: 'TheWrittenWord', serif;
+}
+
+.hidden-menu-item .menu-points {
+  font-family: 'TheWrittenWord', serif;
+}
+
 .menu-box {
   display: flex;
 }
 
 .menu-header {
   font-size: 1.8rem;
-  margin-bottom: .5rem;
+  margin: 1rem 0 1rem 0;
 }
 
 .menu-header-solved {
@@ -109,6 +128,7 @@ body {
 .menu-title {
   font-size: 3rem;
   font-weight: 500;
+  margin: 0;
 }
 
 .menu-text {

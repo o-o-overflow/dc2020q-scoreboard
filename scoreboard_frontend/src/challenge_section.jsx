@@ -1,18 +1,24 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import Challenge from './challenge';
+import HiddenChallenge from './hidden_challenge';
+
 
 function ChallengeSection(props) {
-  const challenges = props.challenges.map((challenge, index) =>
-    (
+  const challenges = props.challenges.map((challenge, index) => {
+    if (!challenge.title) {
+      return <HiddenChallenge id={challenge.id} key={challenge.id} />;
+    }
+    return (
       <Challenge
         {...challenge}
         index={index}
-        key={challenge.title}
+        key={challenge.id}
         onClick={props.onClick}
         section={props.title}
       />
-    ));
+    );
+  });
   return (
     <div>
       <h2 className="section-title">{props.title}</h2>
