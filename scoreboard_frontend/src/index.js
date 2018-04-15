@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChallengeMenu from './challenge_menu';
+import Router from './router';
 import './index.css';
 
 ReactDOM.render(
-  React.createElement(ChallengeMenu),
+  React.createElement(Router),
   document.getElementById('root'),
 );
