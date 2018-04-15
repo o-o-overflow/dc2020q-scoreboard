@@ -1,15 +1,6 @@
 @import url(https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i);
 @import url(https://fonts.googleapis.com/css?family=Cormorant+Upright:300,400,500,600,700);
 
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Josefin Sans', sans-serif;
-  margin: 0;
-}
-
 @media screen and (min-width: 576px) {
   .container {
     max-width:540px
@@ -39,6 +30,33 @@ body {
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  margin: 0;
+  height: auto;
+}
+
+.background {
+  background-image: url(./background.jpg);
+  background-position: 50% 50%;
+  background-size: cover;
+  position: relative;
+}
+
+.background-fade {
+  background-color: white;
+  bottom: 0;
+  left: 0;
+  opacity: 0.8;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
 .center {
   text-align: center;
 }
@@ -50,6 +68,7 @@ body {
 }
 
 .container {
+  position: relative;
   margin-left: auto;
   margin-right: auto;
   padding-left: 15px;
