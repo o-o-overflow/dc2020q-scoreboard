@@ -3,7 +3,7 @@ import React from 'react';
 
 function Challenge(props) {
   const {
-    category, points, onClick, solvedBy, title,
+    category, onClick, points, solvedBy, title,
   } = props;
   let className = 'menu-header menu-header-solved';
   let status;
@@ -19,7 +19,7 @@ function Challenge(props) {
   return (
     <div
       className="menu-item"
-      onClick={onClick}
+      onClick={() => onClick(props)}
       onKeyPress={() => {}}
       role="presentation"
     >
