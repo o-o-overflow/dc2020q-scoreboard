@@ -32,6 +32,7 @@ class ChallengeMenu extends React.Component {
             },
           ],
           column: 'left',
+          style: 'category-amouse',
         },
         Appetizers: {
           challenges: [
@@ -44,6 +45,7 @@ class ChallengeMenu extends React.Component {
             },
           ],
           column: 'left',
+          style: 'category-appetizers',
         },
         'From the Grill': {
           challenges: [
@@ -52,6 +54,7 @@ class ChallengeMenu extends React.Component {
             { id: 6 },
           ],
           column: 'left',
+          style: 'category-grill',
         },
         'Signature Dishes': {
           challenges: [
@@ -60,6 +63,7 @@ class ChallengeMenu extends React.Component {
             { id: 9 },
           ],
           column: 'right',
+          style: 'category-signature',
         },
         'Guest Chefs': {
           challenges: [
@@ -69,14 +73,16 @@ class ChallengeMenu extends React.Component {
 
           ],
           column: 'right',
+          style: 'category-guest',
         },
-        Desserts: {
+        'Fruits and Desserts': {
           challenges: [
             { id: 13 },
             { id: 14 },
             { id: 15 },
           ],
           column: 'right',
+          style: 'category-desserts',
         },
       },
     };
