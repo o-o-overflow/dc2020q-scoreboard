@@ -152,6 +152,22 @@ nav {
   flex-wrap: wrap;
 }
 
+.scoreboard {
+  width: 100%;
+}
+
+.scoreboard td {
+  border-bottom: 1px solid grey;
+  padding: 5px;
+  font-size: 1.3rem;
+}
+
+.scoreboard th {
+  border-bottom: 2px solid;
+  padding: 5px;
+  text-align: left;
+}
+
 .section-title {
   color: #9f3942;
   font-size: 2.25rem;
