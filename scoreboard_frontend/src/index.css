@@ -56,6 +56,36 @@ nav {
   top: 0;
 }
 
+.category-amouse:before {
+  content: '🍡';
+  padding-right: 0.25em;
+}
+
+.category-appetizers:before {
+  content: '🍴';
+  padding-right: 0.25em;
+}
+
+.category-signature:before {
+  content: '🍜';
+  padding-right: 0.25em;
+}
+
+.category-grill:before {
+  content: '🍗';
+  padding-right: 0.25em;
+}
+
+.category-guest:before {
+  content: '🍳';
+  padding-right: 0.25em;
+}
+
+.category-desserts:before {
+  content: '🍒';
+  padding-right: 0.25em;
+}
+
 .center {
   text-align: center;
 }
@@ -150,6 +180,15 @@ nav {
 .row {
   display: flex;
   flex-wrap: wrap;
+}
+
+.rules {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.rules li {
+  list-style: none;
 }
 
 .scoreboard {
