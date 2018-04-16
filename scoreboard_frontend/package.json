@@ -12,7 +12,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "./build.sh",
+    "build": "react-scripts build",
+    "deploy": "./deploy.sh",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
