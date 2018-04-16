@@ -1,0 +1,278 @@
+@import url(https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,600,600i,700,700i);
+@import url(https://fonts.googleapis.com/css?family=Cormorant+Upright:300,400,500,600,700);
+
+@font-face {
+  font-family: "TheWrittenWord";
+  font-stretch: normal;
+  font-style: normal;
+  font-weight: 100;
+  src: url(./TheWrittenWord.eot) format("embedded-opentype"),
+       url(./TheWrittenWord.otf) format("opentype"),
+       url(./TheWrittenWord.svg) format("svg"),
+       url(./TheWrittenWord.woff) format("woff");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Josefin Sans', sans-serif;
+  margin: 0;
+  height: auto;
+}
+
+nav {
+  align-items: center;
+  background: white;
+  display: flex;
+  font-family: 'Cormorant Upright', serif;
+  justify-content: space-between;
+  min-width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: 1;
+}
+
+#nav-toggle {
+  display: none;
+}
+
+.background {
+  background-image: url(./background.jpg);
+  background-position: 50% 50%;
+  background-size: cover;
+  margin-top: 55px;
+  position: relative;
+}
+
+.background-fade {
+  background-color: white;
+  bottom: 0;
+  left: 0;
+  opacity: 0.8;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.category-amouse:before {
+  content: '🍡';
+  padding-right: 0.25em;
+}
+
+.category-appetizers:before {
+  content: '🍴';
+  padding-right: 0.25em;
+}
+
+.category-signature:before {
+  content: '🍜';
+  padding-right: 0.25em;
+}
+
+.category-grill:before {
+  content: '🍗';
+  padding-right: 0.25em;
+}
+
+.category-guest:before {
+  content: '🍳';
+  padding-right: 0.25em;
+}
+
+.category-desserts:before {
+  content: '🍒';
+  padding-right: 0.25em;
+}
+
+.center {
+  text-align: center;
+}
+
+.column {
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+}
+
+.container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 15px;
+}
+
+.hidden-menu-item {
+  font-family: 'TheWrittenWord', serif;
+}
+
+.hidden-menu-item .menu-points {
+  font-family: 'TheWrittenWord', serif;
+}
+
+.menu-box {
+  display: flex;
+}
+
+.menu-header {
+  font-size: 1.8rem;
+  margin: 1rem 0 1rem 0;
+}
+
+.menu-header-solved {
+  color: green;
+}
+
+.menu-header-solved:after {
+  content: ' (solved)';
+}
+
+.menu-header-solved:before {
+  content: '✨';
+}
+
+.menu-item {
+  font-family: 'Cormorant Upright', serif;
+}
+
+.menu-points {
+  font-family: 'Josefin Sans', sans-serif;
+  font-weight: 300;
+  font-size: 2.25rem;
+}
+
+.menu-title {
+  font-size: 3rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.menu-text {
+  font-size: 1.3rem;
+  padding-right: 2rem;
+  width: 100%;
+}
+
+.label-toggle {
+  display: none;
+  margin: 10px;
+  padding-top: 5px;
+}
+
+.nav-items {
+  font-size: 1.2rem;
+}
+
+.nav-items a {
+  color: black;
+  margin: 10px;
+  text-decoration: none;
+}
+
+.nav-title {
+  display: inline-block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  padding: 10px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.rules {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.rules li {
+  list-style: none;
+}
+
+.scoreboard {
+  width: 100%;
+}
+
+.scoreboard td {
+  border-bottom: 1px solid grey;
+  padding: 5px;
+  font-size: 1.3rem;
+}
+
+.scoreboard th {
+  border-bottom: 2px solid;
+  padding: 5px;
+  text-align: left;
+}
+
+.section-title {
+  align-items: center;
+  color: #9f3942;
+  display: inline-flex;
+  font-size: 2.25rem;
+  font-weight: bold;
+  margin-bottom: 0;
+}
+
+@media screen and (max-width: 575px) {
+  .label-toggle {
+    cursor: pointer;
+    display: block;
+    float: right;
+  }
+
+  #nav-toggle:checked ~ .nav-items {
+    height: 100%;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  nav {
+    display: block;
+  }
+
+  .nav-items {
+    background-color: lightgrey;
+    display: block;
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .nav-items a {
+    display: block;
+    margin: 0;
+    padding: 5px;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .container {
+    max-width:540px
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .column {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
