@@ -74,7 +74,7 @@ The S3 bucket is accessible via `Coudfront` through the `access-identity`
 Origin Access Identity:
 https://console.aws.amazon.com/cloudfront/home?region=us-east-1#oai:
 
-The `dev` distribution is protect by HTTP basic authentication using the
+The `dev` distribution is protected by HTTP basic authentication using the
 attached `scoreboard-basic-auth` lambda function:
 https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions/scoreboard-basic-auth?tab=graph
 
@@ -101,12 +101,10 @@ Deploy to https://scoreboard.ooooverflow.com via:
 ```sh
 cd countdown_frontend
 ./deploy.sh
-
-The `index.html` file is set to be cached for an hour, so updates may take an
-hour to roll out.
-
 ```
 
+The `index.html` file is set to be cached for 60 seconds so everyone should be
+able to see updates within a minute of deployment.
 
 ## Scoreboard
 
