@@ -1,16 +1,16 @@
-service: quals-scoreboard
+functions:
+  hello:
+    handler: handler.hello
 provider:
   memorySize: 128
   name: aws
   profile: ooo
+  region: us-east-2
   runtime: python3.6
+  stage: dev
   vpc:
     securityGroupIds:
       - sg-04848976f5c2510dd
     subnetIds:
       - subnet-0d13ea8e8a578a8d7
-  stage: dev
-  region: us-east-2
-functions:
-  hello:
-    handler: handler.hello
+service: quals-scoreboard
