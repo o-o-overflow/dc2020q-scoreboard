@@ -12,5 +12,7 @@ provider:
     securityGroupIds:
       - sg-04848976f5c2510dd
     subnetIds:
+      - subnet-0697d999886af6a87
+      - subnet-05f0b4b1981396370
       - subnet-0d13ea8e8a578a8d7
 service: quals-scoreboard
