@@ -1,5 +1,4 @@
 import base64
-import json
 import os
 
 import boto3
@@ -19,7 +18,10 @@ PSQL = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
 
 
 def hello(event, context):
+    with PSQL.cursor() as cursor:
+        cursor.execute("SELECT * FROM pg_catalog.pg_tables;")
+        result = cursor.fetchone()
     return {
         "statusCode": 200,
-        "body": json.dumps({"input": 'Success'})
+        "body": {"result": result}
     }
