@@ -1,21 +1,25 @@
+import base64
 import json
+import os
 
+import boto3
 import psycopg2
 
-DB_HOST = 'scoreboard-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com'
-DB_PASSWORD = 'INVALID'
+
+def kms_decrypt(b64data):
+    session = boto3.session.Session()
+    kms = session.client('kms')
+    data = base64.b64decode(b64data)
+    return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
+
+
+PSQL = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
+                        password=kms_decrypt(os.getenv('DB_PASSWORD')),
+                        user='scoreboard')
 
 
 def hello(event, context):
-    psql = psycopg2.connect(dbname='scoreboard', host=DB_HOST,
-                            password=DB_PASSWORD, user='scoreboard')
-    body = {
-        "input": event
-    }
-
-    response = {
+    return {
         "statusCode": 200,
-        "body": json.dumps(body)
+        "body": json.dumps({"input": 'Success'})
     }
-
-    return response
