@@ -4,6 +4,8 @@ custom:
 functions:
   hello:
     handler: handler.hello
+  migrate:
+    handler: handler.migrate
 package:
   exclude:
     - kms-secrets.dev.us-east-2.yml
