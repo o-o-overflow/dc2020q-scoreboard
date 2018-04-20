@@ -82,7 +82,7 @@ https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions/scoreboar
 
 ![Countdown Screenshot](static/countdown.png)
 
-Up until the competition starts, https://scoreboard.ooooverflow.com should host
+Up until the competition starts, https://scoreboard.oooverflow.io should host
 the countdown_frontend. This application counts down to the start of the
 competition. When the countdown is exhausted a message appears indicating to
 wait for changes to propagate.
@@ -96,7 +96,7 @@ yarn start
 
 ### Deployment
 
-Deploy to https://scoreboard.ooooverflow.com via:
+Deploy to https://scoreboard.oooverflow.io via:
 
 ```sh
 cd countdown_frontend
