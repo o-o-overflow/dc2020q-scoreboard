@@ -34,23 +34,6 @@ def migrate(event, _context):
         psql.commit()
     return api_response(200, result)
 
-
-def user_register(_event, _context):
-    with psql_connection() as psql:
-        with psql.cursor() as cursor:
-            email = 'test@example.com'
-            password = 'thisisnotarealpassword'
-            LOGGER.info('ADD USER {}'.format(email))
-            try:
-                cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
-                               'crypt(%s, gen_salt(\'bf\', 10)))',
-                               (email, password))
-            except psycopg2.IntegrityError:
-                return api_response(422, 'duplicate email')
-        psql.commit()
-    return api_response(201)
-
-
 @contextmanager
 def psql_connection():
     psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
@@ -60,3 +43,24 @@ def psql_connection():
         yield psql
     finally:
         psql.close()
+
+def user_register(event, _context):
+    email = event.get('email', '').lower().strip()
+    password = event.get('password', '')
+    if not 6 <= len(email) <= 320 or '@' not in email or '.' not in email:
+        return api_response(422, 'invalid email')
+    if not 10 <= len(password) <= 72:
+        return api_response(
+            422, 'password must be between 10 and 72 characters')
+
+    with psql_connection() as psql:
+        with psql.cursor() as cursor:
+            LOGGER.info('ADD USER {}'.format(email))
+            try:
+                cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
+                               'crypt(%s, gen_salt(\'bf\', 10)))',
+                               (email, password))
+            except psycopg2.IntegrityError:
+                return api_response(422, 'duplicate email')
+        psql.commit()
+    return api_response(201)
