@@ -19,21 +19,25 @@ def kms_decrypt(b64data):
     return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
 
 
-def hello(_event, _context):
+def migrate(_event, _context):
     with psql_connection() as psql:
-        with psql.cursor() as cursor:
-            cursor.execute('SELECT * from schema_migrations;')
-            result = cursor.fetchone()
+        result = migrations.run_migrations(psql)
+        psql.commit()
     return {'body': {'result': result},
             'statusCode': 200}
 
 
-def migrate(_event, _context):
+def user_register(_event, _context):
     with psql_connection() as psql:
-        result = migrations.run_migrations(psql)
-        LOGGER.info('COMMIT')
+        with psql.cursor() as cursor:
+            email = 'test@example.com'
+            password = 'thisisnotarealpassword'
+            LOGGER.info('ADD USER {}'.format(email))
+            cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
+                           'crypt(%s, gen_salt(\'bf\', 10)))',
+                           (email, password))
         psql.commit()
-    return {'body': {'result': result},
+    return {'body': {'result': 'success'},
             'statusCode': 200}
 
 
