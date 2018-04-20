@@ -7,7 +7,7 @@ class ChallengeMenu extends React.Component {
     super(props);
     this.state = {
       sections: {
-        'Amouse Bouche': {
+        'Amuse Bouche': {
           challenges: [
             {
               category: 'Web',
@@ -32,7 +32,7 @@ class ChallengeMenu extends React.Component {
             },
           ],
           column: 'left',
-          style: 'category-amouse',
+          style: 'category-amuse',
         },
         Appetizers: {
           challenges: [
