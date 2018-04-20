@@ -12,6 +12,14 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
 
+def api_response(status_code=200, message=None):
+    response = {'body': {'success': status_code < 400},
+                'statusCode': status_code}
+    if message:
+        response['body']['message'] = message
+    return response
+
+
 def kms_decrypt(b64data):
     session = boto3.session.Session()
     kms = session.client('kms')
@@ -19,12 +27,12 @@ def kms_decrypt(b64data):
     return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
 
 
-def migrate(_event, _context):
+def migrate(event, _context):
+    reset = event.get('reset')
     with psql_connection() as psql:
-        result = migrations.run_migrations(psql)
+        result = migrations.run_migrations(psql, reset_db=reset)
         psql.commit()
-    return {'body': {'result': result},
-            'statusCode': 200}
+    return api_response(200, result)
 
 
 def user_register(_event, _context):
@@ -33,12 +41,14 @@ def user_register(_event, _context):
             email = 'test@example.com'
             password = 'thisisnotarealpassword'
             LOGGER.info('ADD USER {}'.format(email))
-            cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
-                           'crypt(%s, gen_salt(\'bf\', 10)))',
-                           (email, password))
+            try:
+                cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
+                               'crypt(%s, gen_salt(\'bf\', 10)))',
+                               (email, password))
+            except psycopg2.IntegrityError:
+                return api_response(422, 'duplicate email')
         psql.commit()
-    return {'body': {'result': 'success'},
-            'statusCode': 200}
+    return api_response(201)
 
 
 @contextmanager

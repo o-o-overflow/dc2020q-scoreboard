@@ -9,7 +9,8 @@ MIGRATIONS = [
      'date_created timestamp with time zone NOT NULL, '
      'email varchar(320) NOT NULL, '
      'password char(60) NOT NULL'
-     ');')
+     ');'),
+    'CREATE UNIQUE INDEX users_lower_email on users (lower(email));'
 ]
 
 
@@ -31,8 +32,9 @@ def reset(psql):
         cursor.execute('DROP TABLE schema_migrations, users;')
 
 
-def run_migrations(psql):
-    #  reset(psql)
+def run_migrations(psql, reset_db):
+    if reset_db:
+        reset(psql)
     last = latest_migration(psql)
     if last + 1 >= len(MIGRATIONS):
         return last
