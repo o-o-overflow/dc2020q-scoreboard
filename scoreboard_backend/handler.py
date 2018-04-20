@@ -1,9 +1,12 @@
+from contextlib import contextmanager
 import base64
 import logging
 import os
 
 import boto3
 import psycopg2
+
+import migrations
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
@@ -16,40 +19,30 @@ def kms_decrypt(b64data):
     return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
 
 
-def latest_migration():
-    with PSQL.cursor() as cursor:
-        LOGGER.info('Create schema_migration if necessary')
-        cursor.execute("""CREATE TABLE IF NOT EXISTS schema_migrations (
-id           integer PRIMARY KEY,
-date_applied date NOT NULL
-);""")
-        LOGGER.info("Find latest migration")
-        cursor.execute("""SELECT id from schema_migrations
-ORDER BY id DESC
-LIMIT 1;""")
-        return cursor.fetchone()
-
-
-PSQL = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
-                        password=kms_decrypt(os.getenv('DB_PASSWORD')),
-                        user='scoreboard')
+def hello(_event, _context):
+    with psql_connection() as psql:
+        with psql.cursor() as cursor:
+            cursor.execute('SELECT * from schema_migrations;')
+            result = cursor.fetchone()
+    return {'body': {'result': result},
+            'statusCode': 200}
 
 
 def migrate(_event, _context):
-    result = latest_migration()
-    LOGGER.info('COMMIT')
-    PSQL.commit()
-    return {
-        "statusCode": 200,
-        "body": {"result": result}
-    }
+    with psql_connection() as psql:
+        result = migrations.run_migrations(psql)
+        LOGGER.info('COMMIT')
+        psql.commit()
+    return {'body': {'result': result},
+            'statusCode': 200}
 
 
-def hello(_event, _context):
-    with PSQL.cursor() as cursor:
-        cursor.execute("SELECT * from schema_migrations;")
-        result = cursor.fetchone()
-    return {
-        "statusCode": 200,
-        "body": {"result": result}
-    }
+@contextmanager
+def psql_connection():
+    psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
+                            password=kms_decrypt(os.getenv('DB_PASSWORD')),
+                            user='scoreboard')
+    try:
+        yield psql
+    finally:
+        psql.close()
