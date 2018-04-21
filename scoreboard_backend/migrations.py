@@ -8,9 +8,20 @@ MIGRATIONS = [
      'id serial PRIMARY KEY, '
      'date_created timestamp with time zone NOT NULL, '
      'email varchar(320) NOT NULL, '
-     'password char(60) NOT NULL'
-     ');'),
-    'CREATE UNIQUE INDEX users_lower_email on users (lower(email));'
+     'password char(60) NOT NULL);'),
+    'CREATE UNIQUE INDEX users_lower_email on users (lower(email));',
+    ('CREATE TABLE challenges ('
+     'id serial PRIMARY KEY, '
+     'date_created timestamp with time zone NOT NULL, '
+     'name varchar(160) NOT NULL, '
+     'description text, '
+     'category_id integer NOT NULL);'),
+    ('CREATE TABLE categories ('
+     'id serial PRIMARY KEY, '
+     'date_created timestamp with time zone NOT NULL, '
+     'name varchar(80) NOT NULL);'),
+    ('ALTER TABLE challenges ADD CONSTRAINT fk_challenges_to_categories '
+     'FOREIGN KEY (category_id) REFERENCES categories(id);')
 ]
 
 
