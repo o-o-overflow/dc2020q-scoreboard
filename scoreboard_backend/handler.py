@@ -34,6 +34,7 @@ def migrate(event, _context):
         psql.commit()
     return api_response(200, result)
 
+
 @contextmanager
 def psql_connection():
     psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
@@ -44,18 +45,39 @@ def psql_connection():
     finally:
         psql.close()
 
-def user_register(event, _context):
+
+def user_login(event, _context):
     email = event.get('email', '').lower().strip()
     password = event.get('password', '')
-    if not 6 <= len(email) <= 320 or '@' not in email or '.' not in email:
+    if not valid_email(email):
         return api_response(422, 'invalid email')
-    if not 10 <= len(password) <= 72:
+    if not valid_password(password):
         return api_response(
             422, 'password must be between 10 and 72 characters')
 
     with psql_connection() as psql:
         with psql.cursor() as cursor:
-            LOGGER.info('ADD USER {}'.format(email))
+            LOGGER.info('USER LOGIN {}'.format(email))
+            cursor.execute('SELECT id FROM users where lower(email)=%s AND '
+                           'password=crypt(%s, password);', (email, password))
+            response = cursor.fetchone()
+    if not response:
+        return api_response(401, 'invalid credentials')
+    return api_response(200)
+
+
+def user_register(event, _context):
+    email = event.get('email', '').lower().strip()
+    password = event.get('password', '')
+    if not valid_email(email):
+        return api_response(422, 'invalid email')
+    if not valid_password(password):
+        return api_response(
+            422, 'password must be between 10 and 72 characters')
+
+    with psql_connection() as psql:
+        with psql.cursor() as cursor:
+            LOGGER.info('USER REGISTER {}'.format(email))
             try:
                 cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
                                'crypt(%s, gen_salt(\'bf\', 10)))',
@@ -64,3 +86,11 @@ def user_register(event, _context):
                 return api_response(422, 'duplicate email')
         psql.commit()
     return api_response(201)
+
+
+def valid_email(email):
+    return 6 <= len(email) <= 320 and '@' in email and '.' in email
+
+
+def valid_password(password):
+    return 10 <= len(password) <= 72

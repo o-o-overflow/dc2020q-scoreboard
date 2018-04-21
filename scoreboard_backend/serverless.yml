@@ -4,6 +4,8 @@ custom:
 functions:
   migrate:
     handler: handler.migrate
+  user_login:
+    handler: handler.user_login
   user_register:
     handler: handler.user_register
 package:
