@@ -2,6 +2,8 @@ custom:
   serverless-kms-secrets:
   kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
 functions:
+  challenges_set:
+    handler: handler.challenges_set
   migrate:
     handler: handler.migrate
   user_login:

@@ -6,7 +6,7 @@ applications:
 * countdown_frontend
 * scoreboard_frontend
 
-Additionally, the root of this repository contains a
+Additionally, the `scoreboard_backend` directory contains a
 [serverless](https://serverless.com/) application for managing the server-side
 components that run in AWS lambda.
 
@@ -146,3 +146,31 @@ You will be prompted to confirm that you want to deploy to production.
 
 The `index.html` file is set to be cached for 60 seconds so everyone should be
 able to see updates within a minute of deployment.
+
+
+# scoreboard_backend
+
+This directory contains a [serverless](https://serverless.com/) application for
+managing the server-side components that run in AWS lambda.
+
+If you're not familiar with lambda, each function is its own program. Some
+functions are mapped to API endpoints, and others (`migrate`, `scoreboard_set`)
+are only meant to be invoked directly.
+
+## Setting the challenges
+
+To rewrite the set of challenges (this is a destructive action), first create a
+`scoreboard.json` file by utilizing the
+[challs-manger](https://github.com/o-o-overflow/challs-manager) program:
+
+```sh
+./challenge_loader.py loadall [.challs file path] --dump scoreboard.json
+```
+
+Noting where `scoreboard.json` is saved as `SCOREBOARD_JSON_PATH`, run the
+following command to update the challenges on the scoreboard:
+
+```sh
+cd scoreboard_backend
+sls invoke -lf challenges_set --path SCOREBOARD_JSON_PATH
+```

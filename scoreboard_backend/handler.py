@@ -11,6 +11,8 @@ import migrations
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
+CHALLENGE_FIELDS = ['id', 'title', 'description', 'flag_hash']
+
 
 def api_response(status_code=200, message=None):
     response = {'body': {'success': status_code < 400},
@@ -18,6 +20,53 @@ def api_response(status_code=200, message=None):
     if message:
         response['body']['message'] = message
     return response
+
+
+def challenges_set(event, _context):
+    if not event:
+        return api_response(422, 'data for the scoreboard must be provided')
+    if not isinstance(event, list):
+        return api_response(422, 'invalid scoreboard data')
+    categories = {'Default': None, 'Second Category': None}
+    categories_values_sql = ', '.join(
+        ['(DEFAULT, now(), %s)'] * len(categories))
+    challenges = []
+    try:
+        for challenge in event:
+            challenges.append({field: challenge[field]
+                               for field in CHALLENGE_FIELDS})
+    except (KeyError, TypeError):
+        return api_response(422, 'invalid scoreboard data')
+    challenges_values_sql = ', '.join(
+        ['(DEFAULT, now(), %s, %s, %s)'] * len(challenges))
+
+    with psql_connection() as psql:
+        with psql.cursor() as cursor:
+            LOGGER.info('Empty challanges and categories tables')
+            cursor.execute('TRUNCATE challenges, categories;')
+
+            LOGGER.info('Add categories')
+            cursor.execute('INSERT INTO categories VALUES {};'
+                           .format(categories_values_sql), tuple(categories))
+
+            LOGGER.info('Get category IDs')
+            cursor.execute('SELECT id, name FROM categories;')
+            results = cursor.fetchall()
+            for category_id, category_name in results:
+                categories[category_name] = category_id
+
+            values = []
+            for challenge in challenges:
+                values.append(challenge['title'])
+                values.append(challenge['description'])
+                #  TODO: Update to use passed in category
+                values.append(categories['Default'])
+
+            LOGGER.info('Add challenges')
+            cursor.execute('INSERT INTO challenges VALUES {};'
+                           .format(challenges_values_sql), tuple(values))
+        psql.commit()
+    return api_response(200, 'challenges set')
 
 
 def kms_decrypt(b64data):
