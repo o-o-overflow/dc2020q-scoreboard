@@ -1,0 +1,42 @@
+custom:
+  serverless-kms-secrets:
+  kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
+functions:
+  challenges_set:
+    handler: handler.challenges_set
+  migrate:
+    handler: handler.migrate
+  user_login:
+    handler: handler.user_login
+  user_register:
+    handler: handler.user_register
+package:
+  exclude:
+    - kms-secrets.dev.us-east-2.yml
+    - node_modules/**
+    - package-lock.json
+plugins:
+  - serverless-kms-secrets
+provider:
+  environment:
+    DB_HOST: scoreboard-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
+    DB_PASSWORD: ${self:custom.kmsSecrets.secrets.DB_PASSWORD}
+  iamRoleStatements:
+    - Action:
+      - KMS:Decrypt
+      Effect: Allow
+      Resource: ${self:custom.kmsSecrets.keyArn}
+  memorySize: 128
+  name: aws
+  profile: ooo
+  region: us-east-2
+  runtime: python3.6
+  stage: dev
+  vpc:
+    securityGroupIds:
+      - sg-04848976f5c2510dd
+    subnetIds:
+      - subnet-0697d999886af6a87
+      - subnet-05f0b4b1981396370
+      - subnet-0d13ea8e8a578a8d7
+service: quals-scoreboard
