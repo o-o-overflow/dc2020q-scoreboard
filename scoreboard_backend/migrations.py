@@ -11,7 +11,7 @@ MIGRATIONS = [
      'password char(60) NOT NULL);'),
     'CREATE UNIQUE INDEX users_lower_email on users (lower(email));',
     ('CREATE TABLE challenges ('
-     'id serial PRIMARY KEY, '
+     'id varchar(16) PRIMARY KEY, '
      'date_created timestamp with time zone NOT NULL, '
      'name varchar(160) NOT NULL, '
      'description text, '
@@ -40,7 +40,8 @@ def latest_migration(psql):
 def reset(psql):
     with psql.cursor() as cursor:
         LOGGER.info('DROP TABLEs')
-        cursor.execute('DROP TABLE schema_migrations, users;')
+        cursor.execute('DROP TABLE categories, challenges, schema_migrations, '
+                       'users;')
 
 
 def run_migrations(psql, reset_db):

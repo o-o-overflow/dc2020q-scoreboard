@@ -38,11 +38,11 @@ def challenges_set(event, _context):
     except (KeyError, TypeError):
         return api_response(422, 'invalid scoreboard data')
     challenges_values_sql = ', '.join(
-        ['(DEFAULT, now(), %s, %s, %s)'] * len(challenges))
+        ['(%s, now(), %s, %s, %s)'] * len(challenges))
 
     with psql_connection() as psql:
         with psql.cursor() as cursor:
-            LOGGER.info('Empty challanges and categories tables')
+            LOGGER.info('Empty challenges and categories tables')
             cursor.execute('TRUNCATE challenges, categories;')
 
             LOGGER.info('Add categories')
@@ -57,6 +57,7 @@ def challenges_set(event, _context):
 
             values = []
             for challenge in challenges:
+                values.append(challenge['id'])
                 values.append(challenge['title'])
                 values.append(challenge['description'])
                 #  TODO: Update to use passed in category
