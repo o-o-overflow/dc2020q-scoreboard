@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 import base64
+import hashlib
 import logging
 import os
 
@@ -12,6 +13,7 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
 CHALLENGE_FIELDS = ['id', 'title', 'description', 'flag_hash']
+PROOF_OF_WORK = '000c7f'
 
 
 def api_response(status_code=200, message=None):
@@ -118,12 +120,19 @@ def user_login(event, _context):
 
 def user_register(event, _context):
     email = event.get('email', '').lower().strip()
+    nonce = event.get('nonce', '').strip()
     password = event.get('password', '')
     if not valid_email(email):
         return api_response(422, 'invalid email')
+    if not nonce.isnumeric():
+        return api_response(422, 'invalid nonce')
     if not valid_password(password):
         return api_response(
             422, 'password must be between 10 and 72 characters')
+
+    digest = hashlib.sha256('{}!{}'.format(email, nonce).encode()).hexdigest()
+    if not digest.startswith(PROOF_OF_WORK):
+        return api_response(422, 'invalid nonce')
 
     with psql_connection() as psql:
         with psql.cursor() as cursor:
