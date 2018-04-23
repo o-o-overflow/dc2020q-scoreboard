@@ -142,7 +142,7 @@ def user_register(event, _context):
     data = parse_json_request(event)
     if data is None:
         return api_response(422, 'invalid request')
-    email = data.get('email', '').lower().strip()
+    email = data.get('email', '').strip()
     nonce = data.get('nonce', '')
     password = data.get('password', '')
     timestamp = data.get('timestamp', '')
@@ -162,6 +162,7 @@ def user_register(event, _context):
     if not digest.startswith(PROOF_OF_WORK):
         return api_response(422, 'invalid nonce')
 
+    email = email.lower()  # Store email in lowercase
     with psql_connection() as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER REGISTER {}'.format(email))

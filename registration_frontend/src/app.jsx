@@ -1,5 +1,7 @@
 import React from 'react';
 
+const strip = text => text.replace(/^\s+|\s+$/g, '');
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -22,7 +24,7 @@ class App extends React.Component {
   }
 
   handleEmailChange = (event) => {
-    this.setState({ ...this.state, email: event.target.value });
+    this.setState({ ...this.state, email: strip(event.target.value) });
   }
 
   handleKeyPress = (event) => {
