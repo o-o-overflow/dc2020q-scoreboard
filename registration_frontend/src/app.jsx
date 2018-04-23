@@ -18,7 +18,7 @@ class App extends React.Component {
       if (message.data.complete) {
         this.register(message.data.nonce);
       } else {
-        this.setState({ ...this.state, status: `${this.state.status}.` });
+        this.setState({ ...this.state, status: `${this.state.status} .` });
       }
     };
   }
@@ -116,22 +116,22 @@ class App extends React.Component {
         </header>
         <div className="container">
           <h1>Registration</h1>
-          <div>
-            <label htmlFor="email">Email:
+          <div className="form-group">
+            <label htmlFor="email">Email Address<br />
               <input id="email" type="text" onChange={this.handleEmailChange} onKeyPress={this.handleKeyPress} value={this.state.email} />
             </label>
           </div>
-          <div>
-            <label htmlFor="password">Password:
+          <div className="form-group">
+            <label htmlFor="password">Password<br />
               <input id="password" placeholder="10 to 72 characters" type="password" onChange={this.handlePasswordChange} onKeyPress={this.handleKeyPress} value={this.state.password} />
             </label>
           </div>
-          <div>
-            <label htmlFor="password_confirmation">Confirmation:
-              <input id="password_confirmation" type="password" onChange={this.handlePasswordConfirmationChange} onKeyPress={this.handleKeyPress} value={this.state.password_confirmation} />
+          <div className="form-group">
+            <label htmlFor="password_confirmation">Password Confirmation<br />
+              <input id="password_confirmation" placeholder="10 to 72 characters" type="password" onChange={this.handlePasswordConfirmationChange} onKeyPress={this.handleKeyPress} value={this.state.password_confirmation} />
             </label>
           </div>
-          <div>
+          <div className="form-group">
             <input className="button" disabled={this.state.button_disabled} onClick={this.handleRegister} type="button" value="Register" />
           </div>
           {status}
