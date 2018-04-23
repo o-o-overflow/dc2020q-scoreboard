@@ -1,8 +1,6 @@
 import React from 'react';
 import workerScript from './worker';
 
-const URL = 'https://bv30jcdr5b.execute-api.us-east-2.amazonaws.com/dev/user_register';
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -75,7 +73,7 @@ class App extends React.Component {
       timestamp: this.hashTimestamp,
     };
     this.setState({ ...this.state, status: 'submitting registration' });
-    fetch(URL, {
+    fetch(process.env.REACT_APP_BACKEND_URL, {
       body: JSON.stringify(requestData),
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
