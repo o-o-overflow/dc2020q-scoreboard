@@ -103,6 +103,7 @@ class App extends React.Component {
 
   render() {
     let status;
+    const buttonText = this.state.button_disabled ? 'Please Wait' : 'Register';
     if (this.state.status !== '') {
       status = (<div className="wrapped">Status: {this.state.status}</div>);
     }
@@ -132,7 +133,7 @@ class App extends React.Component {
             </label>
           </div>
           <div className="form-group">
-            <input className="button" disabled={this.state.button_disabled} onClick={this.handleRegister} type="button" value="Register" />
+            <input className="button" disabled={this.state.button_disabled} onClick={this.handleRegister} type="button" value={buttonText} />
           </div>
           {status}
         </div>
