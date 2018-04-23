@@ -1,5 +1,4 @@
 import React from 'react';
-import workerScript from './worker';
 
 class App extends React.Component {
   constructor(props) {
@@ -12,7 +11,7 @@ class App extends React.Component {
       status: '',
     };
     this.hashTimestamp = null;
-    this.worker = new Worker(workerScript);
+    this.worker = new Worker('worker.js');
     this.worker.onmessage = (message) => {
       if (message.data.complete) {
         this.register(message.data.nonce);
