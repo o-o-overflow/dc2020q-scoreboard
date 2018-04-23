@@ -9,7 +9,6 @@ const worker = () => {
         postMessage({ complete: false });
       }
     }
-    console.log(`${data.value}!${nonce} = ${proofOfWork}`);
     return nonce;
   };
 

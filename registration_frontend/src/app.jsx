@@ -1,6 +1,8 @@
 import React from 'react';
 import workerScript from './worker';
 
+const URL = 'https://bv30jcdr5b.execute-api.us-east-2.amazonaws.com/dev/user_register';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -66,8 +68,38 @@ class App extends React.Component {
   }
 
   register = (nonce) => {
+    const requestData = {
+      email: this.state.email,
+      nonce,
+      password: this.state.password,
+      timestamp: this.hashTimestamp,
+    };
     this.setState({ ...this.state, status: 'submitting registration' });
-    console.log(`registering ${this.state.email} using ${nonce}`);
+    fetch(URL, {
+      body: JSON.stringify(requestData),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+    }).then(response => response.json().then(body => ({ body, status: response.status })))
+      .then(({ body, status }) => {
+        let message;
+        if (status === 201) {
+          message = `${this.state.email} registered successfully. Prior to the competition you will receive an email with more information.`;
+        } else {
+          message = body.message;
+        }
+        this.setState({
+          ...this.state,
+          button_disabled: false,
+          email: '',
+          password: '',
+          password_confirmation: '',
+          status: message,
+        });
+      })
+      .catch((error) => {
+        this.setState({ ...this.state, button_disabled: false, status: '(error) see console for info' });
+        console.log(error);
+      });
   }
 
   render() {
@@ -96,7 +128,7 @@ class App extends React.Component {
             </label>
           </div>
           <div>
-            <label htmlFor="password_confirmation">Password Confirmation:
+            <label htmlFor="password_confirmation">Confirmation:
               <input id="password_confirmation" type="password" onChange={this.handlePasswordConfirmationChange} onKeyPress={this.handleKeyPress} value={this.state.password_confirmation} />
             </label>
           </div>
