@@ -9,6 +9,11 @@ functions:
   user_login:
     handler: handler.user_login
   user_register:
+    events:
+      - http:
+          cors: true
+          method: POST
+          path: user_register
     handler: handler.user_register
 package:
   exclude:

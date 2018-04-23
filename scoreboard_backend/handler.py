@@ -1,8 +1,10 @@
 from contextlib import contextmanager
 import base64
 import hashlib
+import json
 import logging
 import os
+import time
 
 import boto3
 import psycopg2
@@ -14,14 +16,16 @@ LOGGER.setLevel(logging.INFO)
 
 CHALLENGE_FIELDS = ['id', 'title', 'description', 'flag_hash']
 PROOF_OF_WORK = '000c7f'
+TIMESTAMP_MAX_DELTA = 600
 
 
 def api_response(status_code=200, message=None):
-    response = {'body': {'success': status_code < 400},
-                'statusCode': status_code}
+    body = {'success': status_code < 400}
     if message:
-        response['body']['message'] = message
-    return response
+        body['message'] = message
+    return {'body': json.dumps(body),
+            'headers': {'Access-Control-Allow-Origin': '*'},
+            'statusCode': status_code}
 
 
 def challenges_set(event, _context):
@@ -87,6 +91,22 @@ def migrate(event, _context):
     return api_response(200, result)
 
 
+def parse_json_request(event, min_body_size=2, max_body_size=512):
+    headers = event.get('headers', {})
+    content_type = ''
+    for header in headers:
+        if header.lower() == 'content-type':
+            content_type = headers[header]
+            break
+    if content_type.lower() != 'application/json' or \
+       not min_body_size <= len(event['body']) <= max_body_size:
+        return None
+    try:
+        return json.loads(event['body'])
+    except:
+        return None
+
+
 @contextmanager
 def psql_connection():
     psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
@@ -119,18 +139,26 @@ def user_login(event, _context):
 
 
 def user_register(event, _context):
-    email = event.get('email', '').lower().strip()
-    nonce = event.get('nonce', '').strip()
-    password = event.get('password', '')
+    data = parse_json_request(event)
+    if data is None:
+        return api_response(422, 'invalid request')
+    email = data.get('email', '').lower().strip()
+    nonce = data.get('nonce', '')
+    password = data.get('password', '')
+    timestamp = data.get('timestamp', '')
+    if not isinstance(nonce, int):
+        return api_response(422, 'invalid nonce')
     if not valid_email(email):
         return api_response(422, 'invalid email')
-    if not nonce.isnumeric():
-        return api_response(422, 'invalid nonce')
     if not valid_password(password):
         return api_response(
             422, 'password must be between 10 and 72 characters')
+    timestamp_error = validate_timestamp(timestamp)
+    if timestamp_error:
+        return api_response(422, timestamp_error)
 
-    digest = hashlib.sha256('{}!{}'.format(email, nonce).encode()).hexdigest()
+    digest = hashlib.sha256('{}!{}!{}'.format(email, timestamp, nonce)
+                            .encode()).hexdigest()
     if not digest.startswith(PROOF_OF_WORK):
         return api_response(422, 'invalid nonce')
 
@@ -153,3 +181,14 @@ def valid_email(email):
 
 def valid_password(password):
     return 10 <= len(password) <= 72
+
+
+def validate_timestamp(timestamp):
+    if not isinstance(timestamp, int):
+        return 'invalid timestamp'
+    now = int(time.time())
+    if timestamp > now:
+        return 'timestamp is too recent'
+    if now - timestamp > TIMESTAMP_MAX_DELTA:
+        return 'timestamp has expired'
+    return None
