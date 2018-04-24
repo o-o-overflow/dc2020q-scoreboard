@@ -1,5 +1,4 @@
 custom:
-  serverless-kms-secrets:
   kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
 functions:
   challenges_set:
@@ -24,7 +23,7 @@ plugins:
   - serverless-kms-secrets
 provider:
   environment:
-    DB_HOST: scoreboard-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
+    DB_HOST: scoreboard-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
     DB_PASSWORD: ${self:custom.kmsSecrets.secrets.DB_PASSWORD}
   iamRoleStatements:
     - Action:
