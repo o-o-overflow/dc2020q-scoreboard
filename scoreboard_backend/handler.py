@@ -145,11 +145,14 @@ def user_register(event, _context):
     email = data.get('email', '').strip()
     nonce = data.get('nonce', '')
     password = data.get('password', '')
+    team_name = data.get('team_name', '').strip()
     timestamp = data.get('timestamp', '')
     if not isinstance(nonce, int):
         return api_response(422, 'invalid nonce')
     if not valid_email(email):
         return api_response(422, 'invalid email')
+    if not valid_team(team_name):
+        return api_response(422, 'invalid team name')
     if not valid_password(password):
         return api_response(
             422, 'password must be between 10 and 72 characters')
@@ -168,16 +171,22 @@ def user_register(event, _context):
             LOGGER.info('USER REGISTER {}'.format(email))
             try:
                 cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
-                               'crypt(%s, gen_salt(\'bf\', 10)))',
-                               (email, password))
-            except psycopg2.IntegrityError:
-                return api_response(422, 'duplicate email')
+                               'crypt(%s, gen_salt(\'bf\', 10)), %s)',
+                               (email, password, team_name))
+            except psycopg2.IntegrityError as exception:
+                if 'email' in exception.diag.constraint_name:
+                    return api_response(422, 'duplicate email')
+                return api_response(422, 'duplicate team name')
         psql.commit()
     return api_response(201)
 
 
 def valid_email(email):
     return 6 <= len(email) <= 320 and '@' in email and '.' in email
+
+
+def valid_team(team):
+    return 0 < len(team) <= 80
 
 
 def valid_password(password):
