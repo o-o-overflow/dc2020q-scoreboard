@@ -8,8 +8,10 @@ MIGRATIONS = [
      'id serial PRIMARY KEY, '
      'date_created timestamp with time zone NOT NULL, '
      'email varchar(320) NOT NULL, '
-     'password char(60) NOT NULL);'),
+     'password char(60) NOT NULL, '
+     'team_name varchar(80) NOT NULL);'),
     'CREATE UNIQUE INDEX users_lower_email on users (lower(email));',
+    'CREATE UNIQUE INDEX users_lower_team_name on users (lower(team_name));',
     ('CREATE TABLE challenges ('
      'id varchar(16) PRIMARY KEY, '
      'date_created timestamp with time zone NOT NULL, '
