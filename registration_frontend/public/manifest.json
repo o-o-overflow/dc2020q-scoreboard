@@ -3,13 +3,13 @@
   "name": "OOO Def Con Quals 2018",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "ooo.png",
+      "sizes": "192x192 144x144 96x96 72x72 48x48 36x36 24x24",
+      "type": "image/png"
     }
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#b5e853",
+  "background_color": "#000000"
 }
