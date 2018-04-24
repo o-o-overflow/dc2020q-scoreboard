@@ -7,6 +7,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       buttonDisabled: false,
+      ctfTimeTeamId: '',
       email: '',
       password: '',
       passwordConfirmation: '',
@@ -22,6 +23,10 @@ class App extends React.Component {
         this.setState({ ...this.state, status: `${this.state.status} .` });
       }
     };
+  }
+
+  handleCtfTimeTeamIdChange = (event) => {
+    this.setState({ ...this.state, ctfTimeTeamId: strip(event.target.value) });
   }
 
   handleEmailChange = (event) => {
@@ -44,8 +49,11 @@ class App extends React.Component {
 
   handleRegister = () => {
     let validation;
+    const teamId = parseInt(this.state.ctfTimeTeamId, 10);
     if (this.state.teamName.length === 0 || this.state.teamName.length > 80) {
       validation = 'invalid team name';
+    } else if (!Number.isNaN(teamId) && (teamId <= 0 || teamId > 100000)) {
+      validation = 'invalid CTF Time Team ID';
     } else if (this.state.email.length < 6 || this.state.email.length > 320
       || !this.state.email.includes('@') || !this.state.email.includes('.')) {
       validation = 'invalid email';
@@ -76,6 +84,7 @@ class App extends React.Component {
 
   register = (nonce) => {
     const requestData = {
+      ctf_time_team_id: this.state.ctfTimeTeamId,
       email: this.state.email,
       nonce,
       password: this.state.password,
@@ -94,7 +103,7 @@ class App extends React.Component {
         if (status === 201) {
           message = `${this.state.email} registered successfully. Prior to the competition you will receive an email with more information.`;
           reset = {
-            email: '', password: '', passwordConfirmation: '', teamName: '',
+            ctfTimeTeamId: '', email: '', password: '', passwordConfirmation: '', teamName: '',
           };
         } else {
           message = body.message;
@@ -128,9 +137,15 @@ class App extends React.Component {
         </header>
         <div className="container">
           <h1>Registration</h1>
+          <p>Note: Please only register a single account per team.</p>
           <div className="form-group">
             <label htmlFor="team-name">Team Name<br />
               <input id="team-name" onChange={this.handleTeamNameChange} onKeyPress={this.handleKeyPress} readOnly={this.state.buttonDisabled} type="text" value={this.state.teamName} />
+            </label>
+          </div>
+          <div className="form-group">
+            <label htmlFor="ctf-time-team-id">CTF Time Team ID<br />
+              <input id="ctf-time-team-id" onChange={this.handleCtfTimeTeamIdChange} onKeyPress={this.handleKeyPress} max="100000" min="1" placeholder="optional" readOnly={this.state.buttonDisabled} type="number" value={this.state.ctfTimeTeamId} />
             </label>
           </div>
           <div className="form-group">

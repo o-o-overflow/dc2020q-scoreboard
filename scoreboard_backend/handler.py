@@ -103,7 +103,7 @@ def parse_json_request(event, min_body_size=2, max_body_size=512):
         return None
     try:
         return json.loads(event['body'])
-    except:
+    except Exception:
         return None
 
 
@@ -142,6 +142,7 @@ def user_register(event, _context):
     data = parse_json_request(event)
     if data is None:
         return api_response(422, 'invalid request')
+    ctf_time_team_id = data.get('ctf_time_team_id', '').strip()
     email = data.get('email', '').strip()
     nonce = data.get('nonce', '')
     password = data.get('password', '')
@@ -149,6 +150,9 @@ def user_register(event, _context):
     timestamp = data.get('timestamp', '')
     if not isinstance(nonce, int):
         return api_response(422, 'invalid nonce')
+    if not valid_int_as_string(ctf_time_team_id, min_value=1,
+                               max_value=100000):
+        return api_response(422, 'invalid CTF Time team id')
     if not valid_email(email):
         return api_response(422, 'invalid email')
     if not valid_team(team_name):
@@ -165,14 +169,18 @@ def user_register(event, _context):
     if not digest.startswith(PROOF_OF_WORK):
         return api_response(422, 'invalid nonce')
 
-    email = email.lower()  # Store email in lowercase
+    if ctf_time_team_id == '':
+        ctf_time_team_id = None
+    else:
+        ctf_time_team_id = int(ctf_time_team_id)
+
     with psql_connection() as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER REGISTER {}'.format(email))
             try:
                 cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
-                               'crypt(%s, gen_salt(\'bf\', 10)), %s)',
-                               (email, password, team_name))
+                               'crypt(%s, gen_salt(\'bf\', 10)), %s, %s)',
+                               (email, password, team_name, ctf_time_team_id))
             except psycopg2.IntegrityError as exception:
                 if 'email' in exception.diag.constraint_name:
                     return api_response(422, 'duplicate email')
@@ -183,6 +191,14 @@ def user_register(event, _context):
 
 def valid_email(email):
     return 6 <= len(email) <= 320 and '@' in email and '.' in email
+
+
+def valid_int_as_string(value, max_value, min_value):
+    if value == '':
+        return True
+    if not isinstance(value, str) or not value.isnumeric():
+        return False
+    return min_value <= int(value) <= max_value
 
 
 def valid_team(team):
