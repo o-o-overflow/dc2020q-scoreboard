@@ -9,7 +9,8 @@ MIGRATIONS = [
      'date_created timestamp with time zone NOT NULL, '
      'email varchar(320) NOT NULL, '
      'password char(60) NOT NULL, '
-     'team_name varchar(80) NOT NULL);'),
+     'team_name varchar(80) NOT NULL, '
+     'ctf_time_team_id integer NULL);'),
     'CREATE UNIQUE INDEX users_lower_email on users (lower(email));',
     'CREATE UNIQUE INDEX users_lower_team_name on users (lower(team_name));',
     ('CREATE TABLE challenges ('
