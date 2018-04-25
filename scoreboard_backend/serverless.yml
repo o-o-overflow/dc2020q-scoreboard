@@ -40,6 +40,10 @@ provider:
       - KMS:Decrypt
       Effect: Allow
       Resource: ${self:custom.kmsSecrets.keyArn}
+    - Action:
+      - ses:SendEmail
+      Effect: Allow
+      Resource: "*"
   memorySize: 128
   name: aws
   profile: ooo

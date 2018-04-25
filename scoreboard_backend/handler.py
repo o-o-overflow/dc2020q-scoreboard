@@ -119,6 +119,25 @@ def psql_connection():
         psql.close()
 
 
+def send_email(from_email, to_email, subject, body):
+    client = boto3.client('ses', region_name='us-east-1')
+    try:
+        return client.send_email(
+            Destination={'ToAddresses': [to_email]},
+            Message={'Body': {'Text': {'Data': body}},
+                     'Subject': {'Data': subject}},
+            Source=from_email)
+    except client.exceptions.MessageRejected:
+        body = ('Email failed to send. Please forward to {}. Thanks!\n\n{}'
+                .format(to_email, body))
+
+    return client.send_email(
+        Destination={'ToAddresses': ['team@oooverflow.io']},
+        Message={'Body': {'Text': {'Data': body}},
+                 'Subject': {'Data': subject}},
+        Source=from_email)
+
+
 def user_login(event, _context):
     email = event.get('email', '').lower().strip()
     password = event.get('password', '')
@@ -210,9 +229,18 @@ def user_register(event, _context):
                 return api_response(422, 'duplicate team name')
             cursor.execute('SELECT id FROM users where email=%s;', (email,))
             user_id = cursor.fetchone()[0]
+            confirmation_id = str(uuid.uuid4())
             cursor.execute('INSERT INTO confirmations VALUES (%s, %s);',
-                           (str(uuid.uuid4()), user_id))
+                           (confirmation_id, user_id))
         psql.commit()
+
+    confirmation_url = 'https://{}/{}/user_confirm/{}'.format(
+        event['headers']['Host'], event['requestContext']['stage'],
+        confirmation_id)
+    body = 'Please confirm your account creation:\n\n{}'.format(
+        confirmation_url)
+    send_email('OOO Account Registration <accounts@oooverflow.io>',
+               email, 'Please Confirm Your Registration', body)
     return api_response(201)
 
 
