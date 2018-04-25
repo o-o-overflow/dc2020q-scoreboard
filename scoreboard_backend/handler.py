@@ -119,7 +119,12 @@ def psql_connection():
         psql.close()
 
 
-def send_email(from_email, to_email, subject, body):
+def send_email(from_email, to_email, subject, body, stage='dev'):
+    if stage != 'prod':
+        # Only send actual emails in the prod stage.
+        to_email = 'team+{}@oooverflow.io'.format(stage)
+        subject = '[Stage: {}] {}'.format(stage, subject)
+
     client = boto3.client('ses', region_name='us-east-1')
     try:
         return client.send_email(
@@ -128,6 +133,7 @@ def send_email(from_email, to_email, subject, body):
                      'Subject': {'Data': subject}},
             Source=from_email)
     except client.exceptions.MessageRejected:
+        LOGGER.exception('failed to send email to {}'.format(to_email))
         body = ('Email failed to send. Please forward to {}. Thanks!\n\n{}'
                 .format(to_email, body))
 
@@ -170,16 +176,30 @@ def user_confirm(event, _context):
                            (confirmation_id,))
             response = cursor.fetchone()
             if not response:
-                return api_response(422, 'invalid confirmation')
+                return api_response(422, 'invalid confirmation or confirmation already completed')
+            user_id = response[0]
             cursor.execute('DELETE FROM confirmations where id=%s;',
                            (confirmation_id,))
             cursor.execute('UPDATE users SET date_confirmed=now() '
-                           'where id=%s;', (response[0],))
-            psql.commit()
-    return api_response(200, 'you have been confirmed')
+                           'where id=%s;', (user_id,))
+            cursor.execute('SELECT email FROM users where id=%s;', (user_id,))
+            email = cursor.fetchone()[0];
+        psql.commit()
+
+    body = ('Your registration to Def Con 2018 CTF Quals is complete.\n\n'
+            'Prior to the competition you will receive an email with more '
+            'information.\n\nhttps://scoreboard.oooverflow.io/\n')
+    send_email('OOO Account Registration <accounts@oooverflow.io>',
+               email, '[OOO] Registration Complete', body,
+               stage=event['requestContext']['stage'])
+    return api_response(200, 'confirmation complete')
 
 
 def user_register(event, _context):
+    app_url = event['headers'].get('origin', None)
+    if not app_url:
+        return api_response(422, 'origin header missing')
+
     data = parse_json_request(event)
     if data is None:
         return api_response(422, 'invalid request')
@@ -234,13 +254,12 @@ def user_register(event, _context):
                            (confirmation_id, user_id))
         psql.commit()
 
-    confirmation_url = 'https://{}/{}/user_confirm/{}'.format(
-        event['headers']['Host'], event['requestContext']['stage'],
-        confirmation_id)
-    body = 'Please confirm your account creation:\n\n{}'.format(
+    confirmation_url = '{}/#/confirm/{}'.format(app_url, confirmation_id)
+    body = 'Please confirm your account creation:\n\n{}\n'.format(
         confirmation_url)
     send_email('OOO Account Registration <accounts@oooverflow.io>',
-               email, 'Please Confirm Your Registration', body)
+               email, '[OOO] Please Confirm Your Registration', body,
+               stage=event['requestContext']['stage'])
     return api_response(201)
 
 

@@ -8,6 +8,7 @@ functions:
   user_confirm:
     events:
       - http:
+          cors: true
           method: GET
           path: user_confirm/{id}
           request:
