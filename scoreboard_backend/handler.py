@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import time
+import uuid
 
 import boto3
 import psycopg2
@@ -138,6 +139,27 @@ def user_login(event, _context):
     return api_response(200)
 
 
+def user_confirm(event, _context):
+    confirmation_id = event['pathParameters']['id']
+    if len(confirmation_id) != 36:
+        return api_response(422, 'invalid confirmation')
+
+    with psql_connection() as psql:
+        with psql.cursor() as cursor:
+            LOGGER.info('CONFIRM {}'.format(confirmation_id))
+            cursor.execute('SELECT user_id FROM confirmations where id=%s;',
+                           (confirmation_id,))
+            response = cursor.fetchone()
+            if not response:
+                return api_response(422, 'invalid confirmation')
+            cursor.execute('DELETE FROM confirmations where id=%s;',
+                           (confirmation_id,))
+            cursor.execute('UPDATE users SET date_confirmed=now() '
+                           'where id=%s;', (response[0],))
+            psql.commit()
+    return api_response(200, 'you have been confirmed')
+
+
 def user_register(event, _context):
     data = parse_json_request(event)
     if data is None:
@@ -178,13 +200,18 @@ def user_register(event, _context):
         with psql.cursor() as cursor:
             LOGGER.info('USER REGISTER {}'.format(email))
             try:
-                cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
-                               'crypt(%s, gen_salt(\'bf\', 10)), %s, %s)',
+                cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), '
+                               'NULL, %s, crypt(%s, gen_salt(\'bf\', 10)), '
+                               '%s, %s)',
                                (email, password, team_name, ctf_time_team_id))
             except psycopg2.IntegrityError as exception:
                 if 'email' in exception.diag.constraint_name:
                     return api_response(422, 'duplicate email')
                 return api_response(422, 'duplicate team name')
+            cursor.execute('SELECT id FROM users where email=%s;', (email,))
+            user_id = cursor.fetchone()[0]
+            cursor.execute('INSERT INTO confirmations VALUES (%s, %s);',
+                           (str(uuid.uuid4()), user_id))
         psql.commit()
     return api_response(201)
 
