@@ -7,6 +7,7 @@ MIGRATIONS = [
     ('CREATE TABLE users ('
      'id serial PRIMARY KEY, '
      'date_created timestamp with time zone NOT NULL, '
+     'date_confirmed timestamp with time zone NULL, '
      'email varchar(320) NOT NULL, '
      'password char(60) NOT NULL, '
      'team_name varchar(80) NOT NULL, '
@@ -24,7 +25,12 @@ MIGRATIONS = [
      'date_created timestamp with time zone NOT NULL, '
      'name varchar(80) NOT NULL);'),
     ('ALTER TABLE challenges ADD CONSTRAINT fk_challenges_to_categories '
-     'FOREIGN KEY (category_id) REFERENCES categories(id);')
+     'FOREIGN KEY (category_id) REFERENCES categories(id);'),
+    ('CREATE TABLE confirmations ('
+     'id char(36) PRIMARY KEY, '
+     'user_id integer NOT NULL UNIQUE);'),
+    ('ALTER TABLE confirmations ADD CONSTRAINT fk_confirmations_to_users '
+     'FOREIGN KEY (user_id) REFERENCES users(id);'),
 ]
 
 
@@ -43,8 +49,8 @@ def latest_migration(psql):
 def reset(psql):
     with psql.cursor() as cursor:
         LOGGER.info('DROP TABLEs')
-        cursor.execute('DROP TABLE categories, challenges, schema_migrations, '
-                       'users;')
+        cursor.execute('DROP TABLE categories, challenges, confirmations, '
+                       'schema_migrations, users;')
 
 
 def run_migrations(psql, reset_db):

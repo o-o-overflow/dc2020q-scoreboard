@@ -5,6 +5,17 @@ functions:
     handler: handler.challenges_set
   migrate:
     handler: handler.migrate
+  user_confirm:
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: user_confirm/{id}
+          request:
+            parameters:
+              paths:
+                id: true
+    handler: handler.user_confirm
   user_login:
     handler: handler.user_login
   user_register:
@@ -30,6 +41,10 @@ provider:
       - KMS:Decrypt
       Effect: Allow
       Resource: ${self:custom.kmsSecrets.keyArn}
+    - Action:
+      - ses:SendEmail
+      Effect: Allow
+      Resource: "*"
   memorySize: 128
   name: aws
   profile: ooo

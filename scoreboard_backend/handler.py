@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import time
+import uuid
 
 import boto3
 import psycopg2
@@ -118,6 +119,31 @@ def psql_connection():
         psql.close()
 
 
+def send_email(from_email, to_email, subject, body, stage='dev'):
+    if stage != 'prod':
+        # Only send actual emails in the prod stage.
+        to_email = 'team+{}@oooverflow.io'.format(stage)
+        subject = '[Stage: {}] {}'.format(stage, subject)
+
+    client = boto3.client('ses', region_name='us-east-1')
+    try:
+        return client.send_email(
+            Destination={'ToAddresses': [to_email]},
+            Message={'Body': {'Text': {'Data': body}},
+                     'Subject': {'Data': subject}},
+            Source=from_email)
+    except client.exceptions.MessageRejected:
+        LOGGER.exception('failed to send email to {}'.format(to_email))
+        body = ('Email failed to send. Please forward to {}. Thanks!\n\n{}'
+                .format(to_email, body))
+
+    return client.send_email(
+        Destination={'ToAddresses': ['team@oooverflow.io']},
+        Message={'Body': {'Text': {'Data': body}},
+                 'Subject': {'Data': subject}},
+        Source=from_email)
+
+
 def user_login(event, _context):
     email = event.get('email', '').lower().strip()
     password = event.get('password', '')
@@ -138,7 +164,42 @@ def user_login(event, _context):
     return api_response(200)
 
 
+def user_confirm(event, _context):
+    confirmation_id = event['pathParameters']['id']
+    if len(confirmation_id) != 36:
+        return api_response(422, 'invalid confirmation')
+
+    with psql_connection() as psql:
+        with psql.cursor() as cursor:
+            LOGGER.info('CONFIRM {}'.format(confirmation_id))
+            cursor.execute('SELECT user_id FROM confirmations where id=%s;',
+                           (confirmation_id,))
+            response = cursor.fetchone()
+            if not response:
+                return api_response(422, 'invalid confirmation or confirmation already completed')
+            user_id = response[0]
+            cursor.execute('DELETE FROM confirmations where id=%s;',
+                           (confirmation_id,))
+            cursor.execute('UPDATE users SET date_confirmed=now() '
+                           'where id=%s;', (user_id,))
+            cursor.execute('SELECT email FROM users where id=%s;', (user_id,))
+            email = cursor.fetchone()[0];
+        psql.commit()
+
+    body = ('Your registration to Def Con 2018 CTF Quals is complete.\n\n'
+            'Prior to the competition you will receive an email with more '
+            'information.\n\nhttps://scoreboard.oooverflow.io/\n')
+    send_email('OOO Account Registration <accounts@oooverflow.io>',
+               email, '[OOO] Registration Complete', body,
+               stage=event['requestContext']['stage'])
+    return api_response(200, 'confirmation complete')
+
+
 def user_register(event, _context):
+    app_url = event['headers'].get('origin', None)
+    if not app_url:
+        return api_response(422, 'origin header missing')
+
     data = parse_json_request(event)
     if data is None:
         return api_response(422, 'invalid request')
@@ -178,14 +239,27 @@ def user_register(event, _context):
         with psql.cursor() as cursor:
             LOGGER.info('USER REGISTER {}'.format(email))
             try:
-                cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), %s, '
-                               'crypt(%s, gen_salt(\'bf\', 10)), %s, %s)',
+                cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), '
+                               'NULL, %s, crypt(%s, gen_salt(\'bf\', 10)), '
+                               '%s, %s)',
                                (email, password, team_name, ctf_time_team_id))
             except psycopg2.IntegrityError as exception:
                 if 'email' in exception.diag.constraint_name:
                     return api_response(422, 'duplicate email')
                 return api_response(422, 'duplicate team name')
+            cursor.execute('SELECT id FROM users where email=%s;', (email,))
+            user_id = cursor.fetchone()[0]
+            confirmation_id = str(uuid.uuid4())
+            cursor.execute('INSERT INTO confirmations VALUES (%s, %s);',
+                           (confirmation_id, user_id))
         psql.commit()
+
+    confirmation_url = '{}/#/confirm/{}'.format(app_url, confirmation_id)
+    body = 'Please confirm your account creation:\n\n{}\n'.format(
+        confirmation_url)
+    send_email('OOO Account Registration <accounts@oooverflow.io>',
+               email, '[OOO] Please Confirm Your Registration', body,
+               stage=event['requestContext']['stage'])
     return api_response(201)
 
 
