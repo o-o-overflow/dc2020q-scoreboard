@@ -270,10 +270,16 @@ def user_register(event, _context):
 def users(_event, _context):
     with psql_connection() as psql:
         with psql.cursor() as cursor:
-            cursor.execute('SELECT * FROM users;')
-            pprint(cursor.fetchall())
+            cursor.execute('SELECT id, email, team_name, ctf_time_team_id '
+                           'FROM users;')
+            for row in cursor.fetchall():
+                print(row)
+
             cursor.execute('SELECT * FROM confirmations;')
-            pprint(cursor.fetchall())
+            result = cursor.fetchall()
+            if result:
+                print('Pending confirmations')
+                pprint(result)
     return api_response(200)
 
 
