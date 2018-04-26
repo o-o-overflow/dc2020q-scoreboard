@@ -141,6 +141,7 @@ class Registration extends React.Component {
           <label htmlFor="ctf-time-team-id">CTF Time Team ID<br />
             <input id="ctf-time-team-id" onChange={this.handleCtfTimeTeamIdChange} onKeyPress={this.handleKeyPress} max="100000" min="1" placeholder="optional" readOnly={this.state.buttonDisabled} type="number" value={this.state.ctfTimeTeamId} />
           </label>
+          <div className="small">The 762 part of a URL like: <a href="https://ctftime.org/team/762">https://ctftime.org/team/762</a></div>
         </div>
         <div className="form-group">
           <label htmlFor="email">Email Address<br />
