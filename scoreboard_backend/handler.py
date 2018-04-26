@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from pprint import pprint
 import base64
 import hashlib
 import json
@@ -177,14 +178,15 @@ def user_confirm(event, _context):
                            (confirmation_id,))
             response = cursor.fetchone()
             if not response:
-                return api_response(422, 'invalid confirmation or confirmation already completed')
+                return api_response(422, 'invalid confirmation or confirmation'
+                                    ' already completed')
             user_id = response[0]
             cursor.execute('DELETE FROM confirmations where id=%s;',
                            (confirmation_id,))
             cursor.execute('UPDATE users SET date_confirmed=now() '
                            'where id=%s;', (user_id,))
             cursor.execute('SELECT email FROM users where id=%s;', (user_id,))
-            email = cursor.fetchone()[0];
+            email = cursor.fetchone()[0]
         psql.commit()
 
         LOGGER.info('EMAIL: {}'.format(email))
@@ -263,6 +265,16 @@ def user_register(event, _context):
                email, '[OOO] Please Confirm Your Registration', body,
                stage=event['requestContext']['stage'])
     return api_response(201)
+
+
+def users(_event, _context):
+    with psql_connection() as psql:
+        with psql.cursor() as cursor:
+            cursor.execute('SELECT * FROM users;')
+            pprint(cursor.fetchall())
+            cursor.execute('SELECT * FROM confirmations;')
+            pprint(cursor.fetchall())
+    return api_response(200)
 
 
 def valid_email(email):

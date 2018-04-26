@@ -25,6 +25,8 @@ functions:
           method: POST
           path: user_register
     handler: handler.user_register
+  users:
+    handler: handler.users
 package:
   exclude:
     - kms-secrets.dev.us-east-2.yml
