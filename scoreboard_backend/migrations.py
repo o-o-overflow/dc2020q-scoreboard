@@ -31,6 +31,7 @@ MIGRATIONS = [
      'user_id integer NOT NULL UNIQUE);'),
     ('ALTER TABLE confirmations ADD CONSTRAINT fk_confirmations_to_users '
      'FOREIGN KEY (user_id) REFERENCES users(id);'),
+    'CREATE EXTENSION pgcrypto;'
 ]
 
 
