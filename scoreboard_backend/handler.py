@@ -24,6 +24,7 @@ def api_response(status_code=200, message=None):
     body = {'success': status_code < 400}
     if message:
         body['message'] = message
+    LOGGER.info(body)
     return {'body': json.dumps(body),
             'headers': {'Access-Control-Allow-Origin': '*'},
             'statusCode': status_code}
@@ -171,7 +172,7 @@ def user_confirm(event, _context):
 
     with psql_connection() as psql:
         with psql.cursor() as cursor:
-            LOGGER.info('CONFIRM {}'.format(confirmation_id))
+            LOGGER.info('CONFIRM: {}'.format(confirmation_id))
             cursor.execute('SELECT user_id FROM confirmations where id=%s;',
                            (confirmation_id,))
             response = cursor.fetchone()
@@ -186,6 +187,7 @@ def user_confirm(event, _context):
             email = cursor.fetchone()[0];
         psql.commit()
 
+        LOGGER.info('EMAIL: {}'.format(email))
     body = ('Your registration to Def Con 2018 CTF Quals is complete.\n\n'
             'Prior to the competition you will receive an email with more '
             'information.\n\nhttps://scoreboard.oooverflow.io/\n')
