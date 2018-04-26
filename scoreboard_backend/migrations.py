@@ -49,8 +49,8 @@ def latest_migration(psql):
 def reset(psql):
     with psql.cursor() as cursor:
         LOGGER.info('DROP TABLEs')
-        cursor.execute('DROP TABLE categories, challenges, confirmations, '
-                       'schema_migrations, users;')
+        cursor.execute('DROP TABLE IF EXISTS categories, challenges, '
+                       'confirmations, schema_migrations, users;')
 
 
 def run_migrations(psql, reset_db):
