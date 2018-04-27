@@ -271,11 +271,11 @@ def users(_event, _context):
     with psql_connection() as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT id, email, team_name, ctf_time_team_id '
-                           'FROM users;')
+                           'FROM users ORDER BY id;')
             for row in cursor.fetchall():
                 print(row)
 
-            cursor.execute('SELECT * FROM confirmations;')
+            cursor.execute('SELECT * FROM confirmations ORDER BY user_id;')
             result = cursor.fetchall()
             if result:
                 print('Pending confirmations')
