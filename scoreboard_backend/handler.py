@@ -9,6 +9,7 @@ import time
 import uuid
 
 import boto3
+import jwt
 import psycopg2
 
 import migrations
@@ -16,9 +17,23 @@ import migrations
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
+
 CHALLENGE_FIELDS = ['id', 'title', 'description', 'flag_hash']
-PROOF_OF_WORK = '000c7f'
+JWT_SECRET = 'TEST_SECRET'
+REGISTRATION_PROOF_OF_WORK = '000c7f'
 TIMESTAMP_MAX_DELTA = 600
+TOKEN_PROOF_OF_WORK = '00c7f'
+TWELVE_HOURS = 43200
+
+
+def kms_decrypt(b64data):
+    session = boto3.session.Session()
+    kms = session.client('kms')
+    data = base64.b64decode(b64data)
+    return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
+
+
+DB_PASSWORD=kms_decrypt(os.getenv('DB_PASSWORD'))
 
 
 def api_response(status_code=200, message=None):
@@ -79,13 +94,6 @@ def challenges_set(event, _context):
     return api_response(200, 'challenges set')
 
 
-def kms_decrypt(b64data):
-    session = boto3.session.Session()
-    kms = session.client('kms')
-    data = base64.b64decode(b64data)
-    return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
-
-
 def migrate(event, _context):
     reset = event.get('reset')
     with psql_connection() as psql:
@@ -113,8 +121,7 @@ def parse_json_request(event, min_body_size=2, max_body_size=512):
 @contextmanager
 def psql_connection():
     psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
-                            password=kms_decrypt(os.getenv('DB_PASSWORD')),
-                            user='scoreboard')
+                            password=DB_PASSWORD, user='scoreboard')
     try:
         yield psql
     finally:
@@ -146,14 +153,30 @@ def send_email(from_email, to_email, subject, body, stage='dev'):
         Source=from_email)
 
 
-def user_login(event, _context):
-    email = event.get('email', '').lower().strip()
-    password = event.get('password', '')
+def token(event, _context):
+    data = parse_json_request(event)
+    if data is None:
+        return api_response(422, 'invalid request')
+    email = data.get('email', '').strip()
+    nonce = data.get('nonce', '')
+    password = data.get('password', '')
+    timestamp = data.get('timestamp', '')
+    if not isinstance(nonce, int):
+        return api_response(422, 'invalid nonce')
     if not valid_email(email):
         return api_response(422, 'invalid email')
     if not valid_password(password):
         return api_response(
             422, 'password must be between 10 and 72 characters')
+    timestamp_error = validate_timestamp(timestamp)
+    if timestamp_error:
+        return api_response(422, timestamp_error)
+
+    digest = hashlib.sha256('{}!{}!{}!{}'
+                            .format(email, password, timestamp, nonce)
+                            .encode()).hexdigest()
+    if not digest.startswith(TOKEN_PROOF_OF_WORK):
+        return api_response(422, 'invalid nonce')
 
     with psql_connection() as psql:
         with psql.cursor() as cursor:
@@ -163,7 +186,14 @@ def user_login(event, _context):
             response = cursor.fetchone()
     if not response:
         return api_response(401, 'invalid credentials')
-    return api_response(200)
+
+    now = int(time.time())
+    if event['requestContext']['stage'] == 'prod':
+        now = max(now, 1526083200)
+
+    payload = {'exp': now + TWELVE_HOURS, 'nbf': now, 'user_id': response[0]}
+    token = jwt.encode(payload, JWT_SECRET, algorithm='HS256').decode('utf-8')
+    return api_response(200, {'token': token})
 
 
 def user_confirm(event, _context):
@@ -231,7 +261,7 @@ def user_register(event, _context):
 
     digest = hashlib.sha256('{}!{}!{}'.format(email, timestamp, nonce)
                             .encode()).hexdigest()
-    if not digest.startswith(PROOF_OF_WORK):
+    if not digest.startswith(REGISTRATION_PROOF_OF_WORK):
         return api_response(422, 'invalid nonce')
 
     if ctf_time_team_id == '':

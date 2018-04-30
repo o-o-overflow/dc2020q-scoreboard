@@ -5,6 +5,13 @@ functions:
     handler: handler.challenges_set
   migrate:
     handler: handler.migrate
+  token:
+    events:
+      - http:
+          cors: true
+          method: POST
+          path: token
+    handler: handler.token
   user_confirm:
     events:
       - http:
@@ -16,8 +23,6 @@ functions:
               paths:
                 id: true
     handler: handler.user_confirm
-  user_login:
-    handler: handler.user_login
   user_register:
     events:
       - http:
