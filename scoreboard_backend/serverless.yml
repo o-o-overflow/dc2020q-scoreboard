@@ -37,6 +37,7 @@ package:
     - kms-secrets.dev.us-east-2.yml
     - node_modules/**
     - package-lock.json
+    - test*.py
 plugins:
   - serverless-kms-secrets
 provider:

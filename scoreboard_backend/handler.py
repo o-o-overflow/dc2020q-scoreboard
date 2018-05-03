@@ -1,48 +1,26 @@
-from contextlib import contextmanager
 from pprint import pprint
-import base64
 import hashlib
-import json
 import logging
-import os
 import time
 import uuid
 
-import boto3
 import jwt
 import psycopg2
 
+from const import (CHALLENGE_FIELDS, REGISTRATION_PROOF_OF_WORK,
+                   TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
+from helper import (api_response, decrypt_secrets, parse_json_request,
+                    psql_connection, send_email)
+from validator import (proof_of_work, valid_email, valid_int, valid_password,
+                       valid_timestamp, validate)
 import migrations
+
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
 
-CHALLENGE_FIELDS = ['id', 'title', 'description', 'flag_hash']
-REGISTRATION_PROOF_OF_WORK = '000c7f'
-TIMESTAMP_MAX_DELTA = 600
-TOKEN_PROOF_OF_WORK = '00c7f'
-TWELVE_HOURS = 43200
-
-
-def kms_decrypt(b64data):
-    session = boto3.session.Session()
-    kms = session.client('kms')
-    data = base64.b64decode(b64data)
-    return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
-
-
-SECRETS = json.loads(kms_decrypt(os.getenv('SECRETS')))
-
-
-def api_response(status_code=200, message=None):
-    body = {'success': status_code < 400}
-    if message:
-        body['message'] = message
-    LOGGER.info(body)
-    return {'body': json.dumps(body),
-            'headers': {'Access-Control-Allow-Origin': '*'},
-            'statusCode': status_code}
+SECRETS = decrypt_secrets()
 
 
 def challenges_set(event, _context):
@@ -63,7 +41,7 @@ def challenges_set(event, _context):
     challenges_values_sql = ', '.join(
         ['(%s, now(), %s, %s, %s)'] * len(challenges))
 
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('Empty challenges and categories tables')
             cursor.execute('TRUNCATE challenges, categories;')
@@ -95,99 +73,30 @@ def challenges_set(event, _context):
 
 def migrate(event, _context):
     reset = event.get('reset')
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         result = migrations.run_migrations(psql, reset_db=reset)
         psql.commit()
     return api_response(200, result)
 
 
-def parse_json_request(event, min_body_size=2, max_body_size=512):
-    headers = event.get('headers', {})
-    content_type = ''
-    for header in headers:
-        if header.lower() == 'content-type':
-            content_type = headers[header]
-            break
-    if content_type.lower() != 'application/json' or \
-       not min_body_size <= len(event['body']) <= max_body_size:
-        return None
-    try:
-        return json.loads(event['body'])
-    except Exception:
-        return None
-
-
-@contextmanager
-def psql_connection():
-    psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
-                            password=SECRETS['DB_PASSWORD'], user='scoreboard')
-    try:
-        yield psql
-    finally:
-        psql.close()
-
-
-def send_email(from_email, to_email, subject, body, stage='dev'):
-    if stage != 'prod':
-        # Only send actual emails in the prod stage.
-        to_email = 'team+{}@oooverflow.io'.format(stage)
-        subject = '[Stage: {}] {}'.format(stage, subject)
-
-    client = boto3.client('ses', region_name='us-east-1')
-    try:
-        return client.send_email(
-            Destination={'ToAddresses': [to_email]},
-            Message={'Body': {'Text': {'Data': body}},
-                     'Subject': {'Data': subject}},
-            Source=from_email)
-    except client.exceptions.MessageRejected:
-        LOGGER.exception('failed to send email to {}'.format(to_email))
-        body = ('Email failed to send. Please forward to {}. Thanks!\n\n{}'
-                .format(to_email, body))
-
-    return client.send_email(
-        Destination={'ToAddresses': ['team@oooverflow.io']},
-        Message={'Body': {'Text': {'Data': body}},
-                 'Subject': {'Data': subject}},
-        Source=from_email)
-
-
-def token(event, _context):
-    data = parse_json_request(event)
-    if data is None:
-        return api_response(422, 'invalid request')
-    email = data.get('email', '').strip()
-    nonce = data.get('nonce', '')
-    password = data.get('password', '')
-    timestamp = data.get('timestamp', '')
-    if not isinstance(nonce, int):
-        return api_response(422, 'invalid nonce')
-    if not valid_email(email):
-        return api_response(422, 'invalid email')
-    if not valid_password(password):
-        return api_response(
-            422, 'password must be between 10 and 72 characters')
-    timestamp_error = validate_timestamp(timestamp)
-    if timestamp_error:
-        return api_response(422, timestamp_error)
-
-    digest = hashlib.sha256('{}!{}!{}!{}'
-                            .format(email, password, timestamp, nonce)
-                            .encode()).hexdigest()
-    if not digest.startswith(TOKEN_PROOF_OF_WORK):
-        return api_response(422, 'invalid nonce')
-
-    with psql_connection() as psql:
+@validate(email=valid_email, nonce=valid_int, password=valid_password,
+          timestamp=valid_timestamp)
+@proof_of_work(['email', 'password'],
+               TOKEN_PROOF_OF_WORK)
+def token(data, stage):
+    email = data['email']
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER LOGIN {}'.format(email))
             cursor.execute('SELECT id FROM users where lower(email)=%s AND '
-                           'password=crypt(%s, password);', (email, password))
+                           'password=crypt(%s, password);',
+                           (email, data['password']))
             response = cursor.fetchone()
     if not response:
         return api_response(401, 'invalid credentials')
 
     now = int(time.time())
-    if event['requestContext']['stage'] == 'prod':
+    if stage == 'prod':
         now = max(now, 1526083200)
 
     payload = {'exp': now + TWELVE_HOURS, 'nbf': now, 'user_id': response[0]}
@@ -201,7 +110,7 @@ def user_confirm(event, _context):
     if len(confirmation_id) != 36:
         return api_response(422, 'invalid confirmation')
 
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('CONFIRM: {}'.format(confirmation_id))
             cursor.execute('SELECT user_id FROM confirmations where id=%s;',
@@ -255,8 +164,8 @@ def user_register(event, _context):
     if not valid_password(password):
         return api_response(
             422, 'password must be between 10 and 72 characters')
-    timestamp_error = validate_timestamp(timestamp)
-    if timestamp_error:
+    timestamp_error = valid_timestamp(timestamp)
+    if timestamp_error is not True:
         return api_response(422, timestamp_error)
 
     digest = hashlib.sha256('{}!{}!{}'.format(email, timestamp, nonce)
@@ -269,7 +178,7 @@ def user_register(event, _context):
     else:
         ctf_time_team_id = int(ctf_time_team_id)
 
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER REGISTER {}'.format(email))
             try:
@@ -298,7 +207,7 @@ def user_register(event, _context):
 
 
 def users(_event, _context):
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT id, email, team_name, ctf_time_team_id '
                            'FROM users ORDER BY id;')
@@ -313,10 +222,6 @@ def users(_event, _context):
     return api_response(200)
 
 
-def valid_email(email):
-    return 6 <= len(email) <= 320 and '@' in email and '.' in email
-
-
 def valid_int_as_string(value, max_value, min_value):
     if value == '':
         return True
@@ -327,18 +232,3 @@ def valid_int_as_string(value, max_value, min_value):
 
 def valid_team(team):
     return 0 < len(team) <= 80
-
-
-def valid_password(password):
-    return 10 <= len(password) <= 72
-
-
-def validate_timestamp(timestamp):
-    if not isinstance(timestamp, int):
-        return 'invalid timestamp'
-    now = int(time.time())
-    if timestamp > now:
-        return 'timestamp is too recent'
-    if now - timestamp > TIMESTAMP_MAX_DELTA:
-        return 'timestamp has expired'
-    return None
