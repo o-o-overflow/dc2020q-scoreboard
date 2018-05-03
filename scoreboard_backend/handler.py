@@ -19,7 +19,6 @@ LOGGER.setLevel(logging.INFO)
 
 
 CHALLENGE_FIELDS = ['id', 'title', 'description', 'flag_hash']
-JWT_SECRET = 'TEST_SECRET'
 REGISTRATION_PROOF_OF_WORK = '000c7f'
 TIMESTAMP_MAX_DELTA = 600
 TOKEN_PROOF_OF_WORK = '00c7f'
@@ -33,7 +32,7 @@ def kms_decrypt(b64data):
     return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
 
 
-DB_PASSWORD=kms_decrypt(os.getenv('DB_PASSWORD'))
+SECRETS = json.loads(kms_decrypt(os.getenv('SECRETS')))
 
 
 def api_response(status_code=200, message=None):
@@ -121,7 +120,7 @@ def parse_json_request(event, min_body_size=2, max_body_size=512):
 @contextmanager
 def psql_connection():
     psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
-                            password=DB_PASSWORD, user='scoreboard')
+                            password=SECRETS['DB_PASSWORD'], user='scoreboard')
     try:
         yield psql
     finally:
@@ -192,7 +191,8 @@ def token(event, _context):
         now = max(now, 1526083200)
 
     payload = {'exp': now + TWELVE_HOURS, 'nbf': now, 'user_id': response[0]}
-    token = jwt.encode(payload, JWT_SECRET, algorithm='HS256').decode('utf-8')
+    token = jwt.encode(payload, SECRETS['JWT_SECRET'],
+                       algorithm='HS256').decode('utf-8')
     return api_response(200, {'token': token})
 
 
