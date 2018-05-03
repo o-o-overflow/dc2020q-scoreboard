@@ -33,7 +33,7 @@ def decrypt_secrets():
 
 def log_request(data):
     data = copy.deepcopy(data)
-    if 'password' in data and isinstance(data, str):
+    if 'password' in data and isinstance(data['password'], str):
         data['password'] = '<password len={}>'.format(len(data['password']))
     LOGGER.info(data)
 
