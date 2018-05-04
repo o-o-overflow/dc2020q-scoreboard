@@ -1,34 +1,25 @@
-from contextlib import contextmanager
 from pprint import pprint
-import base64
-import hashlib
-import json
 import logging
-import os
 import time
 import uuid
 
-import boto3
+import jwt
 import psycopg2
 
+from const import (CHALLENGE_FIELDS, REGISTRATION_PROOF_OF_WORK,
+                   TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
+from helper import api_response, decrypt_secrets, psql_connection, send_email
+from validator import (extract_headers, proof_of_work, valid_confirmation,
+                       valid_email, valid_int, valid_int_as_string,
+                       valid_password, valid_team, valid_timestamp, validate)
 import migrations
+
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
-CHALLENGE_FIELDS = ['id', 'title', 'description', 'flag_hash']
-PROOF_OF_WORK = '000c7f'
-TIMESTAMP_MAX_DELTA = 600
 
-
-def api_response(status_code=200, message=None):
-    body = {'success': status_code < 400}
-    if message:
-        body['message'] = message
-    LOGGER.info(body)
-    return {'body': json.dumps(body),
-            'headers': {'Access-Control-Allow-Origin': '*'},
-            'statusCode': status_code}
+SECRETS = decrypt_secrets()
 
 
 def challenges_set(event, _context):
@@ -49,7 +40,7 @@ def challenges_set(event, _context):
     challenges_values_sql = ', '.join(
         ['(%s, now(), %s, %s, %s)'] * len(challenges))
 
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('Empty challenges and categories tables')
             cursor.execute('TRUNCATE challenges, categories;')
@@ -79,99 +70,44 @@ def challenges_set(event, _context):
     return api_response(200, 'challenges set')
 
 
-def kms_decrypt(b64data):
-    session = boto3.session.Session()
-    kms = session.client('kms')
-    data = base64.b64decode(b64data)
-    return kms.decrypt(CiphertextBlob=data)['Plaintext'].decode('utf-8')
-
-
 def migrate(event, _context):
     reset = event.get('reset')
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         result = migrations.run_migrations(psql, reset_db=reset)
         psql.commit()
     return api_response(200, result)
 
 
-def parse_json_request(event, min_body_size=2, max_body_size=512):
-    headers = event.get('headers', {})
-    content_type = ''
-    for header in headers:
-        if header.lower() == 'content-type':
-            content_type = headers[header]
-            break
-    if content_type.lower() != 'application/json' or \
-       not min_body_size <= len(event['body']) <= max_body_size:
-        return None
-    try:
-        return json.loads(event['body'])
-    except Exception:
-        return None
-
-
-@contextmanager
-def psql_connection():
-    psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
-                            password=kms_decrypt(os.getenv('DB_PASSWORD')),
-                            user='scoreboard')
-    try:
-        yield psql
-    finally:
-        psql.close()
-
-
-def send_email(from_email, to_email, subject, body, stage='dev'):
-    if stage != 'prod':
-        # Only send actual emails in the prod stage.
-        to_email = 'team+{}@oooverflow.io'.format(stage)
-        subject = '[Stage: {}] {}'.format(stage, subject)
-
-    client = boto3.client('ses', region_name='us-east-1')
-    try:
-        return client.send_email(
-            Destination={'ToAddresses': [to_email]},
-            Message={'Body': {'Text': {'Data': body}},
-                     'Subject': {'Data': subject}},
-            Source=from_email)
-    except client.exceptions.MessageRejected:
-        LOGGER.exception('failed to send email to {}'.format(to_email))
-        body = ('Email failed to send. Please forward to {}. Thanks!\n\n{}'
-                .format(to_email, body))
-
-    return client.send_email(
-        Destination={'ToAddresses': ['team@oooverflow.io']},
-        Message={'Body': {'Text': {'Data': body}},
-                 'Subject': {'Data': subject}},
-        Source=from_email)
-
-
-def user_login(event, _context):
-    email = event.get('email', '').lower().strip()
-    password = event.get('password', '')
-    if not valid_email(email):
-        return api_response(422, 'invalid email')
-    if not valid_password(password):
-        return api_response(
-            422, 'password must be between 10 and 72 characters')
-
-    with psql_connection() as psql:
+@validate(email=valid_email, nonce=valid_int, password=valid_password,
+          timestamp=valid_timestamp)
+@proof_of_work(['email', 'password'],
+               TOKEN_PROOF_OF_WORK)
+def token(data, stage):
+    email = data['email']
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER LOGIN {}'.format(email))
             cursor.execute('SELECT id FROM users where lower(email)=%s AND '
-                           'password=crypt(%s, password);', (email, password))
+                           'password=crypt(%s, password);',
+                           (email, data['password']))
             response = cursor.fetchone()
     if not response:
         return api_response(401, 'invalid credentials')
-    return api_response(200)
+
+    now = int(time.time())
+    if stage == 'prod':
+        now = max(now, 1526083200)
+
+    payload = {'exp': now + TWELVE_HOURS, 'nbf': now, 'user_id': response[0]}
+    token = jwt.encode(payload, SECRETS['JWT_SECRET'],
+                       algorithm='HS256').decode('utf-8')
+    return api_response(200, {'token': token})
 
 
-def user_confirm(event, _context):
-    confirmation_id = event['pathParameters']['id']
-    if len(confirmation_id) != 36:
-        return api_response(422, 'invalid confirmation')
-
-    with psql_connection() as psql:
+@validate(id=valid_confirmation, validate_data=False)
+def user_confirm(data, stage):
+    confirmation_id = data['id']
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('CONFIRM: {}'.format(confirmation_id))
             cursor.execute('SELECT user_id FROM confirmations where id=%s;',
@@ -195,58 +131,30 @@ def user_confirm(event, _context):
             'information.\n\nhttps://scoreboard.oooverflow.io/\n')
     send_email('OOO Account Registration <accounts@oooverflow.io>',
                email, '[OOO] Registration Complete', body,
-               stage=event['requestContext']['stage'])
+               stage=stage)
     return api_response(200, 'confirmation complete')
 
 
-def user_register(event, _context):
-    app_url = event['headers'].get('origin', None)
-    if not app_url:
-        return api_response(422, 'origin header missing')
+@extract_headers(app_url='origin')
+@validate(ctf_time_team_id=valid_int_as_string, email=valid_email,
+          nonce=valid_int, password=valid_password, team_name=valid_team,
+          timestamp=valid_timestamp)
+@proof_of_work(['email'], REGISTRATION_PROOF_OF_WORK)
+def user_register(data, stage, app_url):
+    team_id = data['ctf_time_team_id']
+    team_id = None if team_id == '' else int(team_id)
+    email = data['email']
+    password = data['password']
+    team_name = data['team_name']
 
-    data = parse_json_request(event)
-    if data is None:
-        return api_response(422, 'invalid request')
-    ctf_time_team_id = data.get('ctf_time_team_id', '').strip()
-    email = data.get('email', '').strip()
-    nonce = data.get('nonce', '')
-    password = data.get('password', '')
-    team_name = data.get('team_name', '').strip()
-    timestamp = data.get('timestamp', '')
-    if not isinstance(nonce, int):
-        return api_response(422, 'invalid nonce')
-    if not valid_int_as_string(ctf_time_team_id, min_value=1,
-                               max_value=100000):
-        return api_response(422, 'invalid CTF Time team id')
-    if not valid_email(email):
-        return api_response(422, 'invalid email')
-    if not valid_team(team_name):
-        return api_response(422, 'invalid team name')
-    if not valid_password(password):
-        return api_response(
-            422, 'password must be between 10 and 72 characters')
-    timestamp_error = validate_timestamp(timestamp)
-    if timestamp_error:
-        return api_response(422, timestamp_error)
-
-    digest = hashlib.sha256('{}!{}!{}'.format(email, timestamp, nonce)
-                            .encode()).hexdigest()
-    if not digest.startswith(PROOF_OF_WORK):
-        return api_response(422, 'invalid nonce')
-
-    if ctf_time_team_id == '':
-        ctf_time_team_id = None
-    else:
-        ctf_time_team_id = int(ctf_time_team_id)
-
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER REGISTER {}'.format(email))
             try:
                 cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), '
                                'NULL, %s, crypt(%s, gen_salt(\'bf\', 10)), '
                                '%s, %s)',
-                               (email, password, team_name, ctf_time_team_id))
+                               (email, password, team_name, team_id))
             except psycopg2.IntegrityError as exception:
                 if 'email' in exception.diag.constraint_name:
                     return api_response(422, 'duplicate email')
@@ -263,12 +171,12 @@ def user_register(event, _context):
         confirmation_url)
     send_email('OOO Account Registration <accounts@oooverflow.io>',
                email, '[OOO] Please Confirm Your Registration', body,
-               stage=event['requestContext']['stage'])
+               stage=stage)
     return api_response(201)
 
 
 def users(_event, _context):
-    with psql_connection() as psql:
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT id, email, team_name, ctf_time_team_id '
                            'FROM users ORDER BY id;')
@@ -281,34 +189,3 @@ def users(_event, _context):
                 print('Pending confirmations')
                 pprint(result)
     return api_response(200)
-
-
-def valid_email(email):
-    return 6 <= len(email) <= 320 and '@' in email and '.' in email
-
-
-def valid_int_as_string(value, max_value, min_value):
-    if value == '':
-        return True
-    if not isinstance(value, str) or not value.isnumeric():
-        return False
-    return min_value <= int(value) <= max_value
-
-
-def valid_team(team):
-    return 0 < len(team) <= 80
-
-
-def valid_password(password):
-    return 10 <= len(password) <= 72
-
-
-def validate_timestamp(timestamp):
-    if not isinstance(timestamp, int):
-        return 'invalid timestamp'
-    now = int(time.time())
-    if timestamp > now:
-        return 'timestamp is too recent'
-    if now - timestamp > TIMESTAMP_MAX_DELTA:
-        return 'timestamp has expired'
-    return None

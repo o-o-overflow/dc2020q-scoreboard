@@ -5,6 +5,13 @@ functions:
     handler: handler.challenges_set
   migrate:
     handler: handler.migrate
+  token:
+    events:
+      - http:
+          cors: true
+          method: POST
+          path: token
+    handler: handler.token
   user_confirm:
     events:
       - http:
@@ -16,8 +23,6 @@ functions:
               paths:
                 id: true
     handler: handler.user_confirm
-  user_login:
-    handler: handler.user_login
   user_register:
     events:
       - http:
@@ -32,12 +37,13 @@ package:
     - kms-secrets.dev.us-east-2.yml
     - node_modules/**
     - package-lock.json
+    - test*.py
 plugins:
   - serverless-kms-secrets
 provider:
   environment:
     DB_HOST: scoreboard-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
-    DB_PASSWORD: ${self:custom.kmsSecrets.secrets.DB_PASSWORD}
+    SECRETS: ${self:custom.kmsSecrets.secrets.SECRETS}
   iamRoleStatements:
     - Action:
       - KMS:Decrypt
