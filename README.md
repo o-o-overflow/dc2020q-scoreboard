@@ -4,13 +4,16 @@ This repository contains a number of [React](https://reactjs.org/) frontends
 applications:
 
 * countdown_frontend
+* registration_frontend
 * scoreboard_frontend
 
 Additionally, the `scoreboard_backend` directory contains a
 [serverless](https://serverless.com/) application for managing the server-side
 components that run in AWS lambda.
 
-# Table of Contents
+
+Table of Contents
+=================
 
    * [Qualifier Scoreboard](#qualifier-scoreboard)
    * [Table of Contents](#table-of-contents)
@@ -21,10 +24,17 @@ components that run in AWS lambda.
       * [Countdown](#countdown)
          * [Development](#development)
          * [Deployment](#deployment)
-      * [Scoreboard](#scoreboard)
+      * [Registration](#registration)
          * [Development](#development-1)
          * [Deployment](#deployment-1)
-            * [Production Deployment](#production-deployment)
+         * [Production Deployment](#production-deployment)
+      * [Scoreboard](#scoreboard)
+         * [Development](#development-2)
+         * [Deployment](#deployment-2)
+            * [Production Deployment](#production-deployment-1)
+   * [scoreboard_backend](#scoreboard_backend)
+      * [Development](#development-3)
+      * [Setting the challenges](#setting-the-challenges)
 
 # Deployment Prerequisites
 
@@ -55,6 +65,7 @@ will first require installing the application's packages. Do that via:
 cd APP_frontend
 yarn install
 ```
+
 
 # Frontend Applications
 
@@ -102,6 +113,45 @@ Deploy to https://scoreboard.oooverflow.io via:
 cd countdown_frontend
 ./deploy.sh
 ```
+
+The `index.html` file is set to be cached for 60 seconds so everyone should be
+able to see updates within a minute of deployment.
+
+## Registration
+
+This application is where team will go to register. By default it deploys to
+https://ddzub9yvnwvr4.cloudfront.net where it is protected by HTTP basic
+authentication (credentials listed in #quals_scoreboard on Slack). This
+application is intended to be deployed to the production environment at the
+start of the competition.
+
+### Development
+
+```sh
+cd registration_frontend
+yarn start
+```
+
+### Deployment
+
+Deploy to https://ddzub9yvnwvr4.cloudfront.net via:
+
+```sh
+cd registration_frontend
+./deploy.sh
+```
+
+### Production Deployment
+
+To make an update to the registration page, deploy to
+https://register.oooverflow.io via:
+
+```sh
+cd registration_frontend
+BUILD=prod ./deploy.sh
+```
+
+You will be prompted to confirm that you want to deploy to production.
 
 The `index.html` file is set to be cached for 60 seconds so everyone should be
 able to see updates within a minute of deployment.
@@ -156,6 +206,24 @@ managing the server-side components that run in AWS lambda.
 If you're not familiar with lambda, each function is its own program. Some
 functions are mapped to API endpoints, and others (`migrate`, `scoreboard_set`)
 are only meant to be invoked directly.
+
+
+## Development
+
+By default, all the commands listed below are set up to deploy to the `dev`
+environment. When making changes, first deploy to development via `sls deploy`,
+or `sls deploy -f FUNCTION` to quickly push code changes to a single
+function. Then re-run the test suite via `pytest`.
+
+__Note__: If you make changes to registration, run the slow tests via `pytest
+--runslow`.
+
+Once the tests have passed on development (you've written new tests for your
+changes, right?), deploy to production via `sls deploy --stage prod`. Make sure
+you've coordinated the release of any respective front-end changes as well.
+
+__Note__: For all the following `sls` commands, add `--stage prod` in order to
+issue that command in the production environment.
 
 ## Setting the challenges
 
