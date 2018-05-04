@@ -1,5 +1,4 @@
 from pprint import pprint
-import hashlib
 import logging
 import time
 import uuid
@@ -9,10 +8,10 @@ import psycopg2
 
 from const import (CHALLENGE_FIELDS, REGISTRATION_PROOF_OF_WORK,
                    TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
-from helper import (api_response, decrypt_secrets, parse_json_request,
-                    psql_connection, send_email)
-from validator import (proof_of_work, valid_email, valid_int, valid_password,
-                       valid_timestamp, validate)
+from helper import api_response, decrypt_secrets, psql_connection, send_email
+from validator import (extract_headers, proof_of_work, valid_confirmation,
+                       valid_email, valid_int, valid_int_as_string,
+                       valid_password, valid_team, valid_timestamp, validate)
 import migrations
 
 
@@ -105,11 +104,9 @@ def token(data, stage):
     return api_response(200, {'token': token})
 
 
-def user_confirm(event, _context):
-    confirmation_id = event['pathParameters']['id']
-    if len(confirmation_id) != 36:
-        return api_response(422, 'invalid confirmation')
-
+@validate(id=valid_confirmation, validate_data=False)
+def user_confirm(data, stage):
+    confirmation_id = data['id']
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('CONFIRM: {}'.format(confirmation_id))
@@ -134,49 +131,21 @@ def user_confirm(event, _context):
             'information.\n\nhttps://scoreboard.oooverflow.io/\n')
     send_email('OOO Account Registration <accounts@oooverflow.io>',
                email, '[OOO] Registration Complete', body,
-               stage=event['requestContext']['stage'])
+               stage=stage)
     return api_response(200, 'confirmation complete')
 
 
-def user_register(event, _context):
-    app_url = event['headers'].get('origin', None)
-    if not app_url:
-        return api_response(422, 'origin header missing')
-
-    data = parse_json_request(event)
-    if data is None:
-        return api_response(422, 'invalid request')
-    ctf_time_team_id = data.get('ctf_time_team_id', '').strip()
-    email = data.get('email', '').strip()
-    nonce = data.get('nonce', '')
-    password = data.get('password', '')
-    team_name = data.get('team_name', '').strip()
-    timestamp = data.get('timestamp', '')
-    if not isinstance(nonce, int):
-        return api_response(422, 'invalid nonce')
-    if not valid_int_as_string(ctf_time_team_id, min_value=1,
-                               max_value=100000):
-        return api_response(422, 'invalid CTF Time team id')
-    if not valid_email(email):
-        return api_response(422, 'invalid email')
-    if not valid_team(team_name):
-        return api_response(422, 'invalid team name')
-    if not valid_password(password):
-        return api_response(
-            422, 'password must be between 10 and 72 characters')
-    timestamp_error = valid_timestamp(timestamp)
-    if timestamp_error is not True:
-        return api_response(422, timestamp_error)
-
-    digest = hashlib.sha256('{}!{}!{}'.format(email, timestamp, nonce)
-                            .encode()).hexdigest()
-    if not digest.startswith(REGISTRATION_PROOF_OF_WORK):
-        return api_response(422, 'invalid nonce')
-
-    if ctf_time_team_id == '':
-        ctf_time_team_id = None
-    else:
-        ctf_time_team_id = int(ctf_time_team_id)
+@extract_headers(app_url='origin')
+@validate(ctf_time_team_id=valid_int_as_string, email=valid_email,
+          nonce=valid_int, password=valid_password, team_name=valid_team,
+          timestamp=valid_timestamp)
+@proof_of_work(['email'], REGISTRATION_PROOF_OF_WORK)
+def user_register(data, stage, app_url):
+    team_id = data['ctf_time_team_id']
+    team_id = None if team_id == '' else int(team_id)
+    email = data['email']
+    password = data['password']
+    team_name = data['team_name']
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
@@ -185,7 +154,7 @@ def user_register(event, _context):
                 cursor.execute('INSERT INTO users VALUES (DEFAULT, now(), '
                                'NULL, %s, crypt(%s, gen_salt(\'bf\', 10)), '
                                '%s, %s)',
-                               (email, password, team_name, ctf_time_team_id))
+                               (email, password, team_name, team_id))
             except psycopg2.IntegrityError as exception:
                 if 'email' in exception.diag.constraint_name:
                     return api_response(422, 'duplicate email')
@@ -202,7 +171,7 @@ def user_register(event, _context):
         confirmation_url)
     send_email('OOO Account Registration <accounts@oooverflow.io>',
                email, '[OOO] Please Confirm Your Registration', body,
-               stage=event['requestContext']['stage'])
+               stage=stage)
     return api_response(201)
 
 
@@ -220,15 +189,3 @@ def users(_event, _context):
                 print('Pending confirmations')
                 pprint(result)
     return api_response(200)
-
-
-def valid_int_as_string(value, max_value, min_value):
-    if value == '':
-        return True
-    if not isinstance(value, str) or not value.isnumeric():
-        return False
-    return min_value <= int(value) <= max_value
-
-
-def valid_team(team):
-    return 0 < len(team) <= 80
