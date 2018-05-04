@@ -70,8 +70,12 @@ def challenges_set(event, _context):
     return api_response(200, 'challenges set')
 
 
-def migrate(event, _context):
+def migrate(event, context):
+    prod = '-dev-' not in context.function_name
     reset = event.get('reset')
+    if prod and reset:
+        reset = False
+        LOGGER.warn('Cannot reset the prod environment')
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         result = migrations.run_migrations(psql, reset_db=reset)
         psql.commit()
