@@ -9,9 +9,10 @@ import psycopg2
 from const import (CHALLENGE_FIELDS, REGISTRATION_PROOF_OF_WORK,
                    TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
 from helper import api_response, decrypt_secrets, psql_connection, send_email
-from validator import (extract_headers, proof_of_work, valid_confirmation,
-                       valid_email, valid_int, valid_int_as_string,
-                       valid_password, valid_team, valid_timestamp, validate)
+from validator import (extract_headers, proof_of_work, valid_challenge_id,
+                       valid_confirmation, valid_email, valid_flag, valid_int,
+                       valid_int_as_string, valid_password, valid_team,
+                       valid_timestamp, validate)
 import migrations
 
 
@@ -23,12 +24,19 @@ COMPETITION_START = 1526083200
 SECRETS = decrypt_secrets()
 
 
+def valid_token(token):
+    try:
+        jwt.decode(token, SECRETS['JWT_SECRET'], algorithms=['HS256'])
+    except jwt.InvalidTokenError:
+        return False
+    return True
+
+
 def challenges_set(event, context):
     if not event:
         return api_response(422, 'data for the scoreboard must be provided')
     if not isinstance(event, list):
         return api_response(422, 'invalid scoreboard data')
-
 
     if '-dev-' not in context.function_name and \
        int(time.time()) > COMPETITION_START:
@@ -88,6 +96,28 @@ def migrate(event, context):
         result = migrations.run_migrations(psql, reset_db=reset)
         psql.commit()
     return api_response(200, result)
+
+
+@validate(challenge_id=valid_challenge_id, flag=valid_flag, nonce=valid_int,
+          timestamp=valid_timestamp, token=valid_token)
+@proof_of_work(['challenge_id', 'flag', 'token'], TOKEN_PROOF_OF_WORK)
+def submit(data, stage):
+    challenge_id = data['challenge_id']
+    flag = data['flag'].strip()
+    user_id = jwt.decode(data['token'], verify=False)['user_id']
+
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+        with psql.cursor() as cursor:
+            LOGGER.info('SUBMIT {} {} {}'.format(user_id, challenge_id, flag))
+            try:
+                cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
+                               'now(), %s, %s, %s);',
+                               (user_id, challenge_id, flag))
+            except psycopg2.IntegrityError as exception:
+                return api_response(422, 'invalid submission data')
+        psql.commit()
+
+    return api_response(200)
 
 
 @validate(email=valid_email, nonce=valid_int, password=valid_password,

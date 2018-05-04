@@ -5,6 +5,13 @@ functions:
     handler: handler.challenges_set
   migrate:
     handler: handler.migrate
+  submit:
+    events:
+      - http:
+          cors: true
+          method: POST
+          path: submit
+    handler: handler.submit
   token:
     events:
       - http:
