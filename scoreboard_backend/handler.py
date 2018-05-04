@@ -19,14 +19,22 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
 
+COMPETITION_START = 1526083200
 SECRETS = decrypt_secrets()
 
 
-def challenges_set(event, _context):
+def challenges_set(event, context):
     if not event:
         return api_response(422, 'data for the scoreboard must be provided')
     if not isinstance(event, list):
         return api_response(422, 'invalid scoreboard data')
+
+
+    if '-dev-' not in context.function_name and \
+       int(time.time()) > COMPETITION_START:
+        LOGGER.error('Cannot set challenges once the competition has started')
+        return api_response(422, 'competition has already started')
+
     categories = {'Default': None, 'Second Category': None}
     categories_values_sql = ', '.join(
         ['(DEFAULT, now(), %s)'] * len(categories))
@@ -43,7 +51,7 @@ def challenges_set(event, _context):
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('Empty challenges and categories tables')
-            cursor.execute('TRUNCATE challenges, categories;')
+            cursor.execute('TRUNCATE categories, challenges, submissions;')
 
             LOGGER.info('Add categories')
             cursor.execute('INSERT INTO categories VALUES {};'
@@ -100,7 +108,7 @@ def token(data, stage):
 
     now = int(time.time())
     if stage == 'prod':
-        now = max(now, 1526083200)
+        now = max(now, COMPETITION_START)
 
     payload = {'exp': now + TWELVE_HOURS, 'nbf': now, 'user_id': response[0]}
     token = jwt.encode(payload, SECRETS['JWT_SECRET'],
