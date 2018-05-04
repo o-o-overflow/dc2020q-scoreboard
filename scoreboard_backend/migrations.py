@@ -31,7 +31,13 @@ MIGRATIONS = [
      'user_id integer NOT NULL UNIQUE);'),
     ('ALTER TABLE confirmations ADD CONSTRAINT fk_confirmations_to_users '
      'FOREIGN KEY (user_id) REFERENCES users(id);'),
-    'CREATE EXTENSION IF NOT EXISTS pgcrypto;'
+    'CREATE EXTENSION IF NOT EXISTS pgcrypto;',
+    ('CREATE TABLE submissions ('
+     'id serial PRIMARY KEY, '
+     'date_created timestamp with time zone NOT NULL, '
+     'user_id integer NOT NULL REFERENCES users, '
+     'challenge_id varchar(16) REFERENCES challenges NOT NULL, '
+     'flag varchar(160) NOT NULL);')
 ]
 
 
