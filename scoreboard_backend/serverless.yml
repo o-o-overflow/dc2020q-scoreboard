@@ -1,6 +1,8 @@
 custom:
   kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
 functions:
+  challenge_open:
+    handler: handler.challenge_open
   challenges_set:
     handler: handler.challenges_set
   migrate:

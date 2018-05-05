@@ -36,7 +36,7 @@ MIGRATIONS = [
      'id serial PRIMARY KEY, '
      'date_created timestamp with time zone NOT NULL, '
      'user_id integer NOT NULL REFERENCES users, '
-     'challenge_id varchar(16) REFERENCES challenges NOT NULL, '
+     'challenge_id varchar(16)  NOT NULL REFERENCES challenges, '
      'flag varchar(160) NOT NULL);'),
     'ALTER TABLE users ADD date_last_submitted timestamp with time zone;',
     'CREATE INDEX users_last_submitted ON users (date_last_submitted);',

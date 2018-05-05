@@ -31,6 +31,31 @@ def valid_token(token):
     return True
 
 
+def challenge_open(event, _context):
+    if not event:
+        return api_response(422, 'data must be provided')
+    challenge_id = event.get('id', None)
+    if not challenge_id:
+        return api_response(422, 'invalid challenge id')
+
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+        with psql.cursor() as cursor:
+            cursor.execute('SELECT name, description, category_id, flag_hash '
+                           'FROM unopened_challenges WHERE id=%s',
+                           (challenge_id,))
+            result = cursor.fetchone()
+            if not result:
+                return api_response(
+                    422, 'that challenge does not exist or was already opened')
+
+            cursor.execute('DELETE FROM unopened_challenges WHERE id=%s',
+                           (challenge_id,))
+            cursor.execute('INSERT INTO challenges VALUES (%s, now(), %s, %s, '
+                           '%s, %s);', (challenge_id, *result))
+        psql.commit()
+    return api_response(201)
+
+
 def challenges_set(event, context):
     if not event:
         return api_response(422, 'data for the scoreboard must be provided')

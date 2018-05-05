@@ -242,3 +242,13 @@ following command to update the challenges on the scoreboard:
 cd scoreboard_backend
 sls invoke -lf challenges_set --path SCOREBOARD_JSON_PATH
 ```
+
+
+## Opening a challenge
+
+Run the following:
+
+```sh
+cd scoreboard_backend
+sls invoke -lf challenge_open -d '{"id": "CHALLENGE_ID"}'
+```
