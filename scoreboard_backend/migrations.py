@@ -31,7 +31,28 @@ MIGRATIONS = [
      'user_id integer NOT NULL UNIQUE);'),
     ('ALTER TABLE confirmations ADD CONSTRAINT fk_confirmations_to_users '
      'FOREIGN KEY (user_id) REFERENCES users(id);'),
-    'CREATE EXTENSION pgcrypto;'
+    'CREATE EXTENSION IF NOT EXISTS pgcrypto;',
+    ('CREATE TABLE submissions ('
+     'id serial PRIMARY KEY, '
+     'date_created timestamp with time zone NOT NULL, '
+     'user_id integer NOT NULL REFERENCES users, '
+     'challenge_id varchar(16)  NOT NULL REFERENCES challenges, '
+     'flag varchar(160) NOT NULL);'),
+    'ALTER TABLE users ADD date_last_submitted timestamp with time zone;',
+    'CREATE INDEX users_last_submitted ON users (date_last_submitted);',
+    'ALTER TABLE challenges ADD flag_hash char(64) NOT NULL;',
+    ('CREATE TABLE unopened_challenges ('
+     'id varchar(16) PRIMARY KEY, '
+     'date_created timestamp with time zone NOT NULL, '
+     'name varchar(160) NOT NULL, '
+     'description text, '
+     'category_id integer NOT NULL REFERENCES categories, '
+     'flag_hash char(64) NOT NULL);'),
+    ('CREATE TABLE solves ('
+     'date_created timestamp with time zone NOT NULL, '
+     'challenge_id varchar(16) NOT NULL REFERENCES challenges, '
+     'user_id integer NOT NULL REFERENCES users, '
+     'PRIMARY KEY(challenge_id, user_id));')
 ]
 
 
@@ -43,7 +64,7 @@ def latest_migration(psql):
                        'date_applied timestamp with time zone NOT NULL);')
         LOGGER.info("Find latest migration")
         cursor.execute('SELECT id from schema_migrations '
-                       'ORDER BY id DESC  LIMIT 1;')
+                       'ORDER BY id DESC LIMIT 1;')
         return (cursor.fetchone() or (-1,))[0]
 
 
@@ -51,7 +72,8 @@ def reset(psql):
     with psql.cursor() as cursor:
         LOGGER.info('DROP TABLEs')
         cursor.execute('DROP TABLE IF EXISTS categories, challenges, '
-                       'confirmations, schema_migrations, users;')
+                       'confirmations, schema_migrations, solves, '
+                       'submissions, unopened_challenges,', 'users;')
 
 
 def run_migrations(psql, reset_db):

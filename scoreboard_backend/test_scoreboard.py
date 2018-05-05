@@ -10,14 +10,14 @@ from const import TIMESTAMP_MAX_DELTA
 
 BASE_URL = {
     'dev': 'https://bv30jcdr5b.execute-api.us-east-2.amazonaws.com/dev'}
-PATHS = {'token': 'token', 'user_confirm': 'user_confirm/{id}',
-         'user_register': 'user_register'}
+PATHS = {'submit': 'submit', 'token': 'token',
+         'user_confirm': 'user_confirm/{id}', 'user_register': 'user_register'}
 
 SUCCESS_EMAIL = 'a{}@a.co'.format(int(time.time()))
 
 
-def assert_failure(response, message):
-    assert response.status_code == 422
+def assert_failure(response, message, status=422):
+    assert response.status_code == status
     data = response.json()
     assert set(data.keys()) == {'message', 'success'}
     assert not data['success']
@@ -35,6 +35,11 @@ def compute_nonce(message, prefix):
     return nonce, timestamp
 
 
+@pytest.fixture(params=[None, 1, '', 'a' * 17])
+def invalid_challenge_id(request):
+    return request.param
+
+
 @pytest.fixture(params=[None, 1, 'a' * 35, 'a' * 37])
 def invalid_confirmation_id(request):
     return request.param
@@ -43,6 +48,11 @@ def invalid_confirmation_id(request):
 @pytest.fixture(params=[None, 1, '', 'a@a.c', 'aa.com', 'a@acom',
                         '{}@a.c'.format('a' * 317)])
 def invalid_email(request):
+    return request.param
+
+
+@pytest.fixture(params=[None, 1, '', 'a' * 161])
+def invalid_flag(request):
     return request.param
 
 
@@ -71,6 +81,11 @@ def invalid_timestamp(request):
     return request.param
 
 
+@pytest.fixture(params=[None, '', 1])
+def invalid_token(request):
+    return request.param
+
+
 def request_token(stage):
     email = 'bbzbryce@gmail.com'
     password = 'bbzbryce@gmail.com'
@@ -93,23 +108,132 @@ def stage():
     return 'dev'
 
 
-def test_user_confirm_with_incorrect_confirmation_id(stage):
-    confirmation_url = url('user_confirm', stage, id='a' * 36)
-    response = requests.get(confirmation_url)
-    assert_failure(response, 'invalid confirmation or confirmation already '
-                   'completed')
+@pytest.mark.slow
+def test_submit(stage):
+    challenge_id = 'mario'
+    flag = 'INCORRECT'
+    token = request_token(stage)
+    nonce, timestamp = compute_nonce(
+        '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    print(response.json())
+    assert_failure(response, 'incorrect flag', status=400)
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
+
+    flag = 'OOO{MARIOFLAG}'
+    nonce, timestamp = compute_nonce(
+        '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 201
+    assert response.json()['message'] == 'success!'
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert_failure(response, 'challenge already solved', status=409)
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
 
 
-def test_user_confirm_with_invalid_confirmation_id(invalid_confirmation_id,
-                                                   stage):
-    confirmation_url = url('user_confirm', stage, id=invalid_confirmation_id)
-    response = requests.get(confirmation_url)
-    assert_failure(response, 'invalid id')
+def test_submit__invalid_challenge_id(invalid_challenge_id, stage):
+    flag = 'something fun'
+    nonce = 0  # Does not matter
+    timestamp = int(time.time())
+    token = ''  # Does not matter
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': invalid_challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert_failure(response, 'invalid challenge_id')
 
 
-#def test_submit(stage):
-#    token = request_token(stage)
-#    print(token)
+def test_submit__invalid_flag(invalid_flag, stage):
+    challenge_id = 'mario'
+    nonce = 0  # Does not matter
+    timestamp = int(time.time())
+    token = ''  # Does not matter
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': invalid_flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert_failure(response, 'invalid flag')
+
+
+def test_submit__invalid_nonce(invalid_int, stage):
+    challenge_id = 'mario'
+    flag = 'a' * 160
+    timestamp = int(time.time())
+    token = ''  # Does not matter
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': invalid_int,
+        'token': token, 'timestamp': timestamp})
+    assert_failure(response, 'invalid nonce')
+
+
+def test_submit__invalid_token(invalid_token, stage):
+    challenge_id = 'mario'
+    flag = 'a'
+    nonce = 0  # Does not matter
+    timestamp = int(time.time())
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': invalid_token, 'timestamp': timestamp})
+    assert_failure(response, 'invalid token')
+
+
+def test_submit__invalid_timestamp(invalid_timestamp, stage):
+    challenge_id = 'mario'
+    flag = 'a'
+    nonce = 0  # Does not matter
+    token = ''  # Does not matter
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': invalid_timestamp})
+    assert_failure(response, 'invalid timestamp')
+
+
+@pytest.mark.slow
+def test_submit__nonexistent_challenge_id(stage):
+    challenge_id = 'a'
+    flag = 'something fun'
+    token = request_token(stage)
+    nonce, timestamp = compute_nonce(
+        '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert_failure(response, 'invalid submission data', status=409)
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
 
 
 def test_token_with_extra_parameter(stage):
@@ -195,6 +319,20 @@ def test_token_with_invalid_timestamp(invalid_timestamp, stage):
     assert_failure(response, 'invalid timestamp')
 
 
+def test_user_confirm_with_incorrect_confirmation_id(stage):
+    confirmation_url = url('user_confirm', stage, id='a' * 36)
+    response = requests.get(confirmation_url)
+    assert_failure(response, 'invalid confirmation or confirmation already '
+                   'completed', status=409)
+
+
+def test_user_confirm_with_invalid_confirmation_id(invalid_confirmation_id,
+                                                   stage):
+    confirmation_url = url('user_confirm', stage, id=invalid_confirmation_id)
+    response = requests.get(confirmation_url)
+    assert_failure(response, 'invalid id')
+
+
 @pytest.mark.slow
 def test_user_register(stage):
     ctf_time_team_id = '1'
@@ -220,7 +358,7 @@ def test_user_register_fail_with_duplicate_email(stage):
             'ctf_time_team_id': ctf_time_team_id, 'email': email,
             'nonce': nonce, 'password': password, 'team_name': email + 'm',
             'timestamp': timestamp})
-    assert_failure(response, 'duplicate email')
+    assert_failure(response, 'duplicate email', status=409)
 
 
 @pytest.mark.slow
@@ -235,7 +373,7 @@ def test_user_register_fail_with_duplicate_team_name(stage):
             'ctf_time_team_id': ctf_time_team_id, 'email': email,
             'nonce': nonce, 'password': password, 'team_name': team_name,
             'timestamp': timestamp})
-    assert_failure(response, 'duplicate team name')
+    assert_failure(response, 'duplicate team name', status=409)
 
 
 def test_user_register_with_invalid_ctf_time_team_id(invalid_team_id, stage):

@@ -38,6 +38,10 @@ def proof_of_work(fields, prefix):
     return initial_wrap
 
 
+def valid_challenge_id(challenge_id):
+    return isinstance(challenge_id, str) and 1 <= len(challenge_id) <= 16
+
+
 def valid_confirmation(confirmation):
     return isinstance(confirmation, str) and len(confirmation) == 36
 
@@ -45,6 +49,10 @@ def valid_confirmation(confirmation):
 def valid_email(email):
     return isinstance(email, str) and 6 <= len(email) <= 320 and \
         '@' in email and '.' in email
+
+
+def valid_flag(flag):
+    return isinstance(flag, str) and 1 <= len(flag) <= 160
 
 
 def valid_int(data):
