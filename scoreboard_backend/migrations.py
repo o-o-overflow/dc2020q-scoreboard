@@ -39,7 +39,15 @@ MIGRATIONS = [
      'challenge_id varchar(16) REFERENCES challenges NOT NULL, '
      'flag varchar(160) NOT NULL);'),
     'ALTER TABLE users ADD date_last_submitted timestamp with time zone;',
-    'CREATE INDEX users_last_submitted ON users (date_last_submitted);'
+    'CREATE INDEX users_last_submitted ON users (date_last_submitted);',
+    'ALTER TABLE challenges ADD flag_hash char(64) NOT NULL;',
+    ('CREATE TABLE unopened_challenges ('
+     'id varchar(16) PRIMARY KEY, '
+     'date_created timestamp with time zone NOT NULL, '
+     'name varchar(160) NOT NULL, '
+     'description text, '
+     'category_id integer REFERENCES categories NOT NULL, '
+     'flag_hash char(64) NOT NULL);')
 ]
 
 
@@ -59,7 +67,8 @@ def reset(psql):
     with psql.cursor() as cursor:
         LOGGER.info('DROP TABLEs')
         cursor.execute('DROP TABLE IF EXISTS categories, challenges, '
-                       'confirmations, schema_migrations, users;')
+                       'confirmations, schema_migrations, submissions, '
+                       'unopened_challenges,', 'users;')
 
 
 def run_migrations(psql, reset_db):

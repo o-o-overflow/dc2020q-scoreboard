@@ -53,12 +53,13 @@ def challenges_set(event, context):
     except (KeyError, TypeError):
         return api_response(422, 'invalid scoreboard data')
     challenges_values_sql = ', '.join(
-        ['(%s, now(), %s, %s, %s)'] * len(challenges))
+        ['(%s, now(), %s, %s, %s, %s)'] * len(challenges))
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('Empty challenges and categories tables')
-            cursor.execute('TRUNCATE categories, challenges, submissions;')
+            cursor.execute('TRUNCATE categories, challenges, submissions, '
+                           'unopened_challenges;')
 
             LOGGER.info('Add categories')
             cursor.execute('INSERT INTO categories VALUES {};'
@@ -77,12 +78,13 @@ def challenges_set(event, context):
                 values.append(challenge['description'])
                 #  TODO: Update to use passed in category
                 values.append(categories['Default'])
+                values.append(challenge['flag_hash'])
 
             LOGGER.info('Add challenges')
-            cursor.execute('INSERT INTO challenges VALUES {};'
+            cursor.execute('INSERT INTO unopened_challenges VALUES {};'
                            .format(challenges_values_sql), tuple(values))
         psql.commit()
-    return api_response(200, 'challenges set')
+    return api_response(200, 'unopened_challenges set')
 
 
 def migrate(event, context):
