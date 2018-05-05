@@ -6,7 +6,7 @@ import uuid
 import jwt
 import psycopg2
 
-from const import (CHALLENGE_FIELDS, COMPETITION_START,
+from const import (CHALLENGE_FIELDS, COMPETITION_END, COMPETITION_START,
                    REGISTRATION_PROOF_OF_WORK, SUBMISSION_DELAY,
                    TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
 from helper import api_response, decrypt_secrets, psql_connection, send_email
@@ -138,6 +138,12 @@ def submit(data, stage):
 @proof_of_work(['email', 'password'],
                TOKEN_PROOF_OF_WORK)
 def token(data, stage):
+    now = int(time.time())
+    if stage == 'prod' and now < COMPETITION_START:
+        return api_response(422, 'the competition has not yet started')
+    if now >= COMPETITION_END:
+        return api_response(422, 'the competition is over')
+
     email = data['email']
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
@@ -149,11 +155,11 @@ def token(data, stage):
     if not response:
         return api_response(401, 'invalid credentials')
 
-    now = int(time.time())
     if stage == 'prod':
         now = max(now, COMPETITION_START)
+    expire_time = min(COMPETITION_END, now + TWELVE_HOURS)
 
-    payload = {'exp': now + TWELVE_HOURS, 'nbf': now, 'user_id': response[0]}
+    payload = {'exp': expire_time, 'nbf': now, 'user_id': response[0]}
     token = jwt.encode(payload, SECRETS['JWT_SECRET'],
                        algorithm='HS256').decode('utf-8')
     return api_response(200, {'token': token})
