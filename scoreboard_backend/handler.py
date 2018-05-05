@@ -1,5 +1,6 @@
 from pprint import pprint
 import logging
+import hashlib
 import time
 import uuid
 
@@ -83,8 +84,8 @@ def challenges_set(event, context):
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('Empty challenges and categories tables')
-            cursor.execute('TRUNCATE categories, challenges, submissions, '
-                           'unopened_challenges;')
+            cursor.execute('TRUNCATE categories, challenges, solves, '
+                           'submissions, unopened_challenges;')
 
             LOGGER.info('Add categories')
             cursor.execute('INSERT INTO categories VALUES {};'
@@ -144,15 +145,32 @@ def submit(data, stage):
             LOGGER.info('SUBMIT {} {} {}'.format(user_id, challenge_id, flag))
             cursor.execute('UPDATE users SET date_last_submitted=now() '
                            'WHERE id=%s;', (user_id,))
-            # Ensure the rate limit time is updated, even if the next fails
+            # Ensure the rate limit time is updated even if the following fails
             psql.commit()
 
+            # Check to see if they've already solved it
+            cursor.execute('SELECT 1 FROM solves where challenge_id=%s AND '
+                           'user_id=%s', (challenge_id, user_id))
+            response = cursor.fetchone()
+            if response:
+                return api_response(422, 'challenge already solved')
+
+            # Log submission
             try:
                 cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
                                'now(), %s, %s, %s);',
                                (user_id, challenge_id, flag))
             except psycopg2.IntegrityError as exception:
                 return api_response(422, 'invalid submission data')
+
+            # Check if correct solution
+            flag_hash = hashlib.sha256(flag.encode()).hexdigest()
+            cursor.execute('SELECT 1 FROM challenges WHERE id=%s AND '
+                           'flag_hash=%s', (challenge_id, flag_hash))
+            response = cursor.fetchone()
+            if response:
+                cursor.execute('INSERT INTO solves VALUES (now(), %s, %s);',
+                               (challenge_id, user_id))
         psql.commit()
 
     return api_response(200)

@@ -111,13 +111,14 @@ def stage():
 @pytest.mark.slow
 def test_submit(stage):
     challenge_id = 'mario'
-    flag = 'something fun'
+    flag = 'OOO{MARIOFLAG}'
     token = request_token(stage)
     nonce, timestamp = compute_nonce(
         '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
     response = requests.post(url('submit', stage), json={
         'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
         'token': token, 'timestamp': timestamp})
+    print(response.json())
     assert response.status_code == 200
 
     response = requests.post(url('submit', stage), json={
