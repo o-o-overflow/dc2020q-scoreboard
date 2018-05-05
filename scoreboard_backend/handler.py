@@ -6,7 +6,8 @@ import uuid
 import jwt
 import psycopg2
 
-from const import (CHALLENGE_FIELDS, REGISTRATION_PROOF_OF_WORK,
+from const import (CHALLENGE_FIELDS, COMPETITION_START,
+                   REGISTRATION_PROOF_OF_WORK, SUBMISSION_DELAY,
                    TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
 from helper import api_response, decrypt_secrets, psql_connection, send_email
 from validator import (extract_headers, proof_of_work, valid_challenge_id,
@@ -19,8 +20,6 @@ import migrations
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
-
-COMPETITION_START = 1526083200
 SECRETS = decrypt_secrets()
 
 
@@ -108,6 +107,13 @@ def submit(data, stage):
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
+            cursor.execute('SELECT EXTRACT(EPOCH FROM (now() - date_created)) '
+                           'FROM submissions WHERE user_id=%s ORDER BY '
+                           'date_created DESC LIMIT 1;', (user_id,))
+            response = cursor.fetchone()
+            if response and response[0] < SUBMISSION_DELAY:
+                wait_time = SUBMISSION_DELAY - response[0]
+                return api_response(429, {'seconds': wait_time})
             LOGGER.info('SUBMIT {} {} {}'.format(user_id, challenge_id, flag))
             try:
                 cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '

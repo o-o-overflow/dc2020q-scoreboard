@@ -108,6 +108,7 @@ def stage():
     return 'dev'
 
 
+@pytest.mark.slow
 def test_submit(stage):
     challenge_id = 'mario'
     flag = 'something fun'
@@ -118,6 +119,14 @@ def test_submit(stage):
         'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
         'token': token, 'timestamp': timestamp})
     assert response.status_code == 200
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
 
 
 def test_submit__nonexistent_challenge_id(stage):
