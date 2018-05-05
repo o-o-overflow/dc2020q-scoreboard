@@ -129,18 +129,6 @@ def test_submit(stage):
     time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
 
 
-def test_submit__nonexistent_challenge_id(stage):
-    challenge_id = 'a'
-    flag = 'something fun'
-    token = request_token(stage)
-    nonce, timestamp = compute_nonce(
-        '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
-    response = requests.post(url('submit', stage), json={
-        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
-        'token': token, 'timestamp': timestamp})
-    assert_failure(response, 'invalid submission data')
-
-
 def test_submit__invalid_challenge_id(invalid_challenge_id, stage):
     flag = 'something fun'
     nonce = 0  # Does not matter
@@ -194,6 +182,27 @@ def test_submit__invalid_timestamp(invalid_timestamp, stage):
         'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
         'token': token, 'timestamp': invalid_timestamp})
     assert_failure(response, 'invalid timestamp')
+
+
+@pytest.mark.slow
+def test_submit__nonexistent_challenge_id(stage):
+    challenge_id = 'a'
+    flag = 'something fun'
+    token = request_token(stage)
+    nonce, timestamp = compute_nonce(
+        '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert_failure(response, 'invalid submission data')
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
 
 
 def test_token_with_extra_parameter(stage):

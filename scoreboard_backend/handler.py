@@ -107,14 +107,19 @@ def submit(data, stage):
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
-            cursor.execute('SELECT EXTRACT(EPOCH FROM (now() - date_created)) '
-                           'FROM submissions WHERE user_id=%s ORDER BY '
-                           'date_created DESC LIMIT 1;', (user_id,))
+            cursor.execute('SELECT EXTRACT(EPOCH FROM (now() - '
+                           'date_last_submitted)) FROM users WHERE id=%s;',
+                           (user_id,))
             response = cursor.fetchone()
-            if response and response[0] < SUBMISSION_DELAY:
+            if response[0] and response[0] < SUBMISSION_DELAY:
                 wait_time = SUBMISSION_DELAY - response[0]
                 return api_response(429, {'seconds': wait_time})
             LOGGER.info('SUBMIT {} {} {}'.format(user_id, challenge_id, flag))
+            cursor.execute('UPDATE users SET date_last_submitted=now() '
+                           'WHERE id=%s;', (user_id,))
+            # Ensure the rate limit time is updated, even if the next fails
+            psql.commit()
+
             try:
                 cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
                                'now(), %s, %s, %s);',

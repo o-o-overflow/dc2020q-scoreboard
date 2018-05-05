@@ -37,7 +37,9 @@ MIGRATIONS = [
      'date_created timestamp with time zone NOT NULL, '
      'user_id integer NOT NULL REFERENCES users, '
      'challenge_id varchar(16) REFERENCES challenges NOT NULL, '
-     'flag varchar(160) NOT NULL);')
+     'flag varchar(160) NOT NULL);'),
+    'ALTER TABLE users ADD date_last_submitted timestamp with time zone;',
+    'CREATE INDEX users_last_submitted ON users (date_last_submitted);'
 ]
 
 
@@ -49,7 +51,7 @@ def latest_migration(psql):
                        'date_applied timestamp with time zone NOT NULL);')
         LOGGER.info("Find latest migration")
         cursor.execute('SELECT id from schema_migrations '
-                       'ORDER BY id DESC  LIMIT 1;')
+                       'ORDER BY id DESC LIMIT 1;')
         return (cursor.fetchone() or (-1,))[0]
 
 
