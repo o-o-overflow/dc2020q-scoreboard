@@ -47,7 +47,7 @@ def challenge_open(event, _context):
             result = cursor.fetchone()
             if not result:
                 return api_response(
-                    422, 'that challenge does not exist or was already opened')
+                    400, 'that challenge does not exist or was already opened')
 
             cursor.execute('DELETE FROM unopened_challenges WHERE id=%s',
                            (challenge_id,))
@@ -66,7 +66,7 @@ def challenges_set(event, context):
     if '-dev-' not in context.function_name and \
        int(time.time()) > COMPETITION_START:
         LOGGER.error('Cannot set challenges once the competition has started')
-        return api_response(422, 'competition has already started')
+        return api_response(400, 'competition has already started')
 
     categories = {'Default': None, 'Second Category': None}
     categories_values_sql = ', '.join(
@@ -110,7 +110,7 @@ def challenges_set(event, context):
             cursor.execute('INSERT INTO unopened_challenges VALUES {};'
                            .format(challenges_values_sql), tuple(values))
         psql.commit()
-    return api_response(200, 'unopened_challenges set')
+    return api_response(201, 'unopened_challenges set')
 
 
 def migrate(event, context):
@@ -153,7 +153,7 @@ def submit(data, stage):
                            'user_id=%s', (challenge_id, user_id))
             response = cursor.fetchone()
             if response:
-                return api_response(422, 'challenge already solved')
+                return api_response(409, 'challenge already solved')
 
             # Log submission
             try:
@@ -161,7 +161,7 @@ def submit(data, stage):
                                'now(), %s, %s, %s);',
                                (user_id, challenge_id, flag))
             except psycopg2.IntegrityError as exception:
-                return api_response(422, 'invalid submission data')
+                return api_response(409, 'invalid submission data')
 
             # Check if correct solution
             flag_hash = hashlib.sha256(flag.encode()).hexdigest()
@@ -171,9 +171,14 @@ def submit(data, stage):
             if response:
                 cursor.execute('INSERT INTO solves VALUES (now(), %s, %s);',
                                (challenge_id, user_id))
+                message = 'success!'
+                status = 201
+            else:
+                message = 'incorrect flag'
+                status = 400
         psql.commit()
 
-    return api_response(200)
+    return api_response(status, message)
 
 
 @validate(email=valid_email, nonce=valid_int, password=valid_password,
@@ -183,9 +188,9 @@ def submit(data, stage):
 def token(data, stage):
     now = int(time.time())
     if stage == 'prod' and now < COMPETITION_START:
-        return api_response(422, 'the competition has not yet started')
+        return api_response(400, 'the competition has not yet started')
     if now >= COMPETITION_END:
-        return api_response(422, 'the competition is over')
+        return api_response(400, 'the competition is over')
 
     email = data['email']
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
@@ -218,7 +223,7 @@ def user_confirm(data, stage):
                            (confirmation_id,))
             response = cursor.fetchone()
             if not response:
-                return api_response(422, 'invalid confirmation or confirmation'
+                return api_response(409, 'invalid confirmation or confirmation'
                                     ' already completed')
             user_id = response[0]
             cursor.execute('DELETE FROM confirmations where id=%s;',
@@ -261,8 +266,8 @@ def user_register(data, stage, app_url):
                                (email, password, team_name, team_id))
             except psycopg2.IntegrityError as exception:
                 if 'email' in exception.diag.constraint_name:
-                    return api_response(422, 'duplicate email')
-                return api_response(422, 'duplicate team name')
+                    return api_response(409, 'duplicate email')
+                return api_response(409, 'duplicate team name')
             cursor.execute('SELECT id FROM users where email=%s;', (email,))
             user_id = cursor.fetchone()[0]
             confirmation_id = str(uuid.uuid4())

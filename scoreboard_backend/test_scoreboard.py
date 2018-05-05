@@ -16,8 +16,8 @@ PATHS = {'submit': 'submit', 'token': 'token',
 SUCCESS_EMAIL = 'a{}@a.co'.format(int(time.time()))
 
 
-def assert_failure(response, message):
-    assert response.status_code == 422
+def assert_failure(response, message, status=422):
+    assert response.status_code == status
     data = response.json()
     assert set(data.keys()) == {'message', 'success'}
     assert not data['success']
@@ -111,7 +111,7 @@ def stage():
 @pytest.mark.slow
 def test_submit(stage):
     challenge_id = 'mario'
-    flag = 'OOO{MARIOFLAG}'
+    flag = 'INCORRECT'
     token = request_token(stage)
     nonce, timestamp = compute_nonce(
         '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
@@ -119,7 +119,37 @@ def test_submit(stage):
         'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
         'token': token, 'timestamp': timestamp})
     print(response.json())
-    assert response.status_code == 200
+    assert_failure(response, 'incorrect flag', status=400)
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
+
+    flag = 'OOO{MARIOFLAG}'
+    nonce, timestamp = compute_nonce(
+        '{}!{}!{}'.format(challenge_id, flag, token), '00c7f')
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 201
+    assert response.json()['message'] == 'success!'
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert response.status_code == 429
+    wait_time = response.json()['message']['seconds']
+    assert 0 < wait_time < 60
+    time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
+
+    response = requests.post(url('submit', stage), json={
+        'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
+        'token': token, 'timestamp': timestamp})
+    assert_failure(response, 'challenge already solved', status=409)
 
     response = requests.post(url('submit', stage), json={
         'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
@@ -195,7 +225,7 @@ def test_submit__nonexistent_challenge_id(stage):
     response = requests.post(url('submit', stage), json={
         'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
         'token': token, 'timestamp': timestamp})
-    assert_failure(response, 'invalid submission data')
+    assert_failure(response, 'invalid submission data', status=409)
 
     response = requests.post(url('submit', stage), json={
         'challenge_id': challenge_id, 'flag': flag, 'nonce': nonce,
@@ -293,7 +323,7 @@ def test_user_confirm_with_incorrect_confirmation_id(stage):
     confirmation_url = url('user_confirm', stage, id='a' * 36)
     response = requests.get(confirmation_url)
     assert_failure(response, 'invalid confirmation or confirmation already '
-                   'completed')
+                   'completed', status=409)
 
 
 def test_user_confirm_with_invalid_confirmation_id(invalid_confirmation_id,
@@ -328,7 +358,7 @@ def test_user_register_fail_with_duplicate_email(stage):
             'ctf_time_team_id': ctf_time_team_id, 'email': email,
             'nonce': nonce, 'password': password, 'team_name': email + 'm',
             'timestamp': timestamp})
-    assert_failure(response, 'duplicate email')
+    assert_failure(response, 'duplicate email', status=409)
 
 
 @pytest.mark.slow
@@ -343,7 +373,7 @@ def test_user_register_fail_with_duplicate_team_name(stage):
             'ctf_time_team_id': ctf_time_team_id, 'email': email,
             'nonce': nonce, 'password': password, 'team_name': team_name,
             'timestamp': timestamp})
-    assert_failure(response, 'duplicate team name')
+    assert_failure(response, 'duplicate team name', status=409)
 
 
 def test_user_register_with_invalid_ctf_time_team_id(invalid_team_id, stage):
