@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 import { Link, Route } from 'react-router-dom';
-import ChallengeMenu from './challenge_menu';
+import ChallengeMenu from './ChallengeMenu';
 import LogIn from './LogIn';
-import Rules from './rules';
-import Scoreboard from './scoreboard';
+import Rules from './Rules';
+import Scoreboard from './Scoreboard';
 
 ReactModal.setAppElement('#root');
 

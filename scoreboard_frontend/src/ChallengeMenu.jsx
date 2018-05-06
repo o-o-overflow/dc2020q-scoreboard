@@ -1,6 +1,6 @@
 import React from 'react';
 import update from 'immutability-helper';
-import ChallengeSection from './challenge_section';
+import ChallengeSection from './ChallengeSection';
 
 class ChallengeMenu extends React.Component {
   constructor(props) {

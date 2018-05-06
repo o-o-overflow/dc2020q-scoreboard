@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import Challenge from './challenge';
-import HiddenChallenge from './hidden_challenge';
+import Challenge from './Challenge';
+import HiddenChallenge from './HiddenChallenge';
 
 
 function ChallengeSection(props) {
