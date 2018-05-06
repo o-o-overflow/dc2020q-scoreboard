@@ -222,7 +222,8 @@ def token(data, stage):
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER LOGIN {}'.format(email))
-            cursor.execute('SELECT id FROM users where lower(email)=%s AND '
+            cursor.execute('SELECT id FROM users where date_confirmed IS NOT '
+                           'NULL AND lower(email)=%s AND '
                            'password=crypt(%s, password);',
                            (email, data['password']))
             response = cursor.fetchone()

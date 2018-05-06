@@ -18,7 +18,7 @@ if [[ $BUILD == "prod" ]]; then
     fi
 fi
 
-./node_modules/.bin/react-scripts build \
+sh -ac ". .env.$BUILD; ./node_modules/.bin/react-scripts build" \
   && rm build/static/*/*.map \
   && rm build/asset-manifest.json \
   && rm build/service-worker.js \
