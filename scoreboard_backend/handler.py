@@ -7,7 +7,7 @@ import uuid
 import jwt
 import psycopg2
 
-from const import (CHALLENGE_FIELDS, COMPETITION_END, COMPETITION_START,
+from const import (COMPETITION_END, COMPETITION_START,
                    REGISTRATION_PROOF_OF_WORK, SUBMISSION_DELAY,
                    TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
 from helper import api_response, decrypt_secrets, psql_connection, send_email
@@ -41,8 +41,8 @@ def challenge_open(event, _context):
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
-            cursor.execute('SELECT name, description, category_id, flag_hash '
-                           'FROM unopened_challenges WHERE id=%s',
+            cursor.execute('SELECT name, description, category_id, flag_hash, '
+                           'tags FROM unopened_challenges WHERE id=%s',
                            (challenge_id,))
             result = cursor.fetchone()
             if not result:
@@ -52,7 +52,7 @@ def challenge_open(event, _context):
             cursor.execute('DELETE FROM unopened_challenges WHERE id=%s',
                            (challenge_id,))
             cursor.execute('INSERT INTO challenges VALUES (%s, now(), %s, %s, '
-                           '%s, %s);', (challenge_id, *result))
+                           '%s, %s, %s);', (challenge_id, *result))
         psql.commit()
     return api_response(201)
 
@@ -87,18 +87,30 @@ def challenges_set(event, context):
         LOGGER.error('Cannot set challenges once the competition has started')
         return api_response(400, 'competition has already started')
 
-    categories = {'Default': None, 'Second Category': None}
-    categories_values_sql = ', '.join(
-        ['(DEFAULT, now(), %s)'] * len(categories))
-    challenges = []
+    categories = {}
+    challenge_values = []
     try:
         for challenge in event:
-            challenges.append({field: challenge[field]
-                               for field in CHALLENGE_FIELDS})
+            categories[challenge['category']] = None
+            challenge_values.append(challenge['id'])
+            challenge_values.append(challenge['title'])
+            if 'file_urls' in challenge:
+                file_list = '\n'.join([
+                    ' * {}'.format(x) for x in sorted(challenge['file_urls'])])
+                description = '{}\n\nFiles:\n{}'.format(
+                    challenge['description'], file_list)
+            else:
+                description = challenge['description']
+            challenge_values.append(description)
+            challenge_values.append(challenge['category'])
+            challenge_values.append(challenge['flag_hash'])
+            challenge_values.append(', '.join(sorted(challenge['tags'])))
     except (KeyError, TypeError):
         return api_response(422, 'invalid scoreboard data')
-    challenges_values_sql = ', '.join(
-        ['(%s, now(), %s, %s, %s, %s)'] * len(challenges))
+    categories_sql = ', '.join(
+        ['(DEFAULT, now(), %s)'] * len(categories))
+    challenges_sql = ', '.join(['(%s, now(), %s, %s, %s, %s, %s)']
+                               * len(event))
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
@@ -108,7 +120,7 @@ def challenges_set(event, context):
 
             LOGGER.info('Add categories')
             cursor.execute('INSERT INTO categories VALUES {};'
-                           .format(categories_values_sql), tuple(categories))
+                           .format(categories_sql), tuple(categories))
 
             LOGGER.info('Get category IDs')
             cursor.execute('SELECT id, name FROM categories;')
@@ -116,18 +128,13 @@ def challenges_set(event, context):
             for category_id, category_name in results:
                 categories[category_name] = category_id
 
-            values = []
-            for challenge in challenges:
-                values.append(challenge['id'])
-                values.append(challenge['title'])
-                values.append(challenge['description'])
-                #  TODO: Update to use passed in category
-                values.append(categories['Default'])
-                values.append(challenge['flag_hash'])
+            # Replace challenge name with challenge_id
+            for index in range(3, len(challenge_values), 6):
+                challenge_values[index] = categories[challenge_values[index]]
 
             LOGGER.info('Add challenges')
             cursor.execute('INSERT INTO unopened_challenges VALUES {};'
-                           .format(challenges_values_sql), tuple(values))
+                           .format(challenges_sql), tuple(challenge_values))
         psql.commit()
     return api_response(201, 'unopened_challenges set')
 
