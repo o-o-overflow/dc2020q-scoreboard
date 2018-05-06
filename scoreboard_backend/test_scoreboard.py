@@ -10,7 +10,7 @@ from const import TIMESTAMP_MAX_DELTA
 
 BASE_URL = {
     'dev': 'https://bv30jcdr5b.execute-api.us-east-2.amazonaws.com/dev'}
-PATHS = {'submit': 'submit', 'token': 'token',
+PATHS = {'challenges': 'challenges', 'submit': 'submit', 'token': 'token',
          'user_confirm': 'user_confirm/{id}', 'user_register': 'user_register'}
 
 SUCCESS_EMAIL = 'a{}@a.co'.format(int(time.time()))
@@ -106,6 +106,15 @@ def request_token(stage):
 @pytest.fixture
 def stage():
     return 'dev'
+
+
+def test_challenges(stage):
+    response = requests.get(url('challenges', stage))
+    assert response.status_code == 200
+    data = response.json()['message']
+    assert 'open' in data
+    assert 'solves' in data
+    assert 'unopened_by_category' in data
 
 
 @pytest.mark.slow

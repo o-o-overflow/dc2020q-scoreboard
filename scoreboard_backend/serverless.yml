@@ -3,6 +3,13 @@ custom:
 functions:
   challenge_open:
     handler: handler.challenge_open
+  challenges:
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: challenges
+    handler: handler.challenges
   challenges_set:
     handler: handler.challenges_set
   migrate:
