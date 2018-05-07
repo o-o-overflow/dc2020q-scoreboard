@@ -2,6 +2,7 @@ import React from 'react';
 import ReactModal from 'react-modal';
 import { Link, Route } from 'react-router-dom';
 import ChallengeMenu from './ChallengeMenu';
+import ChallengeModal from './ChallengeModal';
 import LogInModal from './LogInModal';
 import Rules from './Rules';
 import Scoreboard from './Scoreboard';
@@ -19,10 +20,12 @@ class App extends React.Component {
     this.state = {
       challenges: {},
       pointsByTeam: {},
+      showChallengeId: '',
+      showChallengeModal: false,
       showLogInModal: false,
       solvesByTeam: {},
       openedByCategory: {},
-      token: null,
+      token: '',
       unopened: {},
     };
   }
@@ -36,12 +39,21 @@ class App extends React.Component {
     this.handleCloseLogInModal();
   }
 
+  handleCloseChallengeModal = () => {
+    this.setState({ ...this.state, showChallengeModal: false });
+  }
+
   handleCloseLogInModal = () => {
     this.setState({ ...this.state, showLogInModal: false });
   }
 
+
   handleLogOut = () => {
-    this.setState({ ...this.state, token: null });
+    this.setState({ ...this.state, token: '' });
+  }
+
+  handleOpenChallengeModal = (event) => {
+    this.setState({ ...this.state, showChallengeId: event.id, showChallengeModal: true });
   }
 
   handleOpenLogInModal = () => {
@@ -119,7 +131,7 @@ class App extends React.Component {
 
   render() {
     let tokenLink;
-    if (this.state.token) {
+    if (this.state.token !== '') {
       tokenLink = (<button onClick={this.handleLogOut}>Log Out</button>);
     } else {
       tokenLink = (<button onClick={this.handleOpenLogInModal}>Log In</button>);
@@ -142,7 +154,7 @@ class App extends React.Component {
           <div className="background">
             <div className="background-fade" />
             <div className="container">
-              <Route exact path="/" render={() => <ChallengeMenu challenges={this.state.challenges} unopened={this.state.unopened} />} />
+              <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
               <Route exact path="/scoreboard" render={() => <Scoreboard pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
             </div>
@@ -154,8 +166,21 @@ class App extends React.Component {
           isOpen={this.state.showLogInModal}
           onRequestClose={this.handleCloseLogInModal}
         >
-          <LogInModal onClose={this.handleCloseLogInModa} setToken={this.setToken} />
+          <LogInModal onClose={this.handleCloseLogInModal} setToken={this.setToken} />
         </ReactModal>
+        <ReactModal
+          className="modal"
+          contentLabel="Challenge Modal"
+          isOpen={this.state.showChallengeModal}
+          onRequestClose={this.handleCloseChallengeModal}
+        >
+          <ChallengeModal
+            challengeId={this.state.showChallengeId}
+            onClose={this.handleCloseChallengeModal}
+            token={this.state.token}
+          />
+        </ReactModal>
+
       </div>
     );
   }

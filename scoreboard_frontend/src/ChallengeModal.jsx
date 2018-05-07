@@ -1,22 +1,19 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const strip = text => text.replace(/^\s+|\s+$/g, '');
-
-class LogInModal extends React.Component {
+class ChallengeModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       buttonDisabled: false,
-      email: '',
-      password: '',
+      flag: '',
       status: '',
     };
     this.hashTimestamp = null;
     this.worker = new Worker('worker.js');
     this.worker.onmessage = (message) => {
       if (message.data.complete) {
-        this.logIn(message.data.nonce);
+        this.submit(message.data.nonce);
       } else {
         this.setState({ ...this.state, status: `${this.state.status} .` });
       }
@@ -27,23 +24,20 @@ class LogInModal extends React.Component {
     this.worker.terminate();
   }
 
-  handleEmailChange = (event) => {
-    this.setState({ ...this.state, email: strip(event.target.value) });
+  handleFlagChange = (event) => {
+    this.setState({ ...this.state, flag: event.target.value });
   }
 
   handleKeyPress = (event) => {
     if (!this.state.buttonDisabled && event.key === 'Enter') {
-      this.handleLogIn();
+      this.handleSubmit();
     }
   }
 
-  handleLogIn = () => {
+  handleSubmit = () => {
     let validation;
-    if (this.state.email.length < 6 || this.state.email.length > 320
-      || !this.state.email.includes('@') || !this.state.email.includes('.')) {
-      validation = 'invalid email';
-    } else if (this.state.password.length < 10 || this.state.password.length > 72) {
-      validation = 'invalid password';
+    if (this.state.flag.length < 1 || this.state.flag.length > 160) {
+      validation = 'invalid flag';
     } else {
       this.hashTimestamp = parseInt(Date.now() / 1000, 10);
       this.setState({
@@ -53,35 +47,32 @@ class LogInModal extends React.Component {
       });
       this.worker.postMessage({
         prefix: '00c7f',
-        value: `${this.state.email}!${this.state.password}!${this.hashTimestamp}`,
+        value: `${this.props.challengeId}!${this.state.flag}!${this.props.token}!${this.hashTimestamp}`,
       });
       return;
     }
     this.setState({ ...this.state, status: validation });
   }
 
-  handlePasswordChange = (event) => {
-    this.setState({ ...this.state, password: event.target.value });
-  }
 
-  logIn = (nonce) => {
+  submit = (nonce) => {
     const requestData = {
-      email: this.state.email,
+      challenge_id: this.props.challengeId,
+      flag: this.state.flag,
       nonce,
-      password: this.state.password,
       timestamp: this.hashTimestamp,
+      token: this.props.token,
     };
-    this.setState({ ...this.state, status: 'logging in' });
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/token`, {
+    this.setState({ ...this.state, status: 'submitting flag' });
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/submit`, {
       body: JSON.stringify(requestData),
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
     }).then(response => response.json().then(body => ({ body, status: response.status })))
       .then(({ body, status }) => {
-        if (status === 200) {
-          this.props.setToken(body.message.token);
-          return;
-        }
+        // if (status === 200) {
+        //   this.props.setToken(body.message.token);
+        // }
         this.setState({
           ...this.state,
           buttonDisabled: false,
@@ -96,7 +87,7 @@ class LogInModal extends React.Component {
 
   render() {
     let status;
-    const buttonText = this.state.buttonDisabled ? 'Please Wait' : 'LogIn';
+    const buttonText = this.state.buttonDisabled ? 'Please Wait' : 'Submit Flag';
     if (this.state.status !== '') {
       status = (<div className="wrapped">Status: {this.state.status}</div>);
     }
@@ -104,27 +95,23 @@ class LogInModal extends React.Component {
     return (
       <div className="container">
         <button onClick={this.props.onClose}>X</button>
-        <h1>Log In</h1>
+        <h1>Challenge Info</h1>
         <div className="form-group">
-          <label htmlFor="email">Email Address<br />
-            <input id="email" onChange={this.handleEmailChange} onKeyPress={this.handleKeyPress} readOnly={this.state.buttonDisabled} type="text" value={this.state.email} />
+          <label htmlFor="flag">Flag<br />
+            <input id="flag" onChange={this.handleFlagChange} onKeyPress={this.handleKeyPress} readOnly={this.state.buttonDisabled} type="text" value={this.state.flag} />
           </label>
         </div>
         <div className="form-group">
-          <label htmlFor="password">Password<br />
-            <input id="password" onChange={this.handlePasswordChange} onKeyPress={this.handleKeyPress} type="password" value={this.state.password} />
-          </label>
-        </div>
-        <div className="form-group">
-          <input className="button" disabled={this.state.buttonDisabled} onClick={this.handleLogIn} type="button" value={buttonText} />
+          <input className="button" disabled={this.state.buttonDisabled} onClick={this.handleSubmit} type="button" value={buttonText} />
         </div>
         {status}
       </div>
     );
   }
 }
-LogInModal.propTypes = {
+ChallengeModal.propTypes = {
+  challengeId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
-  setToken: PropTypes.func.isRequired,
+  token: PropTypes.string.isRequired,
 };
-export default LogInModal;
+export default ChallengeModal;
