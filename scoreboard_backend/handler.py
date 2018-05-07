@@ -61,8 +61,8 @@ def challenges(event, _context):
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT challenges.id, challenges.name, '
-                           'categories.name FROM challenges JOIN categories '
-                           'ON category_id = categories.id;')
+                           'challenges.tags, categories.name FROM challenges '
+                           'JOIN categories ON category_id = categories.id;')
             open_challenge_data = cursor.fetchall()
             cursor.execute('SELECT challenge_id, team_name FROM solves JOIN '
                            'users ON user_id=id;')

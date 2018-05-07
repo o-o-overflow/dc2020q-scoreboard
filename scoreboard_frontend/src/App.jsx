@@ -80,12 +80,12 @@ class App extends React.Component {
     });
 
     const challenges = {};
-    data.open.forEach(([id, title, category]) => {
+    data.open.forEach(([id, title, tags, category]) => {
       const object = {
         id,
         points: challengePoints(solvesByChallenge[id]),
         solvedBy: solvesByChallenge[id] || 0,
-        tags: 'TODO',
+        tags,
         title,
       };
       if (category in challenges) {
