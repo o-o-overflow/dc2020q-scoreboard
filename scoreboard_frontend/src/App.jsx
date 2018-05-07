@@ -11,7 +11,17 @@ ReactModal.setAppElement('#root');
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showLogInModal: false, token: null };
+    this.state = {
+      challenges: {},
+      showLogInModal: false,
+      openedByCategory: {},
+      token: null,
+      unopened: {},
+    };
+  }
+
+  componentDidMount() {
+    this.loadData();
   }
 
   setToken = (token) => {
@@ -29,6 +39,27 @@ class App extends React.Component {
 
   handleOpenLogInModal = () => {
     this.setState({ ...this.state, showLogInModal: true });
+  }
+
+  loadData = () => {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/challenges`, { method: 'GET' })
+      .then(response => response.json().then(body => ({ body, status: response.status })))
+      .then(({ body, status }) => {
+        if (status !== 200) {
+          console.log(status);
+          console.log(body.message);
+          return;
+        }
+        this.processData(body.message);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  processData = (data) => {
+    console.log(data);
+    this.setState({ ...this.state, unopened: data.unopened_by_category });
   }
 
   render() {
@@ -56,7 +87,7 @@ class App extends React.Component {
           <div className="background">
             <div className="background-fade" />
             <div className="container">
-              <Route exact path="/" component={ChallengeMenu} />
+              <Route exact path="/" render={() => <ChallengeMenu challenges={this.state.challenges} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
               <Route exact path="/scoreboard" component={Scoreboard} />
             </div>

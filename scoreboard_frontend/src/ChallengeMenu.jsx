@@ -1,98 +1,52 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import update from 'immutability-helper';
 import ChallengeSection from './ChallengeSection';
 
 class ChallengeMenu extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      sections: {
-        'Amuse Bouche': {
-          challenges: [
-            {
-              category: 'Web',
-              id: 0,
-              points: 220,
-              solvedBy: 45,
-              title: 'Easypisy',
-            },
-            {
-              category: 'Shellcoding',
-              id: 1,
-              points: 500,
-              solvedBy: 0,
-              title: 'Binary Sunny-Side-Up',
-            },
-            {
-              category: 'Shellcoding',
-              id: 2,
-              points: 130,
-              solvedBy: 1,
-              title: 'Technical Support',
-            },
-          ],
-          column: 'left',
-          style: 'category-amuse',
-        },
-        Appetizers: {
-          challenges: [
-            {
-              category: 'Exploitation',
-              id: 3,
-              points: 220,
-              solvedBy: 23,
-              title: 'IoT Skewers',
-            },
-          ],
-          column: 'left',
-          style: 'category-appetizers',
-        },
-        'From the Grill': {
-          challenges: [
-            { id: 4 },
-            { id: 5 },
-            { id: 6 },
-          ],
-          column: 'left',
-          style: 'category-grill',
-        },
-        'Signature Dishes': {
-          challenges: [
-            { id: 7 },
-            { id: 8 },
-            { id: 9 },
-          ],
-          column: 'right',
-          style: 'category-signature',
-        },
-        'Guest Chefs': {
-          challenges: [
-            { id: 10 },
-            { id: 11 },
-            { id: 12 },
 
-          ],
-          column: 'right',
-          style: 'category-guest',
-        },
-        'Fruits and Desserts': {
-          challenges: [
-            { id: 13 },
-            { id: 14 },
-            { id: 15 },
-          ],
-          column: 'right',
-          style: 'category-desserts',
-        },
+    this.sectionInfo = {
+      'amuse bouche': {
+        column: 'left',
+        style: 'category-amuse',
+      },
+      appetizers: {
+        column: 'left',
+        style: 'category-appetizers',
+      },
+      'from the grill': {
+        column: 'left',
+        style: 'category-grill',
+      },
+      'signature dishes': {
+        column: 'right',
+        style: 'category-signature',
+      },
+      'guest chefs': {
+        column: 'right',
+        style: 'category-guest',
+      },
+      'fruits and desserts': {
+        column: 'right',
+        style: 'category-desserts',
       },
     };
   }
 
   buildSections = (sectionTitle) => {
-    const section = this.state.sections[sectionTitle];
+    const section = this.sectionInfo[sectionTitle];
+
+    const openChallenges = this.props.challenges[sectionTitle] || [];
+    const unopenedChallenges = Array.from(
+      Array(this.props.unopened[sectionTitle] || 0),
+      (_, i) => ({ unopened: i + 1000 }),
+    );
+
     return (
       <ChallengeSection
         {...section}
+        challenges={openChallenges.concat(unopenedChallenges)}
         key={sectionTitle}
         onClick={this.handleClick}
         title={sectionTitle}
@@ -101,29 +55,14 @@ class ChallengeMenu extends React.Component {
   }
 
   handleClick = (sourceProps) => {
-    const { index, section } = sourceProps;
-    const { challenges } = this.state.sections[section];
-
-    const solvedBy = (challenges[index].solvedBy + 1) % 3;
-    const state = update(this.state, {
-      sections: {
-        [section]: {
-          challenges: {
-            [index]: {
-              solvedBy: { $set: solvedBy },
-            },
-          },
-        },
-      },
-    });
-    this.setState(state);
+    console.log(sourceProps);
   }
 
   render() {
-    const leftSections = Object.keys(this.state.sections).filter(sectionTitle =>
-      this.state.sections[sectionTitle].column === 'left').map(this.buildSections);
-    const rightSections = Object.keys(this.state.sections).filter(sectionTitle =>
-      this.state.sections[sectionTitle].column === 'right').map(this.buildSections);
+    const leftSections = Object.keys(this.sectionInfo).filter(sectionTitle =>
+      this.sectionInfo[sectionTitle].column === 'left').map(this.buildSections);
+    const rightSections = Object.keys(this.sectionInfo).filter(sectionTitle =>
+      this.sectionInfo[sectionTitle].column === 'right').map(this.buildSections);
 
     return (
       <div>
@@ -149,4 +88,8 @@ class ChallengeMenu extends React.Component {
     );
   }
 }
+ChallengeMenu.propTypes = {
+  challenges: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
+  unopened: PropTypes.objectOf(PropTypes.number).isRequired,
+};
 export default ChallengeMenu;
