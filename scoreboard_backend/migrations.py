@@ -54,7 +54,9 @@ MIGRATIONS = [
      'user_id integer NOT NULL REFERENCES users, '
      'PRIMARY KEY(challenge_id, user_id));'),
     'ALTER TABLE challenges ADD tags text NOT NULL;',
-    'ALTER TABLE unopened_challenges ADD tags text NOT NULL;'
+    'ALTER TABLE unopened_challenges ADD tags text NOT NULL;',
+    'ALTER TABLE challenges ALTER COLUMN id TYPE varchar(32);',
+    'ALTER TABLE unopened_challenges ALTER COLUMN id TYPE varchar(32);'
 ]
 
 
