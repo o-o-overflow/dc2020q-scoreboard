@@ -71,7 +71,7 @@ def challenges(event, _context):
                 'SELECT categories.name, count(unopened_challenges.id) FROM '
                 'unopened_challenges JOIN categories ON '
                 'category_id=categories.id GROUP BY categories.name;')
-            unopened_by_category = cursor.fetchall()
+            unopened_by_category = dict(cursor.fetchall())
     return api_response(200, {'open': open_challenge_data, 'solves': solves,
                               'unopened_by_category': unopened_by_category})
 
