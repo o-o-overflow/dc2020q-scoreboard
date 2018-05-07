@@ -2,7 +2,7 @@ import React from 'react';
 import ReactModal from 'react-modal';
 import { Link, Route } from 'react-router-dom';
 import ChallengeMenu from './ChallengeMenu';
-import LogIn from './LogIn';
+import LogInModal from './LogInModal';
 import Rules from './Rules';
 import Scoreboard from './Scoreboard';
 
@@ -154,7 +154,7 @@ class App extends React.Component {
           isOpen={this.state.showLogInModal}
           onRequestClose={this.handleCloseLogInModal}
         >
-          <LogIn onCloseLogInModal={this.handleCloseLogInModal} setToken={this.setToken} />
+          <LogInModal onClose={this.handleCloseLogInModa} setToken={this.setToken} />
         </ReactModal>
       </div>
     );

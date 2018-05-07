@@ -3,7 +3,7 @@ import React from 'react';
 
 const strip = text => text.replace(/^\s+|\s+$/g, '');
 
-class LogIn extends React.Component {
+class LogInModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -99,7 +99,7 @@ class LogIn extends React.Component {
 
     return (
       <div className="container">
-        <button onClick={this.props.onCloseLogInModal}>X</button>
+        <button onClick={this.props.onClose}>X</button>
         <h1>Log In</h1>
         <div className="form-group">
           <label htmlFor="email">Email Address<br />
@@ -119,8 +119,8 @@ class LogIn extends React.Component {
     );
   }
 }
-LogIn.propTypes = {
-  onCloseLogInModal: PropTypes.func.isRequired,
+LogInModal.propTypes = {
+  onClose: PropTypes.func.isRequired,
   setToken: PropTypes.func.isRequired,
 };
-export default LogIn;
+export default LogInModal;
