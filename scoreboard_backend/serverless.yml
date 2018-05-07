@@ -54,6 +54,7 @@ package:
     - node_modules/**
     - package-lock.json
     - test*.py
+    - *.sh
 plugins:
   - serverless-kms-secrets
 provider:
