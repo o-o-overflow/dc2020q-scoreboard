@@ -1,75 +1,36 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
-class Scoreboard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      teams: [
-        {
-          name: 'Team 1',
-          points: 3456,
-        },
-        {
-          name: 'Team 2',
-          points: 3115,
-        },
-        {
-          name: 'Team 3',
-          points: 3000,
-        },
-        {
-          name: 'Team 4',
-          points: 2980,
-        },
-        {
-          name: 'Team 5',
-          points: 2560,
-        },
-        {
-          name: 'Team 6',
-          points: 2550,
-        },
-        {
-          name: 'Team 7',
-          points: 2145,
-        },
-        {
-          name: 'Team 8',
-          points: 1996,
-        },
-        {
-          name: 'Team 9',
-          points: 1912,
-        },
-        {
-          name: 'Team 10',
-          points: 1789,
-        },
-        {
-          name: 'Team 11',
-          points: 1789,
-        },
-      ],
-    };
-  }
+function Scoreboard(props) {
+  const teams = Object.keys(props.pointsByTeam).map(name => ({
+    name,
+    points: props.pointsByTeam[name],
+    solves: props.solvesByTeam[name],
+  }));
+  teams.sort((a, b) => b.points - a.points);
 
-  render() {
-    const { teams } = this.state;
-    const teamRows = teams.map(team =>
-      (
-        <tr>
-          <td>{team.name}</td>
-          <td>{team.name}</td>
-          <td>{team.points}</td>
-        </tr>
-      ));
+  const teamRows = teams.map(team =>
+    (
+      <tr key={team.name} >
+        <td>{team.name}</td>
+        <td>{team.solves.join(', ')}</td>
+        <td>{team.points}</td>
+      </tr>
+    ));
 
-    return (
-      <table className="scoreboard">
+  return (
+    <table className="scoreboard">
+      <thead>
         <tr><th>Team</th><th>Menu</th><th>Points</th></tr>
+      </thead>
+      <tbody>
         {teamRows}
-      </table>
-    );
-  }
+      </tbody>
+    </table>
+  );
 }
+Scoreboard.propTypes = {
+  pointsByTeam: PropTypes.objectOf(PropTypes.number).isRequired,
+  solvesByTeam: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
+};
 export default Scoreboard;

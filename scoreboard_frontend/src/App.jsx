@@ -18,7 +18,9 @@ class App extends React.Component {
     super(props);
     this.state = {
       challenges: {},
+      pointsByTeam: {},
       showLogInModal: false,
+      solvesByTeam: {},
       openedByCategory: {},
       token: null,
       unopened: {},
@@ -79,11 +81,13 @@ class App extends React.Component {
       }
     });
 
+    const pointsByChallenge = {};
     const challenges = {};
     data.open.forEach(([id, title, tags, category]) => {
+      pointsByChallenge[id] = challengePoints(solvesByChallenge[id]);
       const object = {
         id,
-        points: challengePoints(solvesByChallenge[id]),
+        points: pointsByChallenge[id],
         solvedBy: solvesByChallenge[id] || 0,
         tags,
         title,
@@ -95,7 +99,22 @@ class App extends React.Component {
       }
     });
 
-    this.setState({ ...this.state, challenges, unopened: data.unopened_by_category });
+    const pointsByTeam = {};
+    Object.keys(solvesByTeam).forEach((team) => {
+      let points = 0;
+      solvesByTeam[team].forEach((id) => {
+        points += pointsByChallenge[id];
+      });
+      pointsByTeam[team] = points;
+    });
+
+    this.setState({
+      ...this.state,
+      challenges,
+      pointsByTeam,
+      solvesByTeam,
+      unopened: data.unopened_by_category,
+    });
   }
 
   render() {
@@ -125,7 +144,7 @@ class App extends React.Component {
             <div className="container">
               <Route exact path="/" render={() => <ChallengeMenu challenges={this.state.challenges} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
-              <Route exact path="/scoreboard" component={Scoreboard} />
+              <Route exact path="/scoreboard" render={() => <Scoreboard pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
             </div>
           </div>
         </div>
