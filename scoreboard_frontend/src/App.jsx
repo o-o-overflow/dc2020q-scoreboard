@@ -8,6 +8,11 @@ import Scoreboard from './Scoreboard';
 
 ReactModal.setAppElement('#root');
 
+function challengePoints(solvers) {
+  if (!Number.isInteger(solvers) || solvers < 2) return 500;
+  return parseInt(100 + (400 / (1 + (0.08 * solvers * Math.log(solvers)))), 10);
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -58,8 +63,39 @@ class App extends React.Component {
   }
 
   processData = (data) => {
-    console.log(data);
-    this.setState({ ...this.state, unopened: data.unopened_by_category });
+    const solvesByChallenge = {};
+    const solvesByTeam = {};
+    data.solves.forEach(([id, team]) => {
+      if (id in solvesByChallenge) {
+        solvesByChallenge[id] += 1;
+      } else {
+        solvesByChallenge[id] = 1;
+      }
+
+      if (team in solvesByTeam) {
+        solvesByTeam[team].push(id);
+      } else {
+        solvesByTeam[team] = [id];
+      }
+    });
+
+    const challenges = {};
+    data.open.forEach(([id, title, category]) => {
+      const object = {
+        id,
+        points: challengePoints(solvesByChallenge[id]),
+        solvedBy: solvesByChallenge[id] || 0,
+        tags: 'TODO',
+        title,
+      };
+      if (category in challenges) {
+        challenges[category].push(object);
+      } else {
+        challenges[category] = [object];
+      }
+    });
+
+    this.setState({ ...this.state, challenges, unopened: data.unopened_by_category });
   }
 
   render() {

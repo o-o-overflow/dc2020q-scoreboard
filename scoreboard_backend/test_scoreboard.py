@@ -87,8 +87,8 @@ def invalid_token(request):
 
 
 def request_token(stage):
-    email = 'bbzbryce@gmail.com'
-    password = 'bbzbryce@gmail.com'
+    email = 'bb@bb.comm'
+    password = 'bb@bb.comm'
 
     nonce, timestamp = compute_nonce('{}!{}'.format(email, password), '00c7f')
     response = requests.post(url('token', stage), json={
