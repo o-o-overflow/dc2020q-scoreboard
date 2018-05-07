@@ -50,11 +50,11 @@ functions:
     handler: handler.users
 package:
   exclude:
-    - kms-secrets.dev.us-east-2.yml
+    - kms-secrets.*.us-east-2.yml
     - node_modules/**
     - package-lock.json
     - test*.py
-    - *.sh
+    - "*.sh"
 plugins:
   - serverless-kms-secrets
 provider:

@@ -46,16 +46,13 @@ class ChallengeMenu extends React.Component {
     return (
       <ChallengeSection
         {...section}
+        authenticated={this.props.authenticated}
         challenges={openChallenges.concat(unopenedChallenges)}
         key={sectionTitle}
-        onClick={this.handleClick}
+        onClick={this.props.onClick}
         title={sectionTitle}
       />
     );
-  }
-
-  handleClick = (sourceProps) => {
-    console.log(sourceProps);
   }
 
   render() {
@@ -89,7 +86,9 @@ class ChallengeMenu extends React.Component {
   }
 }
 ChallengeMenu.propTypes = {
+  authenticated: PropTypes.bool.isRequired,
   challenges: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
+  onClick: PropTypes.func.isRequired,
   unopened: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 export default ChallengeMenu;

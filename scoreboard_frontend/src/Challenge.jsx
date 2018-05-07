@@ -3,7 +3,7 @@ import React from 'react';
 
 function Challenge(props) {
   const {
-    tags, onClick, points, solvedBy, title,
+    tags, points, solvedBy, title,
   } = props;
   let className = 'menu-header menu-header-solved';
   let status;
@@ -16,10 +16,15 @@ function Challenge(props) {
     status = '(Be the first one to order it)';
   }
 
+  let onClick = null;
+  if (props.authenticated) {
+    onClick = () => props.onClick(props);
+  }
+
   return (
     <div
       className="menu-item"
-      onClick={() => onClick(props)}
+      onClick={onClick}
       onKeyPress={() => {}}
       role="presentation"
     >
@@ -35,6 +40,7 @@ function Challenge(props) {
   );
 }
 Challenge.propTypes = {
+  authenticated: PropTypes.bool.isRequired,
   onClick: PropTypes.func.isRequired,
   points: PropTypes.number.isRequired,
   solvedBy: PropTypes.number.isRequired,
