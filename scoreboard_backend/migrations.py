@@ -56,7 +56,9 @@ MIGRATIONS = [
     'ALTER TABLE challenges ADD tags text NOT NULL;',
     'ALTER TABLE unopened_challenges ADD tags text NOT NULL;',
     'ALTER TABLE challenges ALTER COLUMN id TYPE varchar(32);',
-    'ALTER TABLE unopened_challenges ALTER COLUMN id TYPE varchar(32);'
+    'ALTER TABLE unopened_challenges ALTER COLUMN id TYPE varchar(32);',
+    'ALTER TABLE submissions ALTER COLUMN challenge_id TYPE varchar(32);',
+    'ALTER TABLE solves ALTER COLUMN challenge_id TYPE varchar(32);'
 ]
 
 
