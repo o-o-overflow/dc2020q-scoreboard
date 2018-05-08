@@ -9,7 +9,9 @@ class ChallengeModal extends React.Component {
       flag: '',
       status: '',
     };
+    this.countDown = null;
     this.hashTimestamp = null;
+    this.timerID = null;
     this.worker = new Worker('worker.js');
     this.worker.onmessage = (message) => {
       if (message.data.complete) {
@@ -70,9 +72,12 @@ class ChallengeModal extends React.Component {
       method: 'POST',
     }).then(response => response.json().then(body => ({ body, status: response.status })))
       .then(({ body, status }) => {
-        // if (status === 200) {
-        //   this.props.setToken(body.message.token);
-        // }
+        if (status === 429) {
+          this.countDown = Math.ceil(body.message.seconds) + 1;
+          this.tick();
+          this.timerID = setInterval(() => this.tick(), 1000);
+          return;
+        }
         this.setState({
           ...this.state,
           buttonDisabled: false,
@@ -83,6 +88,27 @@ class ChallengeModal extends React.Component {
         this.setState({ ...this.state, buttonDisabled: false, status: '(error) see console for info' });
         console.log(error);
       });
+  }
+
+  tick() {
+    this.countDown -= 1;
+    if (this.countDown <= 0) {
+      clearInterval(this.timerID);
+      this.countDown = null;
+      this.timerID = null;
+      this.setState({
+        ...this.state,
+        buttonDisabled: false,
+        status: 'Okay, you may try again now.',
+      });
+      return;
+    }
+    const plural = this.countDown === 1 ? '' : 's';
+    const status = `You are submitting too frequently. Try again in ${this.countDown} second${plural}.`;
+    this.setState({
+      ...this.state,
+      status,
+    });
   }
 
   render() {
