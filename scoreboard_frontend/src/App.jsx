@@ -52,6 +52,7 @@ class App extends React.Component {
 
   handleLogOut = () => {
     this.setState({ ...this.state, token: '' });
+    window.localStorage.removeItem('token');
   }
 
   handleOpenChallengeModal = (event) => {
