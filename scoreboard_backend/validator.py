@@ -39,7 +39,7 @@ def proof_of_work(fields, prefix):
 
 
 def valid_challenge_id(challenge_id):
-    return isinstance(challenge_id, str) and 1 <= len(challenge_id) <= 16
+    return isinstance(challenge_id, str) and 1 <= len(challenge_id) <= 32
 
 
 def valid_confirmation(confirmation):

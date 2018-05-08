@@ -1,6 +1,18 @@
 custom:
   kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
 functions:
+  challenge:
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: challenge/{id}/{token}
+          request:
+            parameters:
+              paths:
+                id: true
+                token: true
+    handler: handler.challenge
   challenge_open:
     handler: handler.challenge_open
   challenges:
