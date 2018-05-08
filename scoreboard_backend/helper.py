@@ -69,7 +69,6 @@ def send_email(from_email, to_email, subject, body, stage='dev'):
         # Only send actual emails in the prod stage.
         to_email = 'team+{}@oooverflow.io'.format(stage)
         subject = '[Stage: {}] {}'.format(stage, subject)
-        return
 
     client = boto3.client('ses', region_name='us-east-1')
     try:
