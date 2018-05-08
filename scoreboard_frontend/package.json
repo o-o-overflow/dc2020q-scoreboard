@@ -9,7 +9,8 @@
     "react-dom": "^16.3.1",
     "react-modal": "^3.4.4",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "showdown": "^1.8.6"
   },
   "scripts": {
     "start": "react-scripts start",

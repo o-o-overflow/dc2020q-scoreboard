@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import showdown from 'showdown';
 
 class ChallengeModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       buttonDisabled: false,
+      description: 'Loading...',
       flag: '',
       status: '',
     };
@@ -22,8 +24,15 @@ class ChallengeModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.loadData();
+  }
+
   componentWillUnmount() {
     this.worker.terminate();
+    if (this.timerID !== null) {
+      clearInterval(this.timerID);
+    }
   }
 
   handleFlagChange = (event) => {
@@ -56,6 +65,23 @@ class ChallengeModal extends React.Component {
     this.setState({ ...this.state, status: validation });
   }
 
+  loadData = () => {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/challenge/${this.props.challengeId}/${this.props.token}`, { method: 'GET' })
+      .then(response => response.json().then(body => ({ body, status: response.status })))
+      .then(({ body, status }) => {
+        if (status !== 200) {
+          console.log(status);
+          console.log(body.message);
+          return;
+        }
+        const converter = new showdown.Converter({ simplifiedAutoLink: true });
+        const description = converter.makeHtml(body.message);
+        this.setState({ ...this.state, description });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   submit = (nonce) => {
     const requestData = {
@@ -121,7 +147,8 @@ class ChallengeModal extends React.Component {
     return (
       <div className="container">
         <button onClick={this.props.onClose}>X</button>
-        <h1>Challenge Info</h1>
+        <h1>{this.props.challengeTitle}</h1>
+        <div dangerouslySetInnerHTML={{ __html: this.state.description }} />
         <div className="form-group">
           <label htmlFor="flag">Flag<br />
             <input id="flag" onChange={this.handleFlagChange} onKeyPress={this.handleKeyPress} readOnly={this.state.buttonDisabled} type="text" value={this.state.flag} />
@@ -137,6 +164,7 @@ class ChallengeModal extends React.Component {
 }
 ChallengeModal.propTypes = {
   challengeId: PropTypes.string.isRequired,
+  challengeTitle: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   token: PropTypes.string.isRequired,
 };

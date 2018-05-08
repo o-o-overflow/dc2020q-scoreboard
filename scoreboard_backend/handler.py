@@ -32,6 +32,18 @@ def valid_token(token):
     return True
 
 
+@validate(id=valid_challenge_id, token=valid_token, validate_data=False)
+def challenge(data, stage):
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+        with psql.cursor() as cursor:
+            cursor.execute('SELECT description FROM challenges where id=%s',
+                           (data['id'],))
+            result = cursor.fetchone()
+    if not result:
+        return api_response(404)
+    return api_response(200, result[0])
+
+
 def challenge_open(event, _context):
     if not event:
         return api_response(422, 'data must be provided')

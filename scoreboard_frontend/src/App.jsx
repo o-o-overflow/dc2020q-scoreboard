@@ -28,6 +28,7 @@ class App extends React.Component {
       token: '',
       unopened: {},
     };
+    this.challengeTitlesById = {};
   }
 
   componentDidMount() {
@@ -96,6 +97,7 @@ class App extends React.Component {
     const pointsByChallenge = {};
     const challenges = {};
     data.open.forEach(([id, title, tags, category]) => {
+      this.challengeTitlesById[id] = title;
       pointsByChallenge[id] = challengePoints(solvesByChallenge[id]);
       const object = {
         id,
@@ -176,6 +178,7 @@ class App extends React.Component {
         >
           <ChallengeModal
             challengeId={this.state.showChallengeId}
+            challengeTitle={this.challengeTitlesById[this.state.showChallengeId] || ''}
             onClose={this.handleCloseChallengeModal}
             token={this.state.token}
           />
