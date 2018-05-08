@@ -17,13 +17,15 @@ function Challenge(props) {
   }
 
   let onClick = null;
+  let menuClasses = 'menu-item';
   if (props.authenticated) {
     onClick = () => props.onClick(props);
+    menuClasses += ' logged-in';
   }
 
   return (
     <div
-      className="menu-item"
+      className={menuClasses}
       onClick={onClick}
       onKeyPress={() => {}}
       role="presentation"

@@ -149,6 +149,10 @@ nav button {
   padding-top: 5px;
 }
 
+.logged-in {
+  cursor: pointer;
+}
+
 .menu-box {
   display: flex;
 }
