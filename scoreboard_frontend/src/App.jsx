@@ -25,7 +25,7 @@ class App extends React.Component {
       showLogInModal: false,
       solvesByTeam: {},
       openedByCategory: {},
-      token: '',
+      token: window.localStorage.getItem('token') || '',
       unopened: {},
     };
     this.challengeTitlesById = {};
@@ -37,6 +37,7 @@ class App extends React.Component {
 
   setToken = (token) => {
     this.setState({ ...this.state, token });
+    window.localStorage.setItem('token', token);
     this.handleCloseLogInModal();
   }
 
