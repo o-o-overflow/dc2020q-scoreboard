@@ -106,7 +106,7 @@ def challenges_set(event, context):
             categories[challenge['category']] = None
             challenge_values.append(challenge['id'])
             challenge_values.append(challenge['title'])
-            if 'file_urls' in challenge:
+            if challenge['file_urls']:
                 file_list = '\n'.join([
                     ' * {}'.format(x) for x in sorted(challenge['file_urls'])])
                 description = '{}\n\nFiles:\n{}'.format(
