@@ -103,6 +103,8 @@ class ChallengeModal extends React.Component {
           this.tick();
           this.timerID = setInterval(() => this.tick(), 1000);
           return;
+        } else if (status === 201) {
+          this.props.onSolve();
         }
         this.setState({
           ...this.state,
@@ -175,6 +177,7 @@ ChallengeModal.propTypes = {
   challengeId: PropTypes.string.isRequired,
   challengeTitle: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
+  onSolve: PropTypes.func.isRequired,
   solved: PropTypes.bool.isRequired,
   token: PropTypes.string.isRequired,
 };

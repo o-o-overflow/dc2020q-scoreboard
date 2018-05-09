@@ -200,6 +200,7 @@ class App extends React.Component {
             challengeId={this.state.showChallengeId}
             challengeTitle={this.challengeTitlesById[this.state.showChallengeId] || ''}
             onClose={this.handleCloseChallengeModal}
+            onSolve={this.loadData}
             solved={solved}
             token={this.state.token}
           />
