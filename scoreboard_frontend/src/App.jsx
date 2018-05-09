@@ -108,10 +108,12 @@ class App extends React.Component {
     data.open.forEach(([id, title, tags, category]) => {
       this.challengeTitlesById[id] = title;
       pointsByChallenge[id] = challengePoints(solvesByChallenge[id]);
+
       const object = {
         id,
         points: pointsByChallenge[id],
-        solvedBy: solvesByChallenge[id] || 0,
+        solveCount: solvesByChallenge[id] || 0,
+        solved: (solvesByTeam[this.state.team] || []).includes(id),
         tags,
         title,
       };
@@ -178,7 +180,10 @@ class App extends React.Component {
           isOpen={this.state.showLogInModal}
           onRequestClose={this.handleCloseLogInModal}
         >
-          <LogInModal onClose={this.handleCloseLogInModal} setAuthentication={this.setAuthentication} />
+          <LogInModal
+            onClose={this.handleCloseLogInModal}
+            setAuthentication={this.setAuthentication}
+          />
         </ReactModal>
         <ReactModal
           className="modal"
