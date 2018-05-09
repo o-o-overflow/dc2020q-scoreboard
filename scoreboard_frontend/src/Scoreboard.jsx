@@ -3,11 +3,17 @@ import React from 'react';
 
 function Scoreboard(props) {
   const teams = Object.keys(props.pointsByTeam).map(name => ({
+    lastSolveTime: props.lastSolveTimeByTeam[name],
     name,
     points: props.pointsByTeam[name],
     solves: props.solvesByTeam[name],
   }));
-  teams.sort((a, b) => b.points - a.points);
+  teams.sort((a, b) => {
+    if (a.points === b.points) {
+      return a.lastSolveTime - b.lastSolveTime;
+    }
+    return b.points - a.points;
+  });
 
   const teamRows = teams.map(team =>
     (
@@ -30,6 +36,7 @@ function Scoreboard(props) {
   );
 }
 Scoreboard.propTypes = {
+  lastSolveTimeByTeam: PropTypes.objectOf(PropTypes.number).isRequired,
   pointsByTeam: PropTypes.objectOf(PropTypes.number).isRequired,
   solvesByTeam: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
 };
