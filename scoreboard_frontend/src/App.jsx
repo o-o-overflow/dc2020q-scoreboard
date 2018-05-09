@@ -30,6 +30,7 @@ class App extends React.Component {
       token: window.localStorage.getItem('token') || '',
       unopened: {},
     };
+    this.categoryByChallenge = {};
     this.challengeTitlesById = {};
   }
 
@@ -108,6 +109,7 @@ class App extends React.Component {
     const pointsByChallenge = {};
     const challenges = {};
     data.open.forEach(([id, title, tags, category]) => {
+      this.categoryByChallenge[id] = category;
       this.challengeTitlesById[id] = title;
       pointsByChallenge[id] = challengePoints(solvesByChallenge[id]);
 
@@ -175,7 +177,7 @@ class App extends React.Component {
             <div className="container">
               <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
-              <Route exact path="/scoreboard" render={() => <Scoreboard lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
+              <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
             </div>
           </div>
         </div>
