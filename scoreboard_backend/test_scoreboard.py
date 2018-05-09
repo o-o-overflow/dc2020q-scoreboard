@@ -92,6 +92,11 @@ def invalid_token(request):
     return request.param
 
 
+@pytest.fixture(params=[None, 1])
+def invalid_token_for_url(request):
+    return request.param
+
+
 def request_token(stage):
     email = 'bb@bb.comm'
     password = 'bb@bb.comm'
@@ -103,6 +108,7 @@ def request_token(stage):
     assert response.status_code == 200
     data = response.json()
     assert data['success']
+    assert data['message']['team']
     token = data['message']['token']
     assert len(token) == 144
     assert token.count('.') == 2
@@ -130,9 +136,9 @@ def test_challenge__invalid_challenge_id(invalid_challenge_id_for_url, stage):
     assert_failure(response, 'invalid id')
 
 
-def test_challenge__invalid_token(invalid_token, stage):
+def test_challenge__invalid_token(invalid_token_for_url, stage):
     challenge_url = url('challenge', stage, id='mario',
-                        token=invalid_token)
+                        token=invalid_token_for_url)
     response = requests.get(challenge_url)
     assert_failure(response, 'invalid token')
 

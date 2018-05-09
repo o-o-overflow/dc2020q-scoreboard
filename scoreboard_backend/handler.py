@@ -235,9 +235,9 @@ def token(data, stage):
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER LOGIN {}'.format(email))
-            cursor.execute('SELECT id FROM users where date_confirmed IS NOT '
-                           'NULL AND lower(email)=%s AND '
-                           'password=crypt(%s, password);',
+            cursor.execute('SELECT id, team_name FROM users where '
+                           'date_confirmed IS NOT NULL AND '
+                           'lower(email)=%s AND password=crypt(%s, password);',
                            (email, data['password']))
             response = cursor.fetchone()
     if not response:
@@ -250,7 +250,7 @@ def token(data, stage):
     payload = {'exp': expire_time, 'nbf': now, 'user_id': response[0]}
     token = jwt.encode(payload, SECRETS['JWT_SECRET'],
                        algorithm='HS256').decode('utf-8')
-    return api_response(200, {'token': token})
+    return api_response(200, {'team': response[1], 'token': token})
 
 
 @validate(id=valid_confirmation, validate_data=False)
