@@ -167,9 +167,9 @@ class App extends React.Component {
           <div className="nav-items">
             {tokenLink}
             <Link to="/">A La Carte</Link>
-            <a href="https://twitter.com/oooverflow" to="/announcements">Announcements</a>
             <Link to="/rules">Rules</Link>
             <Link to="/scoreboard">Scoreboard</Link>
+            <a href="https://twitter.com/oooverflow">Announcements</a>
           </div>
         </nav>
         <div>
