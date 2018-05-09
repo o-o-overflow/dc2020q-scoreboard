@@ -16,6 +16,7 @@ from validator import (extract_headers, proof_of_work, valid_challenge_id,
                        valid_int_as_string, valid_password, valid_team,
                        valid_timestamp, validate)
 import migrations
+import os.path
 
 
 LOGGER = logging.getLogger(__name__)
@@ -110,7 +111,7 @@ def challenges_set(event, context):
             challenge_values.append(challenge['title'])
             if challenge['file_urls']:
                 file_list = '\n'.join([
-                    ' * {}'.format(x) for x in sorted(challenge['file_urls'])])
+                    ' * [{}]({})'.format(os.path.basename(x), x) for x in sorted(challenge['file_urls'])])
                 description = '{}\n\nFiles:\n{}'.format(
                     challenge['description'], file_list)
             else:
