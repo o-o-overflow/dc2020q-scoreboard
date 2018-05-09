@@ -74,7 +74,8 @@ def challenges(event, _context):
         with psql.cursor() as cursor:
             cursor.execute('SELECT challenges.id, challenges.name, '
                            'challenges.tags, categories.name FROM challenges '
-                           'JOIN categories ON category_id = categories.id;')
+                           'JOIN categories ON category_id = categories.id '
+                           'ORDER BY challenges.date_created ASC;')
             open_challenge_data = cursor.fetchall()
             cursor.execute('SELECT challenge_id, team_name,'
                            'EXTRACT(EPOCH FROM solves.date_created) FROM '
