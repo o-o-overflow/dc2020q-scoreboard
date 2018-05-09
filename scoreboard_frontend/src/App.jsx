@@ -42,6 +42,7 @@ class App extends React.Component {
     window.localStorage.setItem('team', data.team);
     window.localStorage.setItem('token', data.token);
     this.handleCloseLogInModal();
+    this.loadData();
   }
 
   handleCloseChallengeModal = () => {
@@ -57,6 +58,7 @@ class App extends React.Component {
     this.setState({ ...this.state, team: '', token: '' });
     window.localStorage.removeItem('team');
     window.localStorage.removeItem('token');
+    this.loadData();
   }
 
   handleOpenChallengeModal = (event) => {
@@ -108,10 +110,12 @@ class App extends React.Component {
     data.open.forEach(([id, title, tags, category]) => {
       this.challengeTitlesById[id] = title;
       pointsByChallenge[id] = challengePoints(solvesByChallenge[id]);
+
       const object = {
         id,
         points: pointsByChallenge[id],
-        solvedBy: solvesByChallenge[id] || 0,
+        solveCount: solvesByChallenge[id] || 0,
+        solved: (solvesByTeam[this.state.team] || []).includes(id),
         tags,
         title,
       };
@@ -149,6 +153,9 @@ class App extends React.Component {
       tokenLink = (<button onClick={this.handleOpenLogInModal}>Log In</button>);
     }
 
+    const teamSolves = this.state.solvesByTeam[this.state.team] || [];
+    const solved = teamSolves.includes(this.state.showChallengeId);
+
     return (
       <div>
         <nav>
@@ -178,7 +185,10 @@ class App extends React.Component {
           isOpen={this.state.showLogInModal}
           onRequestClose={this.handleCloseLogInModal}
         >
-          <LogInModal onClose={this.handleCloseLogInModal} setAuthentication={this.setAuthentication} />
+          <LogInModal
+            onClose={this.handleCloseLogInModal}
+            setAuthentication={this.setAuthentication}
+          />
         </ReactModal>
         <ReactModal
           className="modal"
@@ -190,6 +200,7 @@ class App extends React.Component {
             challengeId={this.state.showChallengeId}
             challengeTitle={this.challengeTitlesById[this.state.showChallengeId] || ''}
             onClose={this.handleCloseChallengeModal}
+            solved={solved}
             token={this.state.token}
           />
         </ReactModal>
