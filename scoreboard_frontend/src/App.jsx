@@ -42,6 +42,7 @@ class App extends React.Component {
     window.localStorage.setItem('team', data.team);
     window.localStorage.setItem('token', data.token);
     this.handleCloseLogInModal();
+    this.loadData();
   }
 
   handleCloseChallengeModal = () => {
@@ -57,6 +58,7 @@ class App extends React.Component {
     this.setState({ ...this.state, team: '', token: '' });
     window.localStorage.removeItem('team');
     window.localStorage.removeItem('token');
+    this.loadData();
   }
 
   handleOpenChallengeModal = (event) => {
