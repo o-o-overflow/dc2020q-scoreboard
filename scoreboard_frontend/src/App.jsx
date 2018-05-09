@@ -153,6 +153,9 @@ class App extends React.Component {
       tokenLink = (<button onClick={this.handleOpenLogInModal}>Log In</button>);
     }
 
+    const teamSolves = this.state.solvesByTeam[this.state.team] || [];
+    const solved = teamSolves.includes(this.state.showChallengeId);
+
     return (
       <div>
         <nav>
@@ -197,6 +200,7 @@ class App extends React.Component {
             challengeId={this.state.showChallengeId}
             challengeTitle={this.challengeTitlesById[this.state.showChallengeId] || ''}
             onClose={this.handleCloseChallengeModal}
+            solved={solved}
             token={this.state.token}
           />
         </ReactModal>

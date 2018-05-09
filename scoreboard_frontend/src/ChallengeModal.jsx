@@ -144,19 +144,28 @@ class ChallengeModal extends React.Component {
       status = (<div className="wrapped">Status: {this.state.status}</div>);
     }
 
+    let form = '';
+    if (!this.props.solved) {
+      form = (
+        <div>
+          <div className="form-group">
+            <label htmlFor="flag">Flag<br />
+              <input id="flag" onChange={this.handleFlagChange} onKeyPress={this.handleKeyPress} readOnly={this.state.buttonDisabled} type="text" value={this.state.flag} />
+            </label>
+          </div>
+          <div className="form-group">
+            <input className="button" disabled={this.state.buttonDisabled} onClick={this.handleSubmit} type="button" value={buttonText} />
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="container">
         <button onClick={this.props.onClose}>X</button>
         <h1>{this.props.challengeTitle}</h1>
         <div dangerouslySetInnerHTML={{ __html: this.state.description }} />
-        <div className="form-group">
-          <label htmlFor="flag">Flag<br />
-            <input id="flag" onChange={this.handleFlagChange} onKeyPress={this.handleKeyPress} readOnly={this.state.buttonDisabled} type="text" value={this.state.flag} />
-          </label>
-        </div>
-        <div className="form-group">
-          <input className="button" disabled={this.state.buttonDisabled} onClick={this.handleSubmit} type="button" value={buttonText} />
-        </div>
+        {form}
         {status}
       </div>
     );
@@ -166,6 +175,7 @@ ChallengeModal.propTypes = {
   challengeId: PropTypes.string.isRequired,
   challengeTitle: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
+  solved: PropTypes.bool.isRequired,
   token: PropTypes.string.isRequired,
 };
 export default ChallengeModal;
