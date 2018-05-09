@@ -196,14 +196,6 @@ def submit(data, stage):
             if response:
                 return api_response(409, 'challenge already solved')
 
-            # Log submission
-            try:
-                cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
-                               'now(), %s, %s, %s);',
-                               (user_id, challenge_id, flag))
-            except psycopg2.IntegrityError as exception:
-                return api_response(409, 'invalid submission data')
-
             # Check if correct solution
             flag_hash = hashlib.sha256(flag.encode()).hexdigest()
             cursor.execute('SELECT 1 FROM challenges WHERE id=%s AND '
@@ -217,6 +209,15 @@ def submit(data, stage):
             else:
                 message = 'incorrect flag'
                 status = 400
+                # Note: We only want to log incorrect submissions, this way the DB does not contain valid flags. 
+                # Log submission
+                try:
+                    cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
+                                   'now(), %s, %s, %s);',
+                                   (user_id, challenge_id, flag))
+                except psycopg2.IntegrityError as exception:
+                    return api_response(409, 'invalid submission data')
+                
         psql.commit()
 
     return api_response(status, message)
