@@ -19,6 +19,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       challenges: {},
+      lastSolveTimeByTeam: {},
       pointsByTeam: {},
       showChallengeId: '',
       showChallengeModal: false,
@@ -80,9 +81,10 @@ class App extends React.Component {
   }
 
   processData = (data) => {
+    const lastSolveTimeByTeam = {};
     const solvesByChallenge = {};
     const solvesByTeam = {};
-    data.solves.forEach(([id, team]) => {
+    data.solves.forEach(([id, team, time]) => {
       if (id in solvesByChallenge) {
         solvesByChallenge[id] += 1;
       } else {
@@ -90,8 +92,10 @@ class App extends React.Component {
       }
 
       if (team in solvesByTeam) {
+        lastSolveTimeByTeam[team] = Math.max(lastSolveTimeByTeam[team], time);
         solvesByTeam[team].push(id);
       } else {
+        lastSolveTimeByTeam[team] = time;
         solvesByTeam[team] = [id];
       }
     });
@@ -127,6 +131,7 @@ class App extends React.Component {
     this.setState({
       ...this.state,
       challenges,
+      lastSolveTimeByTeam,
       pointsByTeam,
       solvesByTeam,
       unopened: data.unopened_by_category,
@@ -160,7 +165,7 @@ class App extends React.Component {
             <div className="container">
               <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
-              <Route exact path="/scoreboard" render={() => <Scoreboard pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
+              <Route exact path="/scoreboard" render={() => <Scoreboard lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
             </div>
           </div>
         </div>

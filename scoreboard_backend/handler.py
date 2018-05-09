@@ -76,8 +76,9 @@ def challenges(event, _context):
                            'challenges.tags, categories.name FROM challenges '
                            'JOIN categories ON category_id = categories.id;')
             open_challenge_data = cursor.fetchall()
-            cursor.execute('SELECT challenge_id, team_name FROM solves JOIN '
-                           'users ON user_id=id;')
+            cursor.execute('SELECT challenge_id, team_name,'
+                           'EXTRACT(EPOCH FROM solves.date_created) FROM '
+                           'solves JOIN users ON user_id=id;')
             solves = cursor.fetchall()
             cursor.execute(
                 'SELECT categories.name, count(unopened_challenges.id) FROM '
