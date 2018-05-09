@@ -25,6 +25,7 @@ class App extends React.Component {
       showLogInModal: false,
       solvesByTeam: {},
       openedByCategory: {},
+      team: window.localStorage.getItem('team') || '',
       token: window.localStorage.getItem('token') || '',
       unopened: {},
     };
@@ -35,9 +36,10 @@ class App extends React.Component {
     this.loadData();
   }
 
-  setToken = (token) => {
-    this.setState({ ...this.state, token });
-    window.localStorage.setItem('token', token);
+  setAuthentication = (data) => {
+    this.setState({ ...this.state, ...data });
+    window.localStorage.setItem('team', data.team);
+    window.localStorage.setItem('token', data.token);
     this.handleCloseLogInModal();
   }
 
@@ -51,7 +53,8 @@ class App extends React.Component {
 
 
   handleLogOut = () => {
-    this.setState({ ...this.state, token: '' });
+    this.setState({ ...this.state, team: '', token: '' });
+    window.localStorage.removeItem('team');
     window.localStorage.removeItem('token');
   }
 
@@ -136,7 +139,7 @@ class App extends React.Component {
   render() {
     let tokenLink;
     if (this.state.token !== '') {
-      tokenLink = (<button onClick={this.handleLogOut}>Log Out</button>);
+      tokenLink = (<button onClick={this.handleLogOut}>Log Out {this.state.team}</button>);
     } else {
       tokenLink = (<button onClick={this.handleOpenLogInModal}>Log In</button>);
     }
@@ -170,7 +173,7 @@ class App extends React.Component {
           isOpen={this.state.showLogInModal}
           onRequestClose={this.handleCloseLogInModal}
         >
-          <LogInModal onClose={this.handleCloseLogInModal} setToken={this.setToken} />
+          <LogInModal onClose={this.handleCloseLogInModal} setAuthentication={this.setAuthentication} />
         </ReactModal>
         <ReactModal
           className="modal"

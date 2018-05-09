@@ -79,7 +79,7 @@ class LogInModal extends React.Component {
     }).then(response => response.json().then(body => ({ body, status: response.status })))
       .then(({ body, status }) => {
         if (status === 200) {
-          this.props.setToken(body.message.token);
+          this.props.setAuthentication(body.message);
           return;
         }
         this.setState({
@@ -125,6 +125,6 @@ class LogInModal extends React.Component {
 }
 LogInModal.propTypes = {
   onClose: PropTypes.func.isRequired,
-  setToken: PropTypes.func.isRequired,
+  setAuthentication: PropTypes.func.isRequired,
 };
 export default LogInModal;
