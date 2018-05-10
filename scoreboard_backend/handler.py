@@ -1,8 +1,8 @@
 from pprint import pprint
 import logging
 import hashlib
-import time
 import os.path
+import time
 import uuid
 
 import jwt
@@ -110,8 +110,9 @@ def challenges_set(event, context):
             challenge_values.append(challenge['id'])
             challenge_values.append(challenge['title'])
             if challenge['file_urls']:
-                file_list = '\n'.join([
-                    ' * [{}]({})'.format(os.path.basename(x), x) for x in sorted(challenge['file_urls'])])
+                file_list = '\n'.join(
+                    [' * [{}]({})'.format(os.path.basename(x), x)
+                     for x in sorted(challenge['file_urls'])])
                 description = '{}\n\nFiles:\n{}'.format(
                     challenge['description'], file_list)
             else:
@@ -209,15 +210,16 @@ def submit(data, stage):
             else:
                 message = 'incorrect flag'
                 status = 400
-                # Note: We only want to log incorrect submissions, this way the DB does not contain valid flags. 
                 # Log submission
+                #
+                # Note: We only want to log incorrect submissions, this way the
+                #       DB does not contain valid flags.
                 try:
                     cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
                                    'now(), %s, %s, %s);',
                                    (user_id, challenge_id, flag))
                 except psycopg2.IntegrityError as exception:
                     return api_response(409, 'invalid submission data')
-                
         psql.commit()
 
     return api_response(status, message)
