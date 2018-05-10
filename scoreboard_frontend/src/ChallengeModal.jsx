@@ -74,7 +74,7 @@ class ChallengeModal extends React.Component {
           console.log(body.message);
           return;
         }
-        const converter = new showdown.Converter({ simplifiedAutoLink: true });
+          const converter = new showdown.Converter({ literalMidWordUnderscores: true, simplifiedAutoLink: true });
         const description = converter.makeHtml(body.message);
         this.setState({ ...this.state, description });
       })
