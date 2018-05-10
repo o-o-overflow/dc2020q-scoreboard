@@ -166,7 +166,7 @@ class App extends React.Component {
           <label htmlFor="nav-toggle" className="label-toggle">☰</label>
           <div className="nav-items">
             {tokenLink}
-            <Link to="/">A La Carte</Link>
+            <Link to="/">À La Carte</Link>
             <Link to="/rules">Rules</Link>
             <Link to="/scoreboard">Scoreboard</Link>
             <a href="https://twitter.com/oooverflow">Announcements</a>
