@@ -10,7 +10,8 @@ from const import TIMESTAMP_MAX_DELTA
 
 BASE_URL = {
     'dev': 'https://bv30jcdr5b.execute-api.us-east-2.amazonaws.com/dev'}
-PATHS = {'submit': 'submit', 'token': 'token',
+PATHS = {'challenge': 'challenge/{id}/{token}', 'challenges': 'challenges',
+         'submit': 'submit', 'token': 'token',
          'user_confirm': 'user_confirm/{id}', 'user_register': 'user_register'}
 
 SUCCESS_EMAIL = 'a{}@a.co'.format(int(time.time()))
@@ -35,8 +36,13 @@ def compute_nonce(message, prefix):
     return nonce, timestamp
 
 
-@pytest.fixture(params=[None, 1, '', 'a' * 17])
+@pytest.fixture(params=[None, 1, '', 'a' * 33])
 def invalid_challenge_id(request):
+    return request.param
+
+
+@pytest.fixture(params=['', 'a' * 33])
+def invalid_challenge_id_for_url(request):
     return request.param
 
 
@@ -86,9 +92,14 @@ def invalid_token(request):
     return request.param
 
 
+@pytest.fixture(params=[None, 1])
+def invalid_token_for_url(request):
+    return request.param
+
+
 def request_token(stage):
-    email = 'bbzbryce@gmail.com'
-    password = 'bbzbryce@gmail.com'
+    email = 'bb@bb.comm'
+    password = 'bb@bb.comm'
 
     nonce, timestamp = compute_nonce('{}!{}'.format(email, password), '00c7f')
     response = requests.post(url('token', stage), json={
@@ -97,6 +108,7 @@ def request_token(stage):
     assert response.status_code == 200
     data = response.json()
     assert data['success']
+    assert data['message']['team']
     token = data['message']['token']
     assert len(token) == 144
     assert token.count('.') == 2
@@ -106,6 +118,45 @@ def request_token(stage):
 @pytest.fixture
 def stage():
     return 'dev'
+
+
+def test_challenge(stage):
+    token = request_token(stage)
+    challenge_url = url('challenge', stage, id='mario', token=token)
+    response = requests.get(challenge_url)
+    assert response.status_code == 200
+    assert '\n\nFiles:\n * ' in response.json()['message']
+
+
+def test_challenge__invalid_challenge_id(invalid_challenge_id_for_url, stage):
+    token = 'X'  # Does not matter
+    challenge_url = url('challenge', stage, id=invalid_challenge_id_for_url,
+                        token=token)
+    response = requests.get(challenge_url)
+    assert_failure(response, 'invalid id')
+
+
+def test_challenge__invalid_token(invalid_token_for_url, stage):
+    challenge_url = url('challenge', stage, id='mario',
+                        token=invalid_token_for_url)
+    response = requests.get(challenge_url)
+    assert_failure(response, 'invalid token')
+
+
+def test_challenge__nonexistent_challenge_id(stage):
+    token = request_token(stage)
+    challenge_url = url('challenge', stage, id='WRONG', token=token)
+    response = requests.get(challenge_url)
+    assert response.status_code == 404
+
+
+def test_challenges(stage):
+    response = requests.get(url('challenges', stage))
+    assert response.status_code == 200
+    data = response.json()['message']
+    assert 'open' in data
+    assert 'solves' in data
+    assert 'unopened_by_category' in data
 
 
 @pytest.mark.slow

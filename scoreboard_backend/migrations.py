@@ -52,7 +52,13 @@ MIGRATIONS = [
      'date_created timestamp with time zone NOT NULL, '
      'challenge_id varchar(16) NOT NULL REFERENCES challenges, '
      'user_id integer NOT NULL REFERENCES users, '
-     'PRIMARY KEY(challenge_id, user_id));')
+     'PRIMARY KEY(challenge_id, user_id));'),
+    'ALTER TABLE challenges ADD tags text NOT NULL;',
+    'ALTER TABLE unopened_challenges ADD tags text NOT NULL;',
+    'ALTER TABLE challenges ALTER COLUMN id TYPE varchar(32);',
+    'ALTER TABLE unopened_challenges ALTER COLUMN id TYPE varchar(32);',
+    'ALTER TABLE submissions ALTER COLUMN challenge_id TYPE varchar(32);',
+    'ALTER TABLE solves ALTER COLUMN challenge_id TYPE varchar(32);'
 ]
 
 
@@ -73,7 +79,7 @@ def reset(psql):
         LOGGER.info('DROP TABLEs')
         cursor.execute('DROP TABLE IF EXISTS categories, challenges, '
                        'confirmations, schema_migrations, solves, '
-                       'submissions, unopened_challenges,', 'users;')
+                       'submissions, unopened_challenges, users;')
 
 
 def run_migrations(psql, reset_db):

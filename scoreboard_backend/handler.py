@@ -1,13 +1,14 @@
 from pprint import pprint
 import logging
 import hashlib
+import os.path
 import time
 import uuid
 
 import jwt
 import psycopg2
 
-from const import (CHALLENGE_FIELDS, COMPETITION_END, COMPETITION_START,
+from const import (COMPETITION_END, COMPETITION_START,
                    REGISTRATION_PROOF_OF_WORK, SUBMISSION_DELAY,
                    TOKEN_PROOF_OF_WORK, TWELVE_HOURS)
 from helper import api_response, decrypt_secrets, psql_connection, send_email
@@ -32,6 +33,18 @@ def valid_token(token):
     return True
 
 
+@validate(id=valid_challenge_id, token=valid_token, validate_data=False)
+def challenge(data, stage):
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+        with psql.cursor() as cursor:
+            cursor.execute('SELECT description FROM challenges where id=%s',
+                           (data['id'],))
+            result = cursor.fetchone()
+    if not result:
+        return api_response(404)
+    return api_response(200, result[0])
+
+
 def challenge_open(event, _context):
     if not event:
         return api_response(422, 'data must be provided')
@@ -41,8 +54,8 @@ def challenge_open(event, _context):
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
-            cursor.execute('SELECT name, description, category_id, flag_hash '
-                           'FROM unopened_challenges WHERE id=%s',
+            cursor.execute('SELECT name, description, category_id, flag_hash, '
+                           'tags FROM unopened_challenges WHERE id=%s',
                            (challenge_id,))
             result = cursor.fetchone()
             if not result:
@@ -52,9 +65,30 @@ def challenge_open(event, _context):
             cursor.execute('DELETE FROM unopened_challenges WHERE id=%s',
                            (challenge_id,))
             cursor.execute('INSERT INTO challenges VALUES (%s, now(), %s, %s, '
-                           '%s, %s);', (challenge_id, *result))
+                           '%s, %s, %s);', (challenge_id, *result))
         psql.commit()
     return api_response(201)
+
+
+def challenges(event, _context):
+    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+        with psql.cursor() as cursor:
+            cursor.execute('SELECT challenges.id, challenges.name, '
+                           'challenges.tags, categories.name FROM challenges '
+                           'JOIN categories ON category_id = categories.id '
+                           'ORDER BY challenges.date_created ASC;')
+            open_challenge_data = cursor.fetchall()
+            cursor.execute('SELECT challenge_id, team_name,'
+                           'EXTRACT(EPOCH FROM solves.date_created) FROM '
+                           'solves JOIN users ON user_id=id;')
+            solves = cursor.fetchall()
+            cursor.execute(
+                'SELECT categories.name, count(unopened_challenges.id) FROM '
+                'unopened_challenges JOIN categories ON '
+                'category_id=categories.id GROUP BY categories.name;')
+            unopened_by_category = dict(cursor.fetchall())
+    return api_response(200, {'open': open_challenge_data, 'solves': solves,
+                              'unopened_by_category': unopened_by_category})
 
 
 def challenges_set(event, context):
@@ -68,18 +102,31 @@ def challenges_set(event, context):
         LOGGER.error('Cannot set challenges once the competition has started')
         return api_response(400, 'competition has already started')
 
-    categories = {'Default': None, 'Second Category': None}
-    categories_values_sql = ', '.join(
-        ['(DEFAULT, now(), %s)'] * len(categories))
-    challenges = []
+    categories = {}
+    challenge_values = []
     try:
         for challenge in event:
-            challenges.append({field: challenge[field]
-                               for field in CHALLENGE_FIELDS})
+            categories[challenge['category']] = None
+            challenge_values.append(challenge['id'])
+            challenge_values.append(challenge['title'])
+            if challenge['file_urls']:
+                file_list = '\n'.join(
+                    [' * [{}]({})'.format(os.path.basename(x), x)
+                     for x in sorted(challenge['file_urls'])])
+                description = '{}\n\nFiles:\n{}'.format(
+                    challenge['description'], file_list)
+            else:
+                description = challenge['description']
+            challenge_values.append(description)
+            challenge_values.append(challenge['category'])
+            challenge_values.append(challenge['flag_hash'])
+            challenge_values.append(', '.join(sorted(challenge['tags'])))
     except (KeyError, TypeError):
         return api_response(422, 'invalid scoreboard data')
-    challenges_values_sql = ', '.join(
-        ['(%s, now(), %s, %s, %s, %s)'] * len(challenges))
+    categories_sql = ', '.join(
+        ['(DEFAULT, now(), %s)'] * len(categories))
+    challenges_sql = ', '.join(['(%s, now(), %s, %s, %s, %s, %s)']
+                               * len(event))
 
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
@@ -89,7 +136,7 @@ def challenges_set(event, context):
 
             LOGGER.info('Add categories')
             cursor.execute('INSERT INTO categories VALUES {};'
-                           .format(categories_values_sql), tuple(categories))
+                           .format(categories_sql), tuple(categories))
 
             LOGGER.info('Get category IDs')
             cursor.execute('SELECT id, name FROM categories;')
@@ -97,18 +144,13 @@ def challenges_set(event, context):
             for category_id, category_name in results:
                 categories[category_name] = category_id
 
-            values = []
-            for challenge in challenges:
-                values.append(challenge['id'])
-                values.append(challenge['title'])
-                values.append(challenge['description'])
-                #  TODO: Update to use passed in category
-                values.append(categories['Default'])
-                values.append(challenge['flag_hash'])
+            # Replace challenge name with challenge_id
+            for index in range(3, len(challenge_values), 6):
+                challenge_values[index] = categories[challenge_values[index]]
 
             LOGGER.info('Add challenges')
             cursor.execute('INSERT INTO unopened_challenges VALUES {};'
-                           .format(challenges_values_sql), tuple(values))
+                           .format(challenges_sql), tuple(challenge_values))
         psql.commit()
     return api_response(201, 'unopened_challenges set')
 
@@ -155,14 +197,6 @@ def submit(data, stage):
             if response:
                 return api_response(409, 'challenge already solved')
 
-            # Log submission
-            try:
-                cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
-                               'now(), %s, %s, %s);',
-                               (user_id, challenge_id, flag))
-            except psycopg2.IntegrityError as exception:
-                return api_response(409, 'invalid submission data')
-
             # Check if correct solution
             flag_hash = hashlib.sha256(flag.encode()).hexdigest()
             cursor.execute('SELECT 1 FROM challenges WHERE id=%s AND '
@@ -176,6 +210,16 @@ def submit(data, stage):
             else:
                 message = 'incorrect flag'
                 status = 400
+                # Log submission
+                #
+                # Note: We only want to log incorrect submissions, this way the
+                #       DB does not contain valid flags.
+                try:
+                    cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
+                                   'now(), %s, %s, %s);',
+                                   (user_id, challenge_id, flag))
+                except psycopg2.IntegrityError as exception:
+                    return api_response(409, 'invalid submission data')
         psql.commit()
 
     return api_response(status, message)
@@ -196,8 +240,9 @@ def token(data, stage):
     with psql_connection(SECRETS['DB_PASSWORD']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER LOGIN {}'.format(email))
-            cursor.execute('SELECT id FROM users where lower(email)=%s AND '
-                           'password=crypt(%s, password);',
+            cursor.execute('SELECT id, team_name FROM users where '
+                           'date_confirmed IS NOT NULL AND '
+                           'lower(email)=%s AND password=crypt(%s, password);',
                            (email, data['password']))
             response = cursor.fetchone()
     if not response:
@@ -210,7 +255,7 @@ def token(data, stage):
     payload = {'exp': expire_time, 'nbf': now, 'user_id': response[0]}
     token = jwt.encode(payload, SECRETS['JWT_SECRET'],
                        algorithm='HS256').decode('utf-8')
-    return api_response(200, {'token': token})
+    return api_response(200, {'team': response[1], 'token': token})
 
 
 @validate(id=valid_confirmation, validate_data=False)

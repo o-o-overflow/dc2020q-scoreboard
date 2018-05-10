@@ -22,6 +22,11 @@ body {
   height: auto;
 }
 
+input {
+    font-size: 1rem;
+    width: 100%;
+}
+
 nav {
   align-items: center;
   background: white;
@@ -32,6 +37,11 @@ nav {
   position: fixed;
   top: 0;
   z-index: 1;
+}
+
+nav button {
+  font-family: 'Cormorant Upright', serif;
+  font-size: 1.2rem;
 }
 
 #nav-toggle {
@@ -54,6 +64,24 @@ nav {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.button {
+    background-color: lightgreen;
+    border: 1px solid transparent;
+    border-radius: .3rem;
+    cursor: pointer;
+    display: block;
+    font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin: 0;
+    padding: .5rem 1rem;
+}
+
+.button:disabled {
+    cursor: auto;
+    opacity: .65;
 }
 
 .category-amuse:before {
@@ -103,12 +131,26 @@ nav {
   padding: 15px;
 }
 
+.form-group {
+    padding-bottom: 20px;
+}
+
 .hidden-menu-item {
   font-family: 'TheWrittenWord', serif;
 }
 
 .hidden-menu-item .menu-points {
   font-family: 'TheWrittenWord', serif;
+}
+
+.label-toggle {
+  display: none;
+  margin: 10px;
+  padding-top: 5px;
+}
+
+.logged-in {
+  cursor: pointer;
 }
 
 .menu-box {
@@ -154,10 +196,12 @@ nav {
   width: 100%;
 }
 
-.label-toggle {
-  display: none;
-  margin: 10px;
-  padding-top: 5px;
+.modal {
+  background: white;
+  border: 3px solid deeppink;
+  border-radius: .3rem;
+  margin: 100px auto;
+  max-width: 400px;
 }
 
 .nav-items {
@@ -214,6 +258,7 @@ nav {
   font-size: 2.25rem;
   font-weight: bold;
   margin-bottom: 0;
+  text-transform: capitalize;
 }
 
 @media screen and (max-width: 575px) {

@@ -1,8 +1,27 @@
 custom:
   kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
 functions:
+  challenge:
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: challenge/{id}/{token}
+          request:
+            parameters:
+              paths:
+                id: true
+                token: true
+    handler: handler.challenge
   challenge_open:
     handler: handler.challenge_open
+  challenges:
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: challenges
+    handler: handler.challenges
   challenges_set:
     handler: handler.challenges_set
   migrate:
@@ -43,10 +62,11 @@ functions:
     handler: handler.users
 package:
   exclude:
-    - kms-secrets.dev.us-east-2.yml
+    - kms-secrets.*.us-east-2.yml
     - node_modules/**
     - package-lock.json
     - test*.py
+    - "*.sh"
 plugins:
   - serverless-kms-secrets
 provider:
