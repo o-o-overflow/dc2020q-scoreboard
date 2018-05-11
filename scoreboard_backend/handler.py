@@ -109,15 +109,7 @@ def challenges_set(event, context):
             categories[challenge['category']] = None
             challenge_values.append(challenge['id'])
             challenge_values.append(challenge['title'])
-            if challenge['file_urls']:
-                file_list = '\n'.join(
-                    [' * [{}]({})'.format(os.path.basename(x), x)
-                     for x in sorted(challenge['file_urls'])])
-                description = '{}\n\nFiles:\n{}'.format(
-                    challenge['description'], file_list)
-            else:
-                description = challenge['description']
-            challenge_values.append(description)
+            challenge_values.append(challenge['description'])
             challenge_values.append(challenge['category'])
             challenge_values.append(challenge['flag_hash'])
             challenge_values.append(', '.join(sorted(challenge['tags'])))
