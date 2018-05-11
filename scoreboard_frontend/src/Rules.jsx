@@ -7,7 +7,7 @@ function Rules() {
 		
 		<div>
 		  <p>Welcome to DEF CON CTF Quals. May we take your order?</p>
-		  <p>This year marks a transition. For those who are not aware, DEF CON CTF regularly rotates organizers. This year is the first year of the Order of the Overflow. If you are interested in who we are, you can read all about us <a href="">at the changeover announcement</a>. Otherwise, read on fir the rules!</p>
+		  <p>This year marks a transition. For those who are not aware, DEF CON CTF regularly rotates organizers. This year is the first year of the Order of the Overflow. If you are interested in who we are, you can read all about us <a href="https://www.defcon.org/html/defcon-26/dc-26-ctf.html">at the changeover announcement</a>. Otherwise, read on for the rules!</p>
 
 		  <p>This year, we have grilled up a smattering of tasty challenges for your enjoyment.
 			A broad selection of challenges is available on our menu,

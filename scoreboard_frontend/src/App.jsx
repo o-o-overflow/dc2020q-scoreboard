@@ -185,7 +185,7 @@ class App extends React.Component {
     return (
       <div>
         <nav>
-          <div className="nav-title">Order-of-the-Overflow</div>
+          <div className="nav-title"><a href="https://www.oooverflow.io">Order-of-the-Overflow</a></div>
           <input type="checkbox" id="nav-toggle" />
           <label htmlFor="nav-toggle" className="label-toggle">☰</label>
           <div className="nav-items">
