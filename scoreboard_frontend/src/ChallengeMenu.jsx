@@ -34,6 +34,10 @@ class ChallengeMenu extends React.Component {
     };
   }
 
+  componentWillUnmount = () => {
+    this.props.onUnload();
+  }
+
   buildSections = (sectionTitle) => {
     const section = this.sectionInfo[sectionTitle];
 
@@ -89,6 +93,7 @@ ChallengeMenu.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   challenges: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
   onClick: PropTypes.func.isRequired,
+  onUnload: PropTypes.func.isRequired,
   unopened: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 export default ChallengeMenu;

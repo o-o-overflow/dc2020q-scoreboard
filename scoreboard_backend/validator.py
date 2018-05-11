@@ -104,6 +104,8 @@ def validate(validate_data=True, **validators):
                 result = validator(data.get(parameter))
                 if result is False:
                     return api_response(422, 'invalid {}'.format(parameter))
+                elif isinstance(result, dict):
+                    return api_response(**result)
                 elif not isinstance(result, bool):
                     return api_response(422, result)
                 parameters[parameter] = data[parameter]

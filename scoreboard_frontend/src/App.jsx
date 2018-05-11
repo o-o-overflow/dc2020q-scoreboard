@@ -56,7 +56,7 @@ class App extends React.Component {
 
 
   handleLogOut = () => {
-    this.setState({ ...this.state, team: '', token: '' });
+    this.setState({ ...this.state, showChallengeModal: false, team: '', token: '' });
     window.localStorage.removeItem('team');
     window.localStorage.removeItem('token');
     this.loadData();
@@ -67,7 +67,7 @@ class App extends React.Component {
   }
 
   handleOpenLogInModal = () => {
-    this.setState({ ...this.state, showLogInModal: true });
+    this.setState({ ...this.state, showLogInModal: true, showChallengeModal: false });
   }
 
   loadData = () => {
@@ -176,7 +176,7 @@ class App extends React.Component {
           <div className="background">
             <div className="background-fade" />
             <div className="container">
-              <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} unopened={this.state.unopened} />} />
+              <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} onUnload={this.handleCloseChallengeModal} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
               <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
             </div>
@@ -203,6 +203,7 @@ class App extends React.Component {
             challengeId={this.state.showChallengeId}
             challengeTitle={this.challengeTitlesById[this.state.showChallengeId] || ''}
             onClose={this.handleCloseChallengeModal}
+            onTokenExpired={this.handleLogOut}
             onSolve={this.loadData}
             solved={solved}
             token={this.state.token}
