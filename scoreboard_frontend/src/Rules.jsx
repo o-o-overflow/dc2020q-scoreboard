@@ -39,8 +39,10 @@ function Rules() {
 	  <h1>Rules</h1>
 
 	  <ol>
-		<li>No Denial of Service&mdash;DoS is super lame, don't do it or you will be banned.</li>
+		<li>No Denial of Service&mdash;DoS is super lame, don't do it or you will be banned</li>
 		<li>No sharing flags, exploits, or hints&mdash;Do your own hacks</li>
+		<li>No attacks against our infrastructure&mdash;Hack the challenges, not us</li>
+		<li>No automated scanning&mdash;For these challenges, do better</li>		
 	  </ol>
 
 	  <h1>Hints</h1>
