@@ -14,4 +14,4 @@ then
 	exit -1
 fi
 
-sls invoke -lf challenge_open -d "{\"id\": \"$CHALLENGE_ID\" }"
+sls invoke -lf challenge_open -d "{\"id\": \"$CHALLENGE_ID\" }" --stage prod
