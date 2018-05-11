@@ -45,7 +45,7 @@ function Rules() {
 
 	  <h1>Hints</h1>
 	  <p>
-		Any hints that we give will be distributed as announcements on uor Twitter account <a href="https://twitter.com/oooverflow">@oooverflow</a>.
+		Any hints that we give will be distributed as announcements on our Twitter account <a href="https://twitter.com/oooverflow">@oooverflow</a>.
 	  </p>
 	  <p>
 		No hints will be given once a challenge is solved. 
