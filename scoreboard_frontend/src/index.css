@@ -282,7 +282,7 @@ nav button {
 }
 
 .solves th, .solves td {
-	width: 1em;
+	text-align: center;
 }
 
 .solves .solved {
