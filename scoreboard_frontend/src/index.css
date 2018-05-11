@@ -221,6 +221,12 @@ nav button {
   padding: 10px;
 }
 
+.nav-title a {
+  text-decoration: none;
+  color: black;
+}
+
+
 .row {
   display: flex;
   flex-wrap: wrap;
