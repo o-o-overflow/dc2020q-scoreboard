@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [ "$#" -ne 1 ]; then
+	echo "usage: $0 <challenge_id>"
+	exit -1
+fi
+
+
 CHALLENGE_ID=$1
 
 if [ ! -e "../../challs-manager/cloned_repos/chall-$CHALLENGE_ID" ]
