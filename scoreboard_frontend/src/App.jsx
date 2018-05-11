@@ -181,6 +181,7 @@ class App extends React.Component {
 
     const teamSolves = this.state.solvesByTeam[this.state.team] || [];
     const solved = teamSolves.includes(this.state.showChallengeId);
+    const registerLink = this.state.team ? null : <a href="https://register.oooverflow.io">Register</a>;
 
     return (
       <div>
@@ -190,6 +191,7 @@ class App extends React.Component {
           <label htmlFor="nav-toggle" className="label-toggle">☰</label>
           <div className="nav-items">
             {tokenLink}
+			{registerLink}
             <Link to="/">À La Carte</Link>
             <Link to="/rules">Rules</Link>
             <Link to="/scoreboard">Scoreboard</Link>
