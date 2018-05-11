@@ -29,7 +29,7 @@ def valid_token(token):
     try:
         jwt.decode(token, SECRETS['JWT_SECRET'], algorithms=['HS256'])
     except jwt.InvalidTokenError:
-        return False
+        return {'status_code': 401, 'message': 'invald token'}
     return True
 
 

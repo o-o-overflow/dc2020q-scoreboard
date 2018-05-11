@@ -69,12 +69,19 @@ class ChallengeModal extends React.Component {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/challenge/${this.props.challengeId}/${this.props.token}`, { method: 'GET' })
       .then(response => response.json().then(body => ({ body, status: response.status })))
       .then(({ body, status }) => {
-        if (status !== 200) {
+        if (status === 401) {
+          this.props.onTokenExpired();
+          console.log('Token expired. Please log in again');
+          return;
+        } else if (status !== 200) {
           console.log(status);
           console.log(body.message);
           return;
         }
-          const converter = new showdown.Converter({ literalMidWordUnderscores: true, simplifiedAutoLink: true });
+        const converter = new showdown.Converter({
+          literalMidWordUnderscores: true,
+          simplifiedAutoLink: true,
+        });
         const description = converter.makeHtml(body.message);
         this.setState({ ...this.state, description });
       })
@@ -98,13 +105,17 @@ class ChallengeModal extends React.Component {
       method: 'POST',
     }).then(response => response.json().then(body => ({ body, status: response.status })))
       .then(({ body, status }) => {
-        if (status === 429) {
+        if (status === 201) {
+          this.props.onSolve();
+        } else if (status === 401) {
+          this.props.onTokenExpired();
+          console.log('Token expired. Please log in again');
+          return;
+        } else if (status === 429) {
           this.countDown = Math.ceil(body.message.seconds) + 1;
           this.tick();
           this.timerID = setInterval(() => this.tick(), 1000);
           return;
-        } else if (status === 201) {
-          this.props.onSolve();
         }
         this.setState({
           ...this.state,
@@ -178,6 +189,7 @@ ChallengeModal.propTypes = {
   challengeTitle: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onSolve: PropTypes.func.isRequired,
+  onTokenExpired: PropTypes.func.isRequired,
   solved: PropTypes.bool.isRequired,
   token: PropTypes.string.isRequired,
 };
