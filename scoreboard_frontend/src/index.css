@@ -251,6 +251,10 @@ nav button {
   text-align: left;
 }
 
+.toTeam {
+  cursor: pointer;	
+}
+
 .section-title {
   align-items: center;
   color: #9f3942;

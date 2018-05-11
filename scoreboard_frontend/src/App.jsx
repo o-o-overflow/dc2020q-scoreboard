@@ -203,7 +203,7 @@ class App extends React.Component {
             <div className="container">
               <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} onUnload={this.handleCloseChallengeModal} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
-              <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} teamScoreboardOrder={this.state.teamScoreboardOrder} />} />
+              <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} teamScoreboardOrder={this.state.teamScoreboardOrder} team={this.state.team} />} />
 				<Route exact path="/solves" render={() => <GameMatrix challenges={this.state.challenges} teamScoreboardOrder={this.state.teamScoreboardOrder}/>}/>
             </div>
           </div>
