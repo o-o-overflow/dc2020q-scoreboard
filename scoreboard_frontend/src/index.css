@@ -261,6 +261,32 @@ nav button {
   text-transform: capitalize;
 }
 
+.solves {
+	width: 100%;
+	table-layout: fixed;
+}
+
+.solves thead tr {
+	height: 10em;
+}
+
+.solves th {
+	-webkit-transform: rotate(-50deg);
+	-moz-transform: rotate(-50deg);
+	-ms-transform: rotate(-50deg);
+	-o-transform: rotate(-50deg);
+}
+
+.solves th, .solves td {
+	width: 1em;
+}
+
+.solves .solved {
+	color: green;
+	font-size: 1.6em;
+}
+
+
 @media screen and (max-width: 575px) {
   .label-toggle {
     cursor: pointer;

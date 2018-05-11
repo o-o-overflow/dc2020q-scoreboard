@@ -3,6 +3,7 @@ import ReactModal from 'react-modal';
 import { Link, Route } from 'react-router-dom';
 import ChallengeMenu from './ChallengeMenu';
 import ChallengeModal from './ChallengeModal';
+import GameMatrix from './GameMatrix';
 import LogInModal from './LogInModal';
 import Rules from './Rules';
 import Scoreboard from './Scoreboard';
@@ -21,6 +22,7 @@ class App extends React.Component {
       challenges: {},
       lastSolveTimeByTeam: {},
       pointsByTeam: {},
+      teamScoreboardOrder: [],
       showChallengeId: '',
       showChallengeModal: false,
       showLogInModal: false,
@@ -137,11 +139,26 @@ class App extends React.Component {
       pointsByTeam[team] = points;
     });
 
+	const teamScoreboardOrder = Object.keys(pointsByTeam).map(name => ({
+		lastSolveTime: lastSolveTimeByTeam[name],
+		name,
+		points: pointsByTeam[name],
+		solves: solvesByTeam[name],
+	}));
+	teamScoreboardOrder.sort((a, b) => {
+		if (a.points === b.points) {
+			return a.lastSolveTime - b.lastSolveTime;
+		}
+		return b.points - a.points;
+	});
+	  
+
     this.setState({
       ...this.state,
       challenges,
       lastSolveTimeByTeam,
       pointsByTeam,
+	  teamScoreboardOrder,
       solvesByTeam,
       unopened: data.unopened_by_category,
     });
@@ -169,6 +186,7 @@ class App extends React.Component {
             <Link to="/">À La Carte</Link>
             <Link to="/rules">Rules</Link>
             <Link to="/scoreboard">Scoreboard</Link>
+            <Link to="/solves">Solves</Link>
             <a href="https://twitter.com/oooverflow">Announcements</a>
           </div>
         </nav>
@@ -178,7 +196,8 @@ class App extends React.Component {
             <div className="container">
               <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} onUnload={this.handleCloseChallengeModal} unopened={this.state.unopened} />} />
               <Route exact path="/rules" component={Rules} />
-              <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} />} />
+              <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} teamScoreboardOrder={this.state.teamScoreboardOrder} />} />
+				<Route exact path="/solves" render={() => <GameMatrix challenges={this.state.challenges} teamScoreboardOrder={this.state.teamScoreboardOrder}/>}/>
             </div>
           </div>
         </div>

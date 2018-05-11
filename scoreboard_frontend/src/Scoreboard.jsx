@@ -16,18 +16,20 @@ function categoryIcons(categoryByChallenge, challengeId) {
 }
 
 function Scoreboard(props) {
-  const teams = Object.keys(props.pointsByTeam).map(name => ({
-    lastSolveTime: props.lastSolveTimeByTeam[name],
-    name,
-    points: props.pointsByTeam[name],
-    solves: props.solvesByTeam[name].map(id => categoryIcons(props.categoryByChallenge, id)),
+	console.log(props.teamScoreboardOrder);
+  const teams = props.teamScoreboardOrder.map(team => ({
+      lastSolveTime: team.lastSolveTime,
+      name: team.name,
+      points: props.pointsByTeam[team.name],
+      solves: team.solves.map(id => categoryIcons(props.categoryByChallenge, id)),
   }));
-  teams.sort((a, b) => {
-    if (a.points === b.points) {
-      return a.lastSolveTime - b.lastSolveTime;
-    }
-    return b.points - a.points;
-  });
+  // no longer needed because I lifted this code up into App
+  // teams.sort((a, b) => {
+  //   if (a.points === b.points) {
+  //     return a.lastSolveTime - b.lastSolveTime;
+  //   }
+  //   return b.points - a.points;
+  // });
 
   const teamRows = teams.map(team =>
     (
