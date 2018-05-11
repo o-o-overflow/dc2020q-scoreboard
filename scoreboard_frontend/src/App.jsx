@@ -30,6 +30,7 @@ class App extends React.Component {
       openedByCategory: {},
       team: window.localStorage.getItem('team') || '',
       token: window.localStorage.getItem('token') || '',
+      intervalID: -1,
       unopened: {},
     };
     this.categoryByChallenge = {};
@@ -38,6 +39,12 @@ class App extends React.Component {
 
   componentDidMount() {
     this.loadData();
+	  const intervalId = setInterval(this.loadData, 60000);
+	  this.setState({intervalId: intervalId});
+  }
+
+  componentWillUnmount () {
+	  clearInterval(this.state.intervalId);
   }
 
   setAuthentication = (data) => {
