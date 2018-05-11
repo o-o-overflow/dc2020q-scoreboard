@@ -26,6 +26,10 @@ function Rules() {
 	  <div>
 		We do adaptive scoring based on the number of solves. All challenges start out at 500 and decrease from there.
 	  </div>
+	  <h1>Flag Format</h1>
+	  <div>
+		<p>Unless otherwise noted in the challenge description, all flags will be in the format: <pre>OOO&#123;...&#125;</pre> <b>AND YOU MUST SUBMIT THE WHOLE THING, INCLUDING THE OOO&#123;...&#125;</b></p>
+	  </div>
 	  <h1>Opening Challenges</h1>
 	  <div>
 		For this year, we will decide what challenges to open. 
