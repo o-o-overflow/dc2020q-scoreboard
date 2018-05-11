@@ -30,8 +30,8 @@ class Counter extends React.Component {
       clearInterval(this.timerID);
       return (
         <div className="countdown">
-          Please wait for DNS to update.<br />
-          Hacking will begin soon...
+          Hacking will begin soon...<br />
+          Please refresh, lightly.
         </div>
       )
     }
