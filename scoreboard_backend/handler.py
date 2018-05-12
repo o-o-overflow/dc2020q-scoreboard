@@ -1,7 +1,6 @@
 from pprint import pprint
 import logging
 import hashlib
-import os.path
 import time
 import uuid
 
