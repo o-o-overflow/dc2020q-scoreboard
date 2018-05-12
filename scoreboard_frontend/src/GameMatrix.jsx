@@ -15,14 +15,9 @@ class GameMatrix extends React.Component {
 	}
 
 	solvedRow (solves) {
-		console.log(solves);
-		console.log(this.challenges);
-		console.log(this.props.challenges);
 		const solved = this.challenges.map((id) => {
-			console.log(id);
 			const isSolved = solves.has(id);
 			const theClass = isSolved ? 'solved' : 'not-solved';
-			console.log(id);
 			return <td className={theClass} dangerouslySetInnerHTML={ {__html: isSolved ? '&#10004;' : '&#10060;'} }></td>;
 		});
 		return solved;
@@ -43,13 +38,12 @@ class GameMatrix extends React.Component {
 		this.challenges = [];
 		Object.keys(this.props.challenges).map((cat) => {
 			this.props.challenges[cat].map((chall) => {
-				console.log(chall.id);
 				this.challenges.push(chall.id);
 			});
 		});
 
 		this.challenges.sort();
-		
+
 		return (
 			<table className='solves'>
 			  <thead>
@@ -60,7 +54,7 @@ class GameMatrix extends React.Component {
 			  </thead>
 			  <tbody>
 				{this.body()}
-			  </tbody>				
+			  </tbody>
 			</table>
 		);
 	}
