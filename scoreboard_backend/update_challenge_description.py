@@ -7,11 +7,12 @@ import getpass
 
 import sshtunnel
 
-DB_HOST = 'scoreboard-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com'
+#DB_HOST = 'scoreboard-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com'
+DB_HOST = 'scoreboard-prod.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com'
 
 def main():
 
-        print("THIS IS ALL FOR DEV, FIX THIS LATER FOR THE REAL GAME")
+        print("THIS IS PROD, DO YOU KNOW WHAT YOU DO?")
 
         challenge_id = sys.argv[1]
 
