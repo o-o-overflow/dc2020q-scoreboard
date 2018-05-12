@@ -11,7 +11,7 @@ function Rules() {
 
 		  <p>This year, we have grilled up a smattering of tasty challenges for your enjoyment.
 			A broad selection of challenges is available on our menu,
-			divided in five categories of (very) roughly incremental difficulty:
+			divided in five categories of (very) roughly incremental difficulty (with <span className="category-guest">Guest Chefs</span> challenges as spicy or mild as our guest chefs want them to be):
 			</p>
       </div>
       <ul>
