@@ -14,7 +14,8 @@ DB_HOST = {'dev': 'scoreboard-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com',
            'prod': 'scoreboard-prod.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com'}
 
 
-def decrypt_secrets(environment='dev'):
+#def decrypt_secrets(environment='dev'):
+def decrypt_secrets(environment='prod'):
     session = boto3.session.Session(profile_name='ooo')
     kms = session.client('kms')
     with open('scoreboard_backend/kms-secrets.{}.us-east-2.yml'
@@ -76,7 +77,8 @@ def diff_string(diff):
     return last
 
 @contextmanager
-def psql_connection(db_password, environment='dev'):
+#def psql_connection(db_password, environment='dev'):
+def psql_connection(db_password, environment='prod'):
     psql = psycopg2.connect(dbname='scoreboard', host=DB_HOST[environment],
                             password=db_password, user='scoreboard')
     try:
@@ -94,7 +96,7 @@ def info_team(psql, team):
         else:
             team_id = team_id[0]
     now = datetime.datetime.now(datetime.timezone.utc)
-    print ("")    
+    print ("")
     print ("\x1b[32m----------------------------------------------------------\x1b[0m")
     print ("\x1b[32m        Challenge       Wront Attempts     Solved \x1b[0m ")
     with psql.cursor() as cursor:
@@ -117,7 +119,7 @@ def info_team(psql, team):
                     wrong = wrong[0]
             print ("\x1b[33m%20s\x1b[0m         %3s          %s"%(name, wrong, when))
     print ("\x1b[32m----------------------------------------------------------\x1b[0m")
-    print ("")    
+    print ("")
 
 def timeline(psql):
     now   = datetime.datetime.now(datetime.timezone.utc)
@@ -137,10 +139,10 @@ def timeline(psql):
     for i in range(len(slots)):
         if i==current:
             print ("\x1b[32mNOW>\x1b[0m           %5s               %5s"%(slots[i][0], len(slots[i][1])))
-        else:    
+        else:
             print (" %2d            %5s               %5s"%(i,slots[i][0], len(slots[i][1])))
-        
-    
+
+
 
 def info_chall(psql, chall):
     now = datetime.datetime.now(datetime.timezone.utc)
@@ -152,13 +154,13 @@ def info_chall(psql, chall):
             sys.exit(2)
         else:
             opentime = opentime[0]
-    print ("")    
+    print ("")
     print ("\x1b[32m----------------------------------\x1b[0m")
     diff = now-opentime
     when = diff_string(diff)
     print ("\x1b[32m Open Time:\x1b[0m %s ago"%when)
     with psql.cursor() as cursor2:
-        cursor2.execute('SELECT solves.date_created, user_id FROM solves WHERE challenge_id=%s;',(chall,))
+        cursor2.execute('SELECT solves.date_created, team_name FROM solves,users WHERE solves.user_id = users.id and challenge_id=%s;',(chall,))
         solvedby = cursor2.fetchall()
         if len(solvedby)==0:
             print ("\x1b[32m Solved by:\x1b[0m no one yet")
@@ -169,6 +171,12 @@ def info_chall(psql, chall):
             diff = solvedby[0][0]-opentime
             when = diff_string(diff)
             print ("\x1b[32m                 \x1b[0m %s after it was open"%when)
+            print ("\x1b[32m Last 3 teams that solved it:\x1b[0m")
+            for solver in solvedby[-3:][::-1]:
+                diff = now-solver[0]
+                when = diff_string(diff)
+                print ("      %s, %s ago"%(solver[1], when))
+
 
     with psql.cursor() as cursor2:
         cursor2.execute('SELECT submissions.date_created, team_name, flag FROM submissions,users WHERE submissions.user_id = users.id and challenge_id=%s;',(chall,))
@@ -179,17 +187,17 @@ def info_chall(psql, chall):
             errors.sort(key=lambda x:x[0])
             print ("\x1b[32m Wrong Flag Submitted:\x1b[0m %d"%len(errors))
             print ("\x1b[32m Last 10 wrong submissions:\x1b[0m")
-            for when, team, flag in errors[-10:]:
+            for when, team, flag in errors[-10:][::-1]:
                 diff = now-when
                 when = diff_string(diff)
                 print ("      '%s' from %s, %s ago"%(flag, team, when))
     print ("\x1b[32m----------------------------------\x1b[0m")
-    print ("")    
+    print ("")
 
 def challs_table(psql):
-    print ("")    
-    print ("\x1b[32m           Name       : Status  Solved  Wrong  Last \x1b[0m")
-    print ("\x1b[32m-------------------------------------------------------\x1b[0m")
+    print ("")
+    print ("\x1b[32m           Name       : Status  Solved  Wrong    Last     Open\x1b[0m")
+    print ("\x1b[32m--------------------------------------------------------------\x1b[0m")
     now = datetime.datetime.now(datetime.timezone.utc)
     with psql.cursor() as cursor:
         cursor.execute('SELECT id from challenges;')
@@ -205,63 +213,80 @@ def challs_table(psql):
             else:
                 diff = now-last
                 last = diff_string(diff)
-            print ("\x1b[33m%20s\x1b[0m  :  OPEN    %3s    %3s   %s"%(name,tot,wrong,last))
-    
+            with psql.cursor() as cursor2:
+                cursor2.execute('SELECT date_created FROM challenges WHERE id=%s;', (name,))
+                openfrom = "X"
+                opentime = cursor2.fetchone()[0]
+                diff = now-opentime
+                openfrom = diff_string(diff)
+            print ("\x1b[33m%20s\x1b[0m  :  OPEN    %3s    %5s   %5s  %7s"%(name,tot,wrong,last,openfrom))
+
     with psql.cursor() as cursor:
         cursor.execute('SELECT id from unopened_challenges;')
         for name in cursor.fetchall():
-            print ("%20s  :  OPEN      -      -      -"%name)
-    print ("")    
-         
+            print ("%20s  :  CLOSE     -        -       -"%name)
+    print ("")
+
 
 def stats(psql):
     with psql.cursor() as cursor:
         cursor.execute('SELECT count(*) from users;')
         total = cursor.fetchone()[0]
-    
+
     with psql.cursor() as cursor:
         cursor.execute('SELECT count(*) from solves;')
         tsolved = cursor.fetchone()[0]
-    
+
     with psql.cursor() as cursor:
         cursor.execute('SELECT count(distinct(challenge_id)) from solves;')
         usolved = cursor.fetchone()[0]
-   
+
     with psql.cursor() as cursor:
         cursor.execute('SELECT count(*) from submissions;')
         flags = cursor.fetchone()[0]
-    
+
     with psql.cursor() as cursor:
         cursor.execute('SELECT count(*) from challenges;')
         open = cursor.fetchone()[0]
 
     with psql.cursor() as cursor:
+        cursor.execute('SELECT count(*) from unopened_challenges;')
+        closed = cursor.fetchone()[0]
+
+    with psql.cursor() as cursor:
         cursor.execute('SELECT count(distinct(user_id)) from solves;')
         active = cursor.fetchone()[0]
-    
+
     with psql.cursor() as cursor:
         cursor.execute('SELECT count(*) as c from solves group by user_id order by c;')
         max_solved = cursor.fetchall()
         if not max_solved:
            max_solved = 0
         else:
-           max_solved = max_solved[-1]
+           max_solved = max_solved[-1][0]
 
+    now   = datetime.datetime.now(datetime.timezone.utc)
+    start = datetime.datetime(2018,5,12,0,0,0,tzinfo=datetime.timezone.utc)
+    diff  = now-start
+    diffm = diff.days*24*60+diff.seconds//60
+    progress = diffm*100/(48*60)
+    diffs = diff_string(now-start)
     print ("")
     print ("\x1b[32m----------------------------------\x1b[0m")
-    print ("\x1b[32m Total Teams\x1b[0m:         %s"%total)
-    print ("\x1b[32m Active Teams\x1b[0m:        %s"%active)
-    print ("\x1b[32m Open Challenges\x1b[0m:     %s"%open)
-    print ("\x1b[32m Solved Challenges\x1b[0m:   %s"%usolved)
-    print ("\x1b[32m Correct Submissions\x1b[0m: %s"%tsolved)
-    print ("\x1b[32m Buffer\x1b[0m:              %s"%(open-max_solved,))
-    print ("\x1b[32m Wrong Flags\x1b[0m:         %s"%flags)
+    print ("\x1b[32m Game Time\x1b[0m:           %6s (%d%%)"%(diffs,int(progress)))
+    print ("\x1b[32m Total Teams\x1b[0m:         %6s"%total)
+    print ("\x1b[32m Active Teams\x1b[0m:        %6s"%active)
+    print ("\x1b[32m Open Challenges\x1b[0m:     %6s (%d%%)"%(open,open*100/(open+closed)))
+    print ("\x1b[32m Solved Challenges\x1b[0m:   %6s"%usolved)
+    print ("\x1b[32m Correct Submissions\x1b[0m: %6s"%tsolved)
+    print ("\x1b[32m Buffer\x1b[0m:              %6s"%(open-max_solved,))
+    print ("\x1b[32m Wrong Flags\x1b[0m:         %6s"%flags)
     print ("\x1b[32m----------------------------------\x1b[0m")
     print ("  (for more options use %s -h )"%sys.argv[0])
     print ("")
 
 def teams_table(psql):
-    print ("")    
+    print ("")
     print ("\x1b[32m           Name       : Solved  Wrong    Last \x1b[0m")
     print ("\x1b[32m-------------------------------------------------------\x1b[0m")
     now = datetime.datetime.now(datetime.timezone.utc)
@@ -283,7 +308,7 @@ def teams_table(psql):
                 last = diff_string(diff)
             print ("%20s  :  %3s    %3s    %s"%(team, solved, flags.get(team,0), last))
 
-    print ("")    
+    print ("")
 
 
 if __name__ == '__main__':
