@@ -287,6 +287,10 @@ nav button {
 	-o-transform: rotate(-50deg);
 }
 
+.solves th:first-child {
+	width: 10em;
+}
+
 .solves th, .solves td {
 	text-align: center;
 }
