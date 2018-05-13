@@ -274,10 +274,11 @@ nav button {
 .solves {
 	width: 100%;
 	table-layout: fixed;
+	margin-top: 4em;
 }
 
 .solves thead tr {
-	height: 10em;
+	height: 1em;
 }
 
 .solves th {
@@ -289,6 +290,10 @@ nav button {
 
 .solves th:first-child {
 	width: 10em;
+	-webkit-transform: unset;
+	-moz-transform: unset;
+	-ms-transform: unset;
+	-o-transform: unset
 }
 
 .solves th, .solves td {
