@@ -57,7 +57,7 @@ class ChallengeModal extends React.Component {
         status: 'computing proof of work',
       });
       this.worker.postMessage({
-        prefix: '00c7f',
+        prefix: '00c7',
         value: `${this.props.challengeId}!${this.state.flag}!${this.props.token}!${this.hashTimestamp}`,
       });
       return;
