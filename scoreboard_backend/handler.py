@@ -194,7 +194,15 @@ def submit(data, stage):
             cursor.execute('SELECT 1 FROM challenges WHERE id=%s AND '
                            'flag_hash=%s', (challenge_id, flag_hash))
             response = cursor.fetchone()
-            if response:
+            if challenge_id == 'mom':
+                message = 'Thanks, we hope whoever you chose appreciated the gesture.'
+                status = 201
+                cursor.execute('INSERT INTO solves VALUES (now(), %s, %s);',
+                               (challenge_id, user_id))
+                cursor.execute('INSERT INTO submissions VALUES (DEFAULT, '
+                               'now(), %s, %s, %s);',
+                               (user_id, challenge_id, flag))
+            elif response:
                 cursor.execute('INSERT INTO solves VALUES (now(), %s, %s);',
                                (challenge_id, user_id))
                 message = 'success!'
