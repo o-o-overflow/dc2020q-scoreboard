@@ -107,7 +107,10 @@ class App extends React.Component {
       }
 
       if (team in solvesByTeam) {
-        lastSolveTimeByTeam[team] = Math.max(lastSolveTimeByTeam[team], time);
+	  if (id !== "mom")
+	  {
+	    lastSolveTimeByTeam[team] = Math.max(lastSolveTimeByTeam[team], time);
+	  }
         solvesByTeam[team].push(id);
       } else {
         lastSolveTimeByTeam[team] = time;
