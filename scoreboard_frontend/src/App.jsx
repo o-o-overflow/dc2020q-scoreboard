@@ -30,7 +30,6 @@ class App extends React.Component {
       openedByCategory: {},
       team: window.localStorage.getItem('team') || '',
       token: window.localStorage.getItem('token') || '',
-      intervalID: -1,
       unopened: {},
     };
     this.categoryByChallenge = {};
@@ -39,12 +38,6 @@ class App extends React.Component {
 
   componentDidMount() {
     this.loadData();
-	  const intervalId = setInterval(this.loadData, 60000);
-	  this.setState({intervalId: intervalId});
-  }
-
-  componentWillUnmount () {
-	  clearInterval(this.state.intervalId);
   }
 
   setAuthentication = (data) => {
@@ -80,7 +73,7 @@ class App extends React.Component {
   }
 
   loadData = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/challenges`, { method: 'GET' })
+    fetch('data.json', { method: 'GET' })
       .then(response => response.json().then(body => ({ body, status: response.status })))
       .then(({ body, status }) => {
         if (status !== 200) {
@@ -161,7 +154,7 @@ class App extends React.Component {
 		}
 		return b.points - a.points;
 	});
-	  
+
 
     this.setState({
       ...this.state,
