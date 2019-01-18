@@ -10,8 +10,8 @@ function App() {
         </div>
       </header>
       <div className="container">
-        <h1>Countdown to DEF CON Quals 2018</h1>
-        <Counter startTime={1526083200} />
+        <h1>Countdown to DEF CON CTF Quals 2019</h1>
+        <Counter startTime={1557532800} />
       </div>
     </div>
   );
