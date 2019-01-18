@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Ensure OOO_S3_BUCKET is set
+if [ -z "$OOO_S3_BUCKET" ]; then
+    echo "\$OOO_S3_BUCKET is not set. Please source .env file."
+    exit 1
+fi
+
 # Allow BUILD=prod to be set.
 if [ -z "$BUILD" ]; then
     BUILD=dev
@@ -23,5 +29,5 @@ sh -ac ". .env.$BUILD; ./node_modules/.bin/react-scripts build" \
   && rm build/asset-manifest.json \
   && rm build/service-worker.js \
   && find build/static -regex '.*\.[cj]ss*' -exec sed -i '' '/^\/[/*]# sourceMappingURL/ d' {} \; \
-  && aws --profile ooo s3 cp ./build/index.html s3://oooverflow-scoreboard/$BUILD/index.html --cache-control max-age=60 \
-  && aws --profile ooo s3 sync build/ s3://oooverflow-scoreboard/$BUILD
+  && aws --profile ooo s3 cp ./build/index.html s3://$OOO_S3_BUCKET/$BUILD/scoreboard/index.html --cache-control max-age=60 \
+  && aws --profile ooo s3 sync build/ s3://$OOO_S3_BUCKET/$BUILD/scoreboard

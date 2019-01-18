@@ -71,7 +71,7 @@ yarn install
 
 The frontend applications each build to static html, css, and javascript. The
 deployed code lives in the
-[oooverflow-scoreboard](https://s3.console.aws.amazon.com/s3/buckets/oooverflow-scoreboard/?region=us-east-1&tab=overview)
+[ooodc2019q-scoreboard](https://s3.console.aws.amazon.com/s3/buckets/ooodc2019q-scoreboard/?region=us-east-1&tab=overview)
 S3 bucket under the `dev` and `prod` prefixes.
 
 Cloudfront distributions are configured to serve files out of that S3 bucket
