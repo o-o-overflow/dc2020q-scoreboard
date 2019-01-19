@@ -75,7 +75,7 @@ plugins:
   - serverless-kms-secrets
 provider:
   environment:
-    DB_HOST: dc2019q-scoreboard-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
+    DB_HOST: sb-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
     SECRETS: ${self:custom.kmsSecrets.secrets.SECRETS}
   iamRoleStatements:
     - Action:
@@ -94,10 +94,10 @@ provider:
   stage: dev
   vpc:
     securityGroupIds:
-      - sg-0a863cf22c6690b80
+      - sg-00d15b6f6446af81e
     subnetIds:
-      - subnet-0423499623e794a99
-      - subnet-01108604635dcc775
-      - subnet-0efdf26865a0f0c7e
+      - subnet-0cdd1cd843fe7b14f
+      - subnet-06e45b4af8eb26116
+      - subnet-052dffd800fb23613
 
-service: dc2019q-scoreboard
+service: sb
