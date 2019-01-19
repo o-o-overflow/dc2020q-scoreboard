@@ -55,9 +55,9 @@ def parse_json_request(event, min_body_size=2, max_body_size=512):
 
 
 @contextmanager
-def psql_connection(db_password):
+def psql_connection(db_password, db_username):
     psql = psycopg2.connect(dbname='scoreboard', host=os.getenv('DB_HOST'),
-                            password=db_password, user='scoreboard')
+                            password=db_password, user=db_username)
     try:
         yield psql
     finally:

@@ -26,6 +26,8 @@ functions:
     handler: handler.challenges_set
   migrate:
     handler: handler.migrate
+  ping:
+    handler: handler.ping
   submit:
     events:
       - http:
@@ -71,7 +73,7 @@ plugins:
   - serverless-kms-secrets
 provider:
   environment:
-    DB_HOST: scoreboard-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
+    DB_HOST: dc2019q-scoreboard-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
     SECRETS: ${self:custom.kmsSecrets.secrets.SECRETS}
   iamRoleStatements:
     - Action:
@@ -90,9 +92,10 @@ provider:
   stage: dev
   vpc:
     securityGroupIds:
-      - sg-04848976f5c2510dd
+      - sg-0a863cf22c6690b80
     subnetIds:
-      - subnet-0697d999886af6a87
-      - subnet-05f0b4b1981396370
-      - subnet-0d13ea8e8a578a8d7
-service: quals-scoreboard
+      - subnet-0423499623e794a99
+      - subnet-01108604635dcc775
+      - subnet-0efdf26865a0f0c7e
+
+service: dc2019q-scoreboard

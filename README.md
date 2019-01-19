@@ -252,3 +252,16 @@ Run the following:
 cd scoreboard_backend
 sls invoke -lf challenge_open -d '{"id": "CHALLENGE_ID"}'
 ```
+
+
+
+## Other Comments
+
+When configuring subnets and security group for the backend, use the ones
+associated with a manually created RDS instance. Ensure the prod and dev
+databases use the same RDS instance and security group.
+
+It's important that the security group allows all ingress traffic to itself.
+
+And to allow access to KMS set up an endpoint to KMS:
+https://aws.amazon.com/blogs/security/how-to-connect-directly-to-aws-key-management-service-from-amazon-vpc-by-using-an-aws-privatelink-endpoint/

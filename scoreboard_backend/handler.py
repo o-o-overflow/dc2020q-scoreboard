@@ -34,7 +34,8 @@ def valid_token(token):
 
 @validate(id=valid_challenge_id, token=valid_token, validate_data=False)
 def challenge(data, stage):
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT description FROM challenges where id=%s',
                            (data['id'],))
@@ -51,7 +52,8 @@ def challenge_open(event, _context):
     if not challenge_id:
         return api_response(422, 'invalid challenge id')
 
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT name, description, category_id, flag_hash, '
                            'tags FROM unopened_challenges WHERE id=%s',
@@ -70,7 +72,8 @@ def challenge_open(event, _context):
 
 
 def challenges(event, _context):
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT challenges.id, challenges.name, '
                            'challenges.tags, categories.name FROM challenges '
@@ -119,7 +122,8 @@ def challenges_set(event, context):
     challenges_sql = ', '.join(['(%s, now(), %s, %s, %s, %s, %s)']
                                * len(event))
 
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('Empty challenges and categories tables')
             cursor.execute('TRUNCATE categories, challenges, solves, '
@@ -152,10 +156,15 @@ def migrate(event, context):
     if prod and reset:
         reset = False
         LOGGER.warn('Cannot reset the prod environment')
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         result = migrations.run_migrations(psql, reset_db=reset)
         psql.commit()
     return api_response(200, result)
+
+
+def ping(event, context):
+    return api_response(200, 'ok')
 
 
 @validate(challenge_id=valid_challenge_id, flag=valid_flag, nonce=valid_int,
@@ -166,7 +175,8 @@ def submit(data, stage):
     flag = data['flag'].strip()
     user_id = jwt.decode(data['token'], verify=False)['user_id']
 
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT EXTRACT(EPOCH FROM (now() - '
                            'date_last_submitted)) FROM users WHERE id=%s;',
@@ -236,7 +246,8 @@ def token(data, stage):
         return api_response(400, 'the competition is over')
 
     email = data['email']
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER LOGIN {}'.format(email))
             cursor.execute('SELECT id, team_name FROM users where '
@@ -260,7 +271,8 @@ def token(data, stage):
 @validate(id=valid_confirmation, validate_data=False)
 def user_confirm(data, stage):
     confirmation_id = data['id']
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('CONFIRM: {}'.format(confirmation_id))
             cursor.execute('SELECT user_id FROM confirmations where id=%s;',
@@ -299,7 +311,8 @@ def user_register(data, stage, app_url):
     password = data['password']
     team_name = data['team_name']
 
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             LOGGER.info('USER REGISTER {}'.format(email))
             try:
@@ -328,7 +341,8 @@ def user_register(data, stage, app_url):
 
 
 def users(_event, _context):
-    with psql_connection(SECRETS['DB_PASSWORD']) as psql:
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT id, email, team_name, ctf_time_team_id '
                            'FROM users ORDER BY id;')
