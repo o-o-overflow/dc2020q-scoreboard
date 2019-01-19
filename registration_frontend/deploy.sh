@@ -9,7 +9,7 @@ fi
 
 # Allow BUILD=prod to be set.
 if [ -z "$BUILD" ]; then
-    BUILD=development
+    BUILD=dev
 elif [[ $BUILD != "prod" ]]; then
     echo "Only BUILD=prod is supported. Goodbye!"
     exit 1
