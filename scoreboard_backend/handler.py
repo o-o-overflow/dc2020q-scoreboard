@@ -163,7 +163,7 @@ def migrate(event, context):
     return api_response(200, result)
 
 
-def ping(event, context):
+def ping(_event, _context):
     return api_response(200, 'ok')
 
 
@@ -232,6 +232,14 @@ def submit(data, stage):
         psql.commit()
 
     return api_response(status, message)
+
+
+def test_email(event, _context):
+    stage = event['requestContext']['stage']
+    print('test email in {}'.format(stage))
+    send_email('OOO Debug <debug@oooverflow.io>', email, '[OOO] Debug Email',
+               '', stage=stage)
+    return api_response(200, 'ok')
 
 
 @validate(email=valid_email, nonce=valid_int, password=valid_password,
@@ -346,8 +354,10 @@ def users(_event, _context):
         with psql.cursor() as cursor:
             cursor.execute('SELECT id, email, team_name, ctf_time_team_id '
                            'FROM users ORDER BY id;')
-            for row in cursor.fetchall():
-                print(row)
+            result = cursor.fetchall()
+            if result:
+                print('Users')
+                pprint(result)
 
             cursor.execute('SELECT * FROM confirmations ORDER BY user_id;')
             result = cursor.fetchall()
