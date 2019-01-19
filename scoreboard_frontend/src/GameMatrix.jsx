@@ -2,10 +2,6 @@ import React from 'react';
 
 class GameMatrix extends React.Component {
 
-	constructor(props) {
-		super(props);
-	}
-
 	header () {
 		const theHeaders = this.challenges.map((id) => {
 			return <th key={id}>{id}</th>;
@@ -37,8 +33,8 @@ class GameMatrix extends React.Component {
 	render () {
 		this.challenges = [];
 		Object.keys(this.props.challenges).map((cat) => {
-			this.props.challenges[cat].map((chall) => {
-				this.challenges.push(chall.id);
+			return this.props.challenges[cat].map((chall) => {
+				return this.challenges.push(chall.id);
 			});
 		});
 
