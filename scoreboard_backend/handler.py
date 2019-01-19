@@ -234,11 +234,11 @@ def submit(data, stage):
     return api_response(status, message)
 
 
-def test_email(event, _context):
-    stage = event['requestContext']['stage']
-    print('test email in {}'.format(stage))
-    send_email('OOO Debug <debug@oooverflow.io>', email, '[OOO] Debug Email',
-               '', stage=stage)
+def test_email(_event, context):
+    stage = 'prod' if '-prod-' in context.function_name else 'dev'
+    print('Sending test email in stage {}'.format(stage))
+    email = 'OOO Debug <debug@oooverflow.io>'
+    send_email(email, email, '[OOO] Debug Email', '', stage=stage)
     return api_response(200, 'ok')
 
 
