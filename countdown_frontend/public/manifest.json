@@ -1,15 +1,1 @@
-{
-  "short_name": "Quals2019",
-  "name": "OOO DEF CON CTF Quals 2019",
-  "icons": [
-    {
-      "src": "ooo.png",
-      "sizes": "192x192 144x144 96x96 72x72 48x48 36x36 24x24",
-      "type": "image/png"
-    }
-  ],
-  "start_url": "./index.html",
-  "display": "standalone",
-  "theme_color": "#b5e853",
-  "background_color": "#000000"
-}
+../../scoreboard_frontend/public/manifest.json

@@ -299,7 +299,7 @@ def user_confirm(data, stage):
         psql.commit()
 
         LOGGER.info('EMAIL: {}'.format(email))
-    body = ('Your registration to DEF CON 2018 CTF Quals is complete.\n\n'
+    body = ('Your registration to DEF CON 2019 CTF Quals is complete.\n\n'
             'https://scoreboard.oooverflow.io/\n')
     send_email('OOO Account Registration <accounts@oooverflow.io>',
                email, '[OOO] Registration Complete', body,
