@@ -257,11 +257,12 @@ sls invoke -lf challenge_open -d '{"id": "CHALLENGE_ID"}'
 
 ## Other Comments
 
-When configuring subnets and security group for the backend, use the ones
-associated with a manually created RDS instance. Ensure the prod and dev
-databases use the same RDS instance and security group.
+Run `terraform apply` to build/update the scoreboard infrastructure in AWS.
 
-It's important that the security group allows all ingress traffic to itself.
+After running for the first time a few values have to be updated:
 
-And to allow access to KMS set up an endpoint to KMS:
-https://aws.amazon.com/blogs/security/how-to-connect-directly-to-aws-key-management-service-from-amazon-vpc-by-using-an-aws-privatelink-endpoint/
+In `serverless.yml`
+
+* `securityGroupIds` needs to be set to the ID of the lambda security group
+* `subnetIds` needs to be set to all of the private subnet ids
+* `DB_HOST` needs to be updated to the endpoint of the RDS instance

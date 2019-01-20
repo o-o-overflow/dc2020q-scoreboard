@@ -9,7 +9,7 @@ from const import TIMESTAMP_MAX_DELTA
 
 
 BASE_URL = {
-    'dev': 'https://bv30jcdr5b.execute-api.us-east-2.amazonaws.com/dev'}
+    'dev': 'https://eipmhhofv1.execute-api.us-east-2.amazonaws.com/dev'}
 PATHS = {'challenge': 'challenge/{id}/{token}', 'challenges': 'challenges',
          'submit': 'submit', 'token': 'token',
          'user_confirm': 'user_confirm/{id}', 'user_register': 'user_register'}

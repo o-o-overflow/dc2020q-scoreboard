@@ -22,4 +22,8 @@ var/
 # Serverless directories
 .serverless
 
+# Terraform stuff
+.terraform
+terraform.tfstate.backup
+
 node_modules
