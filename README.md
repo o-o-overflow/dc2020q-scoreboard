@@ -79,7 +79,7 @@ mapped to an appropriate prefix.
 
 * (prod) https://scoreboard.oooverflow.io ->
   https://d2y59cme150ipu.cloudfront.net
-* (dev) https://d3npqu6kfryvtp.cloudfront.net
+* (dev) https://d2b8nk094e89za.cloudfront.net
 
 The S3 bucket is accessible via `Coudfront` through the `access-identity`
 Origin Access Identity:
@@ -120,7 +120,7 @@ able to see updates within a minute of deployment.
 ## Registration
 
 This application is where team will go to register. By default it deploys to
-https://ddzub9yvnwvr4.cloudfront.net where it is protected by HTTP basic
+https://d2ni0nv313ubc4.cloudfront.net where it is protected by HTTP basic
 authentication (credentials listed in #quals_scoreboard on Slack). This
 application is intended to be deployed to the production environment at the
 start of the competition.
@@ -134,7 +134,7 @@ yarn start
 
 ### Deployment
 
-Deploy to https://ddzub9yvnwvr4.cloudfront.net via:
+Deploy to https://d2ni0nv313ubc4.cloudfront.net via:
 
 ```sh
 cd registration_frontend
@@ -161,7 +161,7 @@ able to see updates within a minute of deployment.
 ![Countdown Screenshot](static/scoreboard.png)
 
 This application is the actual scoreboard that the qualifiers will use. By
-default it deploys to https://d3npqu6kfryvtp.cloudfront.net where it is
+default it deploys to https://d2b8nk094e89za.cloudfront.net where it is
 protected by HTTP basic authentication (credentials listed in #quals_scoreboard
 on Slack). This application is intended to be deployed to the production
 environment at the start of the competition.
@@ -175,7 +175,7 @@ yarn start
 
 ### Deployment
 
-Deploy to https://d3npqu6kfryvtp.cloudfront.net via:
+Deploy to https://d2b8nk094e89za.cloudfront.net via:
 
 ```sh
 cd countdown_frontend
