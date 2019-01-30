@@ -130,7 +130,7 @@ class Registration extends React.Component {
 
     return (
       <div>
-        <h1>Registration</h1>
+        <h1>Quals 2019 Registration</h1>
         <p>Note: Please only register a single account per team.</p>
         <div className="form-group">
           <label htmlFor="team-name">Team Name<br />

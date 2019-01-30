@@ -8,7 +8,8 @@ function App() {
     <div>
       <header>
         <div className="container">
-          <h1><a href="http://www.oooverflow.io/">OOO</a> --- DEF CON CTF Quals 2019</h1>
+          <a href="http://www.oooverflow.io/"><img alt="OOO logo" src={process.env.PUBLIC_URL + 'ooo-logo-175.png'} /></a>
+          <h1>OOO --- DEF CON CTF</h1>
         </div>
       </header>
       <div className="container">
