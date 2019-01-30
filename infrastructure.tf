@@ -247,7 +247,7 @@ resource "aws_db_instance" "scoreboard-dev" {
   allow_major_version_upgrade = false
   apply_immediately = true
   availability_zone = "us-east-2a"
-  auto_minor_version_upgrade = false
+  auto_minor_version_upgrade = true
   db_subnet_group_name = "${aws_db_subnet_group.sb_private.id}"
   deletion_protection = false
   engine = "postgres"
@@ -260,6 +260,27 @@ resource "aws_db_instance" "scoreboard-dev" {
   skip_final_snapshot = true
   storage_type = "gp2"
   tags = { Name = "sb-dev" }
+  username = "${var.DB_USERNAME}"
+  vpc_security_group_ids = ["${aws_security_group.database.id}"]
+}
+
+resource "aws_db_instance" "scoreboard-prod" {
+  allocated_storage = 16
+  allow_major_version_upgrade = false
+  apply_immediately = false
+  auto_minor_version_upgrade = true
+  db_subnet_group_name = "${aws_db_subnet_group.sb_private.id}"
+  deletion_protection = true
+  engine = "postgres"
+  engine_version = "10.4"
+  identifier = "sb-prod"
+  instance_class = "db.t3.micro"  # Update before quals to db.m5.large
+  multi_az = true
+  name = "scoreboard"
+  password = "${var.DB_PASSWORD}"
+  skip_final_snapshot = false
+  storage_type = "gp2"
+  tags = { Name = "sb-prod" }
   username = "${var.DB_USERNAME}"
   vpc_security_group_ids = ["${aws_security_group.database.id}"]
 }
