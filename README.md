@@ -77,8 +77,7 @@ S3 bucket under the `dev` and `prod` prefixes.
 Cloudfront distributions are configured to serve files out of that S3 bucket
 mapped to an appropriate prefix.
 
-* (prod) https://scoreboard.oooverflow.io ->
-  https://d2y59cme150ipu.cloudfront.net
+* (prod) https://scoreboard.oooverflow.io
 * (dev) https://d2b8nk094e89za.cloudfront.net
 
 The S3 bucket is accessible via `Coudfront` through the `access-identity`
