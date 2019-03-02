@@ -1,6 +1,12 @@
 #!/bin/sh
-sls invoke -lf challenges_set --path ../../challs-manager/scoreboard.json
+JSON_FILE="../../dc2019q-chalmanager/scoreboard.json"
 
-for challenge in $(cat ../../challs-manager/scoreboard.json | grep '"id"' | cut -d'"' -f 4); do
+if [ ! -f "$JSON_FILE" ]; then
+	echo "Error, unable to find the scoreboard file $JSON_FILE" 1>&2
+	exit 1
+fi
+sls invoke -lf challenges_set --path "$JSON_FILE"
+
+for challenge in $(cat "$JSON_FILE" | grep '"id"' | cut -d'"' -f 4); do
     sls invoke -lf challenge_open -d "{\"id\": \"$challenge\" }"
 done

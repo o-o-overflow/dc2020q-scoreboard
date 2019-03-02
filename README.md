@@ -66,6 +66,16 @@ cd APP_frontend
 yarn install
 ```
 
+## Backend Dependencies
+
+All the backend applications use serverless https://serverless.com/framework/docs/providers/aws/guide/installation/.
+
+Install using
+
+```sh
+npm install -g serverless
+```
+
 
 # Frontend Applications
 
