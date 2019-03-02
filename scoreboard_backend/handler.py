@@ -356,7 +356,7 @@ def users(_event, _context):
                            'FROM users ORDER BY id;')
             result = cursor.fetchall()
             if result:
-                print('Users')
+                print('Users: {}'.format(len(result)))
                 pprint(result)
 
             cursor.execute('SELECT * FROM confirmations ORDER BY user_id;')

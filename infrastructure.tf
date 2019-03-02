@@ -251,7 +251,7 @@ resource "aws_db_instance" "scoreboard-dev" {
   db_subnet_group_name = "${aws_db_subnet_group.sb_private.id}"
   deletion_protection = false
   engine = "postgres"
-  engine_version = "10.4"
+  engine_version = "10.6"
   identifier = "sb-dev"
   instance_class = "db.t2.micro"
   multi_az = false
@@ -272,7 +272,7 @@ resource "aws_db_instance" "scoreboard-prod" {
   db_subnet_group_name = "${aws_db_subnet_group.sb_private.id}"
   deletion_protection = true
   engine = "postgres"
-  engine_version = "10.4"
+  engine_version = "10.6"
   identifier = "sb-prod"
   instance_class = "db.t3.micro"  # Update before quals to db.m5.large
   multi_az = true
