@@ -78,7 +78,6 @@ resource "aws_eip" "nat_a" {
   vpc = true
 }
 
-/*
 resource "aws_eip" "nat_b" {
   depends_on = ["aws_internet_gateway.gateway"]
   tags = { Name = "sb_b" }
@@ -90,7 +89,6 @@ resource "aws_eip" "nat_c" {
   tags = { Name = "sb_c" }
   vpc = true
 }
-*/
 
 
 resource "aws_nat_gateway" "gateway_a" {
@@ -99,7 +97,6 @@ resource "aws_nat_gateway" "gateway_a" {
   tags = { Name = "sb_a" }
 }
 
-/*
 resource "aws_nat_gateway" "gateway_b" {
   allocation_id = "${aws_eip.nat_b.id}"
   subnet_id = "${aws_subnet.public_b.id}"
@@ -111,7 +108,6 @@ resource "aws_nat_gateway" "gateway_c" {
   subnet_id = "${aws_subnet.public_c.id}"
   tags = { Name = "sb_c" }
 }
-*/
 
 resource "aws_route_table" "public" {
   route {
@@ -134,7 +130,7 @@ resource "aws_route_table" "private_a" {
 resource "aws_route_table" "private_b" {
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = "${aws_nat_gateway.gateway_a.id}"
+    nat_gateway_id = "${aws_nat_gateway.gateway_b.id}"
   }
   tags = { Name = "sb_private_b" }
   vpc_id = "${aws_vpc.scoreboard.id}"
@@ -143,11 +139,12 @@ resource "aws_route_table" "private_b" {
 resource "aws_route_table" "private_c" {
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = "${aws_nat_gateway.gateway_a.id}"
+    nat_gateway_id = "${aws_nat_gateway.gateway_c.id}"
   }
   tags = { Name = "sb_private_c" }
   vpc_id = "${aws_vpc.scoreboard.id}"
 }
+
 
 resource "aws_route_table_association" "private_a" {
   route_table_id = "${aws_route_table.private_a.id}"
@@ -155,13 +152,13 @@ resource "aws_route_table_association" "private_a" {
 }
 
 resource "aws_route_table_association" "private_b" {
-  route_table_id = "${aws_route_table.private_a.id}"
-  subnet_id = "${aws_subnet.private_a.id}"
+  route_table_id = "${aws_route_table.private_b.id}"
+  subnet_id = "${aws_subnet.private_b.id}"
 }
 
 resource "aws_route_table_association" "private_c" {
-  route_table_id = "${aws_route_table.private_a.id}"
-  subnet_id = "${aws_subnet.private_a.id}"
+  route_table_id = "${aws_route_table.private_c.id}"
+  subnet_id = "${aws_subnet.private_c.id}"
 }
 
 resource "aws_route_table_association" "public_a" {
