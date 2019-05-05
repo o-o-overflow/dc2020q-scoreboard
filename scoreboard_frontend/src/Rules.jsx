@@ -4,14 +4,14 @@ function Rules() {
   return (
       <div className="rules">
 		<h1>Introduction</h1>
-		
+
 		<div>
 		  <p>Welcome to DEF CON CTF Quals. May we take your order?</p>
 		  <p>This year marks a transition. For those who are not aware, DEF CON CTF regularly rotates organizers. This year is the first year of the Order of the Overflow. If you are interested in who we are, you can read all about us <a href="https://www.defcon.org/html/defcon-26/dc-26-ctf.html">at the changeover announcement</a>. Otherwise, read on for the rules!</p>
 
 		  <p>This year, we have grilled up a smattering of tasty challenges for your enjoyment.
 			A broad selection of challenges is available on our menu,
-			divided in five categories of (very) roughly incremental difficulty (with <span className="category-guest">Guest Chefs</span> challenges as spicy or mild as our guest chefs want them to be):
+			divided in five categories of (very) roughly incremental difficulty:
 			</p>
       </div>
       <ul>
@@ -19,7 +19,6 @@ function Rules() {
         <li className="category-appetizers">Appetizers</li>
         <li className="category-signature">Signature Dishes</li>
         <li className="category-grill">From the Grill</li>
-        <li className="category-guest">Guest Chefs</li>
         <li className="category-desserts">Fruit and Desserts</li>
       </ul>
 	  <h1>Scoring</h1>
@@ -32,7 +31,7 @@ function Rules() {
 	  </div>
 	  <h1>Opening Challenges</h1>
 	  <div>
-		For this year, we will decide what challenges to open. 
+		For this year, we will decide what challenges to open.
 	  </div>
 	  <h1>IRC/Twitter</h1>
 	  <div>
@@ -46,7 +45,7 @@ function Rules() {
 		<li>No Denial of Service&mdash;DoS is super lame, don't do it or you will be banned</li>
 		<li>No sharing flags, exploits, or hints&mdash;Do your own hacks</li>
 		<li>No attacks against our infrastructure&mdash;Hack the challenges, not us</li>
-		<li>No automated scanning&mdash;For these challenges, do better</li>		
+		<li>No automated scanning&mdash;For these challenges, do better</li>
 	  </ol>
 
 	  <h1>Hints</h1>
@@ -54,13 +53,13 @@ function Rules() {
 		Any hints that we give will be distributed as announcements on our Twitter account <a href="https://twitter.com/oooverflow">@oooverflow</a>.
 	  </p>
 	  <p>
-		No hints will be given once a challenge is solved. 
+		No hints will be given once a challenge is solved.
 	  </p>
 	  <h1>Team Size</h1>
 	  <p>
 		No limit on team sizes.
 	  </p>
-		
+
     </div>
   );
 }

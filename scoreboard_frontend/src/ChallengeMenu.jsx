@@ -23,10 +23,6 @@ class ChallengeMenu extends React.Component {
         column: 'right',
         style: 'category-signature',
       },
-      'guest chefs': {
-        column: 'right',
-        style: 'category-guest',
-      },
       'fruits and desserts': {
         column: 'right',
         style: 'category-desserts',

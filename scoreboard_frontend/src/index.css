@@ -104,11 +104,6 @@ nav button {
   padding-right: 0.25em;
 }
 
-.category-guest:before {
-  content: '🍳';
-  padding-right: 0.25em;
-}
-
 .category-desserts:before {
   content: '🍒';
   padding-right: 0.25em;
@@ -258,7 +253,7 @@ nav button {
 }
 
 .toTeam {
-  cursor: pointer;	
+  cursor: pointer;
 }
 
 .section-title {

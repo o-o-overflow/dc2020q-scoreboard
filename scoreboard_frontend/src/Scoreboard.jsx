@@ -6,7 +6,6 @@ const CATEGORY_TO_CSS_CLASS = {
   appetizers: 'appetizers',
   'from the grill': 'grill',
   'signature dishes': 'signature',
-  'guest chefs': 'guest',
   'fruits and desserts': 'desserts',
 };
 
