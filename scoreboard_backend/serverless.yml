@@ -62,6 +62,8 @@ functions:
           method: POST
           path: user_register
     handler: handler.user_register
+  user_reset_password:
+    handler: handler.user_reset_password
   users:
     handler: handler.users
 package:

@@ -349,6 +349,25 @@ def user_register(data, stage, app_url):
     return api_response(201)
 
 
+def user_reset_password(event, _context):
+    if not event:
+        return api_response(422, 'data must be provided')
+    email = event.get('email', None)
+    password = event.get('password', None)
+    if not email or not password:
+        return api_response(422, 'both email and password must be set')
+    if not valid_password(password):
+        return api_response(422, 'invalid password')
+
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
+        with psql.cursor() as cursor:
+            cursor.execute('UPDATE users set password=crypt(%s, gen_salt(\'bf\', 10)) where email=%s;',
+                           (password, email))
+        psql.commit()
+    return api_response(200)
+
+
 def users(_event, _context):
     with psql_connection(SECRETS['DB_PASSWORD'],
                          SECRETS['DB_USERNAME']) as psql:

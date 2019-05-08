@@ -263,6 +263,18 @@ sls invoke -lf challenge_open -d '{"id": "CHALLENGE_ID"}'
 ```
 
 
+## Helper Scripts
+
+### Reset Password
+
+```sh
+cd scoreboard_backend
+STAGE=prod ./scripts/reset_password.sh USERNAME PASSWORD
+```
+
+Note: the password must be at least 10 characters
+
+
 
 ## Other Comments
 
