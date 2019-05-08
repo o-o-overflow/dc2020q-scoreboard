@@ -362,16 +362,18 @@ def users(_event, _context):
     with psql_connection(SECRETS['DB_PASSWORD'],
                          SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
-            cursor.execute('SELECT id, email, team_name, ctf_time_team_id '
-                           'FROM users ORDER BY id;')
-            result = cursor.fetchall()
-            if result:
-                print('Users: {}'.format(len(result)))
-                pprint(result)
-
-            cursor.execute('SELECT * FROM confirmations ORDER BY user_id;')
-            result = cursor.fetchall()
-            if result:
-                print('Pending confirmations')
-                pprint(result)
+            cursor.execute('SELECT date_created, date_confirmed, email, ctf_time_team_id, team_name '
+                           'FROM users ORDER BY date_created;')
+            users = cursor.fetchall()
+    if users:
+        confirmed_users = len([x for x in users if x[1] is not None])
+        unconfirmed_users = len(users) - confirmed_users
+        print(f'  Confirmed Users: {confirmed_users}')
+        if unconfirmed_users > 0:
+            print(f'Unconfirmed Users: {unconfirmed_users}')
+        print(f"Last {min(32, len(users))} Registered Users:")
+        for user in users[-32:]:
+            unconfirmed = "" if user[1] else "unconfirmed"
+            created = str(user[0])[:19]
+            print(f"{created} {unconfirmed:11s} {user[2]:32s} {str(user[3] or ''):>5s} {user[4]}")
     return api_response(200)
