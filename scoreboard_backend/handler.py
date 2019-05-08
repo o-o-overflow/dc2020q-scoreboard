@@ -76,8 +76,9 @@ def challenges(event, _context):
                          SECRETS['DB_USERNAME']) as psql:
         with psql.cursor() as cursor:
             cursor.execute('SELECT challenges.id, challenges.name, '
-                           'challenges.tags, categories.name FROM challenges '
-                           'JOIN categories ON category_id = categories.id '
+                           'challenges.tags, categories.name, '
+                           'EXTRACT(EPOCH from challenges.date_created) FROM  '
+                           'challenges JOIN categories ON category_id = categories.id '
                            'ORDER BY challenges.date_created ASC;')
             open_challenge_data = cursor.fetchall()
             cursor.execute('SELECT challenge_id, team_name,'
