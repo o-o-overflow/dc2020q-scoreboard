@@ -48,7 +48,7 @@ def valid_confirmation(confirmation):
 
 def valid_email(email):
     return isinstance(email, str) and 6 <= len(email) <= 320 and \
-        '@' in email and '.' in email
+        '@' in email and '.' in email and ' ' not in email
 
 
 def valid_flag(flag):
