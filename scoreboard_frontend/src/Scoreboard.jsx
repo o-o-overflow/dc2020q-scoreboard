@@ -21,16 +21,10 @@ function Scoreboard(props) {
       name: team.name,
 	  num: num++,
       points: props.pointsByTeam[team.name],
-      solves: team.solves.map(id => categoryIcons(props.categoryByChallenge, id)),
+      solves: team.solves.filter(id => props.categoryByChallenge[id] !== "speedrun").map(id => categoryIcons(props.categoryByChallenge, id)),
+	  speedrunOverall: team.speedrunOverall,
+	  speedrunIndividual: team.speedrunIndividual,
   }));
-  // no longer needed because I lifted this code up into App
-  // teams.sort((a, b) => {
-  //   if (a.points === b.points) {
-  //     return a.lastSolveTime - b.lastSolveTime;
-  //   }
-  //   return b.points - a.points;
-  // });
-
 
   const teamRows = teams.map(team =>
     (
@@ -38,6 +32,8 @@ function Scoreboard(props) {
         <td>{team.num}</td>
         <td>{team.name}</td>
         <td dangerouslySetInnerHTML={{ __html: team.solves.join('') }} />
+		<td>{team.speedrunIndividual}</td>
+		<td>{team.speedrunOverall}</td>
         <td>{team.points}</td>
       </tr>
     ));
@@ -56,7 +52,7 @@ function Scoreboard(props) {
 		  <div>{youLink}</div>
 		  <table className="scoreboard">
 			<thead>
-			  <tr><th>#</th><th>Team</th><th>Ordered</th><th>Points</th></tr>
+			  <tr><th>#</th><th>Team</th><th>Ordered</th><th>Speedrun Individual</th><th>Speedrun Overall</th><th>Points</th></tr>
 			</thead>
 			<tbody>
 			  {teamRows}

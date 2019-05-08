@@ -32,7 +32,7 @@ class GameMatrix extends React.Component {
 
 	render () {
 		this.challenges = [];
-		Object.keys(this.props.challenges).map((cat) => {
+		Object.keys(this.props.challenges).filter(cat => cat !== "speedrun").map((cat) => {
 			return this.props.challenges[cat].map((chall) => {
 				return this.challenges.push(chall.id);
 			});

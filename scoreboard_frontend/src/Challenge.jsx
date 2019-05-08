@@ -26,6 +26,14 @@ function Challenge(props) {
     onClick = () => props.onClick(props);
     menuClasses += ' logged-in';
   }
+	let point_display = (
+		<span className="menu-points">{points}pt</span>
+	);
+	if (props.isSpeedrun) {
+		point_display = (
+			<span></span>
+		);
+	}
 
   return (
     <div
@@ -40,7 +48,7 @@ function Challenge(props) {
           {tags}<br />
           {status}
         </div>
-        <span className="menu-points">{points}pt</span>
+		{point_display}
       </div>
     </div>
   );
@@ -53,5 +61,6 @@ Challenge.propTypes = {
   solved: PropTypes.bool.isRequired,
   tags: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  isSpeedrun: PropTypes.bool.isRequired,
 };
 export default Challenge;
