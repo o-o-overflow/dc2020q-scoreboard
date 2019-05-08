@@ -267,8 +267,6 @@ def token(data, stage):
     if not response:
         return api_response(401, 'invalid credentials')
 
-    if stage == 'prod':
-        now = max(now, COMPETITION_START)
     expire_time = min(COMPETITION_END, now + TWELVE_HOURS)
 
     payload = {'exp': expire_time, 'nbf': now, 'user_id': response[0]}

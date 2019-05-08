@@ -80,9 +80,9 @@ def valid_timestamp(timestamp):
         return 'invalid timestamp'
     now = int(time.time())
     if timestamp > now:
-        return 'timestamp is too recent'
+        return 'POW timestamp is ahead of server time by {:0.2f}'.format(timestamp - now)
     if now - timestamp > TIMESTAMP_MAX_DELTA:
-        return 'timestamp has expired'
+        return 'POW timestamp expired {:0.2f} seconds ago'.format(now - timestamp - TIMESTAMP_MAX_DELTA)
     return True
 
 
