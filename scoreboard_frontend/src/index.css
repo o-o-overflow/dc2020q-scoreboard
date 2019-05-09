@@ -149,7 +149,7 @@ input {
 }
 
 .menu-header-solved:after {
-  content: ' (solved)';
+  content: ' (completed)';
 }
 
 .menu-points {
@@ -204,7 +204,8 @@ input {
 }
 
 .scoreboard {
-  width: 100%;
+	width: 100%;
+	text-transform: none !important;
 }
 
 .scoreboard td {
