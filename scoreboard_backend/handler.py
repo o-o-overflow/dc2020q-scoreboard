@@ -269,6 +269,13 @@ def submit(data, stage):
 
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
         with psql.cursor() as cursor:
+            # Verify if valid ID before doing anything else
+            cursor.execute("SELECT 1 FROM challenges WHERE id=%s", (challenge_id,))
+            response = cursor.fetchone()
+            if not response:
+                LOGGER.warning("INVALID SUBMIT {} {} {}".format(user_id, challenge_id, flag))
+                return api_response(422, "invalid challenge_id")
+
             cursor.execute(
                 "SELECT EXTRACT(EPOCH FROM (now() - date_created)) FROM submissions "
                 "WHERE challenge_id=%s AND user_id=%s order by date_created desc limit 1",
