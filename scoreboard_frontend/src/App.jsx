@@ -320,7 +320,7 @@ class App extends React.Component {
             {tokenLink}
 			{registerLink}
             <a className="lcars-title right lcars-black-bg" href="https://twitter.com/oooverflow">Announcements</a>
-            <Link className="lcars-title right lcars-black-bg" to="/leaderboard">Leaderboard</Link>
+            <Link className="lcars-title right lcars-black-bg" to={`/leaderboard/${this.state.currentRace.id}`}>Leaderboard</Link>
             <Link className="lcars-title right lcars-black-bg" to="/solves">Solves</Link>			
             <Link className="lcars-title right lcars-black-bg" to="/scoreboard">Scoreboard</Link>			
             <Link className="lcars-title right lcars-black-bg" to="/rules">Rules</Link>			
