@@ -50,30 +50,36 @@ input {
   display: none;
 }
 
-.category-amuse:before {
-  content: '🍡';
+.category-first-contact:before {
+  content: '👽';
   padding-right: 0.25em;
 }
 
-.category-appetizers:before {
-  content: '🍴';
+.category-space:before {
+  content: '🚀';
   padding-right: 0.25em;
 }
 
-.category-signature:before {
-  content: '🍜';
+.category-weapons:before {
+  content: '🔫';
   padding-right: 0.25em;
 }
 
-.category-grill:before {
-  content: '🍗';
+.category-science:before {
+  content: '🔬';
   padding-right: 0.25em;
 }
 
-.category-desserts:before {
-  content: '🍒';
+.category-diplomacy:before {
+  content: '🖖';
   padding-right: 0.25em;
 }
+
+.category-speedrun:before {
+  content: '🏎';
+  padding-right: 0.25em;
+}
+
 
 .container {
   position: relative;
@@ -172,6 +178,7 @@ input {
 	font-size: 1.25rem;
 	line-height: 1.5;
 	padding: .5rem 1rem;
+	margin-top: 1rem;
 }
 
 .modal h1 {

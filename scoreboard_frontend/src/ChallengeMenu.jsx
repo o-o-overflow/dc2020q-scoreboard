@@ -9,27 +9,33 @@ class ChallengeMenu extends React.Component {
     this.sectionInfo = {
       'amuse bouche': {
         column: 'left',
-        style: 'category-amuse',
+        style: 'category-first-contact',
+		newName: 'First Contact',
       },
       appetizers: {
         column: 'left',
-        style: 'category-appetizers',
+        style: 'category-space',
+		newName: 'Space',
       },
       'from the grill': {
-        column: 'left',
-        style: 'category-grill',
+          column: 'left',
+          style: 'category-weapons',
+		  newName: 'Weapons',
       },
       'signature dishes': {
-        column: 'right',
-        style: 'category-signature',
+          column: 'left',
+          style: 'category-science',
+		  newName: 'Science',
       },
       'fruits and desserts': {
         column: 'right',
-        style: 'category-desserts',
+        style: 'category-diplomacy',
+		newName: 'Diplomacy',
       },
       'speedrun': {
-        column: 'right',
-        style: 'category-speedrun',
+          column: 'right',
+          style: 'category-speedrun',
+		  newName: 'Speedrun',
       },
     };
   }
@@ -39,7 +45,7 @@ class ChallengeMenu extends React.Component {
   }
 
   buildSections = (sectionTitle) => {
-    const section = this.sectionInfo[sectionTitle];
+      const section = this.sectionInfo[sectionTitle];
 
     const openChallenges = this.props.challenges[sectionTitle] || [];
     const unopenedChallenges = Array.from(
@@ -53,9 +59,9 @@ class ChallengeMenu extends React.Component {
         {...section}
         authenticated={this.props.authenticated}
         challenges={openChallenges.concat(unopenedChallenges)}
-        key={sectionTitle}
+        key={section.newName}
         onClick={this.props.onClick}
-        title={sectionTitle}
+        title={section.newName}
 		isSpeedrun={isSpeedrun}
       />
     );

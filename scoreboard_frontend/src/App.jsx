@@ -307,7 +307,7 @@ class App extends React.Component {
 
     const teamSolves = this.state.solvesByTeam[this.state.team] || [];
     const solved = teamSolves.includes(this.state.showChallengeId);
-    const registerLink = this.state.team ? null : <a href="https://register.oooverflow.io">Register</a>;
+    const registerLink = this.state.team ? null : <div className="lcars-title left lcars-black-bg"><a href="https://register.oooverflow.io">Register</a></div>;
 
     return (
       <div className="lcars-app-container lcars-black-bg">
