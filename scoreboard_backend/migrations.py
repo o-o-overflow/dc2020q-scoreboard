@@ -89,7 +89,7 @@ def latest_migration(psql):
             "date_applied timestamp with time zone NOT NULL);"
         )
         LOGGER.info("Find latest migration")
-        cursor.execute("SELECT id from schema_migrations " "ORDER BY id DESC LIMIT 1;")
+        cursor.execute("SELECT id from schema_migrations ORDER BY id DESC LIMIT 1;")
         return (cursor.fetchone() or (-1,))[0]
 
 

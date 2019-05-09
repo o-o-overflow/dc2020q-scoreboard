@@ -84,7 +84,7 @@ def challenge_open(event, _context):
                 "DELETE FROM unopened_challenges WHERE id=%s", (challenge_id,)
             )
             cursor.execute(
-                "INSERT INTO challenges VALUES (%s, now(), %s, %s, " "%s, %s, %s);",
+                "INSERT INTO challenges VALUES (%s, now(), %s, %s, %s, %s, %s);",
                 (challenge_id, *result),
             )
         psql.commit()
@@ -284,7 +284,7 @@ def submit(data, stage):
 
             # Check to see if they've already solved it
             cursor.execute(
-                "SELECT 1 FROM solves where challenge_id=%s AND " "user_id=%s",
+                "SELECT 1 FROM solves where challenge_id=%s AND user_id=%s",
                 (challenge_id, user_id),
             )
             response = cursor.fetchone()
@@ -294,7 +294,7 @@ def submit(data, stage):
             # Check if correct solution
             flag_hash = hashlib.sha256(flag.encode()).hexdigest()
             cursor.execute(
-                "SELECT 1 FROM challenges WHERE id=%s AND " "flag_hash=%s",
+                "SELECT 1 FROM challenges WHERE id=%s AND flag_hash=%s",
                 (challenge_id, flag_hash),
             )
             response = cursor.fetchone()
@@ -387,12 +387,12 @@ def user_confirm(data, stage):
             response = cursor.fetchone()
             if not response:
                 return api_response(
-                    409, "invalid confirmation or confirmation" " already completed"
+                    409, "invalid confirmation or confirmation already completed"
                 )
             user_id = response[0]
             cursor.execute("DELETE FROM confirmations where id=%s;", (confirmation_id,))
             cursor.execute(
-                "UPDATE users SET date_confirmed=now() " "where id=%s;", (user_id,)
+                "UPDATE users SET date_confirmed=now() where id=%s;", (user_id,)
             )
             cursor.execute("SELECT email FROM users where id=%s;", (user_id,))
             email = cursor.fetchone()[0]
