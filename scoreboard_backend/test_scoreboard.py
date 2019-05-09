@@ -551,9 +551,7 @@ def test_user_confirm_with_incorrect_confirmation_id(stage):
     confirmation_url = url("user_confirm", stage, id="a" * 36)
     response = requests.get(confirmation_url)
     assert_failure(
-        response,
-        "invalid confirmation or confirmation already completed",
-        status=409,
+        response, "invalid confirmation or confirmation already completed", status=409
     )
 
 
