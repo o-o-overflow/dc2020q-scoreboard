@@ -10,8 +10,8 @@ import psycopg2
 import yaml
 
 
-DB_HOST = {'dev': 'scoreboard-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com',
-           'prod': 'scoreboard-prod.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com'}
+DB_HOST = {'dev': 'sb-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com',
+           'prod': 'sb-prod.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com'}
 
 
 def decrypt_secrets(environment='dev'):
@@ -37,7 +37,7 @@ def main():
 @contextmanager
 def psql_connection(db_password, environment='dev'):
     psql = psycopg2.connect(dbname='scoreboard', host=DB_HOST[environment],
-                            password=db_password, user='scoreboard')
+                            password=db_password, user='dc2019qmaster')
     try:
         yield psql
     finally:
