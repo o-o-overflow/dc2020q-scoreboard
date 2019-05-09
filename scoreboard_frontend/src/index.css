@@ -244,14 +244,22 @@ table.scoreboard  {
   text-transform: capitalize;
 }
 
+table.solves {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+table.solves * {
+	text-transform: none !important;
+}
+
 .solves {
-	width: 100%;
 	table-layout: fixed;
 	margin-top: 4em;
 }
 
 .solves thead tr {
-	height: 1em;
+	height: 4rem;
 }
 
 .solves th {
@@ -274,7 +282,7 @@ table.scoreboard  {
 }
 
 .solves .solved {
-	color: green;
+	color: #739F75;
 	font-size: 1.6em;
 }
 
