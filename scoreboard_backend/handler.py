@@ -94,6 +94,55 @@ def challenges(event, _context):
                               'unopened_by_category': unopened_by_category})
 
 
+def challenges_add(event, _context):
+    if not event:
+        return api_response(422, 'data for the scoreboard must be provided')
+    if not isinstance(event, list):
+        return api_response(422, 'invalid scoreboard data')
+    with psql_connection(SECRETS['DB_PASSWORD'],
+                         SECRETS['DB_USERNAME']) as psql:
+        with psql.cursor() as cursor:
+            LOGGER.info('Get category IDs')
+            cursor.execute('SELECT id, name FROM categories;')
+            categories = {x[1]: x[0] for x in cursor.fetchall()}
+
+            LOGGER.info('Get opened challenges')
+            cursor.execute('SELECT name FROM challenges;')
+            existing_challenges = [x[0] for x in cursor.fetchall()]
+
+            LOGGER.info('Get unopened challenges')
+            cursor.execute('SELECT name FROM unopened_challenges;')
+            existing_challenges.extend(x[0] for x in cursor.fetchall())
+            LOGGER.info(f'Existing challenges: {sorted(existing_challenges)}')
+
+            new_challenges = []
+            challenge_values = []
+            try:
+                for challenge in event:
+                    if challenge['id'] in existing_challenges:
+                        continue
+                    new_challenges.append(challenge['id'])
+                    challenge_values.append(challenge['id'])
+                    challenge_values.append(challenge['title'])
+                    challenge_values.append(challenge['description'])
+                    challenge_values.append(categories[challenge['category']])
+                    challenge_values.append(challenge['flag_hash'])
+                    challenge_values.append(', '.join(sorted(challenge['tags'])))
+            except (KeyError, TypeError):
+                return api_response(422, 'invalid scoreboard data')
+
+            if not new_challenges:
+                return api_response(304)
+
+            LOGGER.info(f'Adding challenges: {sorted(new_challenges)}')
+
+            challenges_sql = ', '.join(['(%s, now(), %s, %s, %s, %s, %s)']
+                                       * len(new_challenges))
+            cursor.execute('INSERT INTO unopened_challenges VALUES {};'
+                           .format(challenges_sql), tuple(challenge_values))
+        psql.commit()
+    return api_response(201, 'added {} challenge(s)'.format(len(new_challenges)))
+
 def challenges_set(event, context):
     if not event:
         return api_response(422, 'data for the scoreboard must be provided')
@@ -140,7 +189,7 @@ def challenges_set(event, context):
             for category_id, category_name in results:
                 categories[category_name] = category_id
 
-            # Replace challenge name with challenge_id
+            # Replace category name with category_id
             for index in range(3, len(challenge_values), 6):
                 challenge_values[index] = categories[challenge_values[index]]
 

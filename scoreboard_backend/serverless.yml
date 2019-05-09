@@ -22,6 +22,8 @@ functions:
           method: GET
           path: challenges
     handler: handler.challenges
+  challenges_add:
+    handler: handler.challenges_add
   challenges_set:
     handler: handler.challenges_set
   migrate:
