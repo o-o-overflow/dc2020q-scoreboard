@@ -140,6 +140,10 @@ input {
 	font-size: 125%;
 }
 
+.menu-solved {
+	filter: brightness(50%);
+}
+
 .menu-header-solved {
   color: green;
 }

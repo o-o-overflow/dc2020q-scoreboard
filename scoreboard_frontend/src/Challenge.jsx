@@ -13,11 +13,11 @@ function Challenge(props) {
 
   let status;
   if (solveCount > 1) {
-    status = `(Solved by ${solveCount} cadets)`;
+    status = `(Completed by ${solveCount} cadets)`;
   } else if (solveCount === 1) {
-    status = '(Solved by 1 team)';
+    status = '(Completed by 1 cadet)';
   } else {
-    status = '(Be the first one to solve it)';
+    status = '(Be the first)';
   }
 
   let onClick = null;
@@ -26,6 +26,10 @@ function Challenge(props) {
     onClick = () => props.onClick(props);
     menuClasses += ' logged-in';
   }
+	if (solved)
+	{
+		menuClasses += ' menu-solved';
+	}
 	let point_display = (
 		<div className="menu-points">{points} pts</div>
 	);
