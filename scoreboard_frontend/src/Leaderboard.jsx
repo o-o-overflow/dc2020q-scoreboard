@@ -11,7 +11,7 @@ class Leaderboard extends React.Component {
 				<tr key={team.name}>
 				  <td>{idx+1}</td>
 				  <td key={team.name}>{team.name}</td>
-				  <td>{team.overallSpeedrun.toFixed(2)} seconds</td>
+				  <td>{team.overallSpeedrun.toFixed(2)} s</td>
 				</tr>
 			);
 		});
@@ -39,34 +39,34 @@ class Leaderboard extends React.Component {
 	raceList() {
 		return this.props.races.map((race) => {
 			return (
-				<li>
-				  <Link to={`/leaderboard/${race.id}`}>{race.id}</Link> started at {race.open_time}
-				</li>
+				<Link to={`/leaderboard/${race.id}`}>
+				  <div className="race-log-element lcars-element button round lcars-u-2-2">
+					<div className="race-name">{race.id}</div>
+					<div className="race-open">Stardate {race.open_time}</div>
+				  </div>
+				</Link>
 			);
 		});
 	}
 	
 	render () {
-		const current_header = this.props.currentRace ?
-			  (
-				  <h1>Live race <Link to={`/leaderboard/${this.props.currentRace.id}`}>{this.props.currentRace.id}</Link></h1>
-			  ) :
-			  (
-				  <h1>Racetrack is currently closed</h1>
-			  );
 
 		return (
 			<div id="leaderboard">
-			  {current_header}
-			  <h2>Overall Leaderboard</h2>
-			  {this.overallLeaders()}
-			  <ul className="race-list">
+			  <div className="overall-leaderboard lcars-u-3 lcars-column">
+				<h2>Overall Leaderboard</h2>
+				{this.overallLeaders()}
+			  </div>
+			  <div className="race-list lcars-u-3 lcars-column">
+				<h2>Race Log</h2>
 				{this.raceList()}
-			  </ul>
+			  </div>
+			  <div className="race-results lcars-u-3 lcars-column">
 			  <Route path="/leaderboard/:race" render={(props) =>
 													   (
 														   <RaceResults teamSpeedrunSolveOrder={this.props.teamSpeedrunSolveOrder[props.match.params.race] || []} race={props.match.params.race}/>
 													   )}/>
+				</div>
 			</div>
 		);
 	}

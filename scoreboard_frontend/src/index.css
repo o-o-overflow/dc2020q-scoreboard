@@ -205,26 +205,29 @@ input {
 
 .scoreboard {
 	width: 100%;
-	text-transform: none !important;
 }
 
 .scoreboard * {
 	text-transform: none !important;
 }
 
-table.scoreboard  {
+table.overall-leaders * {
+	text-transform: none !important;
+}
+
+table.scoreboard, table.overall-leaders  {
 	border-spacing: 0;
 	border-collapse: collapse;
 }
 
 
-.scoreboard td {
+.scoreboard td, .overall-leaders td {
   border-bottom: 1px solid grey;
   padding: 5px;
   font-size: 1.3rem;
 }
 
-.scoreboard th {
+.scoreboard th, .overall-leaders th {
   border-bottom: 2px solid;
   padding: 5px;
   text-align: left;
@@ -286,6 +289,35 @@ table.solves * {
 	font-size: 1.6em;
 }
 
+#leaderboard {
+	display: flex;
+	justify-content: space-between;
+	align-items: stretch;
+	width: 100%;
+	margin-right: 3rem;
+}
+
+#leaderboard h2 {
+	background-color: #82609B;
+	border-radius: 1.5rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+.race-log-element {
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: space-between;
+	align-items: stretch;
+}
+
+.race-name {
+	text-align: left;
+}
+.race-open {
+	text-align: right;
+}
+
 
 @media screen and (max-width: 575px) {
   .label-toggle {
@@ -302,31 +334,31 @@ table.solves * {
 
 }
 
-@media screen and (min-width: 576px) {
-  .container {
-    max-width:540px
-  }
-}
+/* @media screen and (min-width: 576px) { */
+/*   .container { */
+/*     max-width:540px */
+/*   } */
+/* } */
 
-@media screen and (min-width: 768px) {
-  .column {
-    flex: 0 0 50%;
-    max-width: 50%;
-  }
+/* @media screen and (min-width: 768px) { */
+/*   .column { */
+/*     flex: 0 0 50%; */
+/*     max-width: 50%; */
+/*   } */
 
-  .container {
-    max-width: 720px;
-  }
-}
+/*   .container { */
+/*     max-width: 720px; */
+/*   } */
+/* } */
 
-@media screen and (min-width: 992px) {
-  .container {
-    max-width: 960px;
-  }
-}
+/* @media screen and (min-width: 992px) { */
+/*   .container { */
+/*     max-width: 960px; */
+/*   } */
+/* } */
 
-@media screen and (min-width: 1200px) {
-  .container {
-    max-width: 1140px;
-  }
-}
+/* @media screen and (min-width: 1200px) { */
+/*   .container { */
+/*     max-width: 1140px; */
+/*   } */
+/* } */
