@@ -2,11 +2,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 
 const CATEGORY_TO_CSS_CLASS = {
-  'amuse bouche': 'amuse',
-  appetizers: 'appetizers',
-  'from the grill': 'grill',
-  'signature dishes': 'signature',
-  'fruits and desserts': 'desserts',
+  'amuse bouche': 'first-contact',
+  appetizers: 'space',
+  'from the grill': 'weapons',
+  'signature dishes': 'science',
+  'fruits and desserts': 'diplomacy',
 };
 
 function categoryIcons(categoryByChallenge, challengeId) {
@@ -52,7 +52,7 @@ function Scoreboard(props) {
 		  <div>{youLink}</div>
 		  <table className="scoreboard">
 			<thead>
-			  <tr><th>#</th><th>Team</th><th>Ordered</th><th>Speedrun Individual</th><th>Speedrun Overall</th><th>Points</th></tr>
+			  <tr><th>#</th><th>Team</th><th>Completed</th><th>Speedrun Individual</th><th>Speedrun Overall</th><th>Points</th></tr>
 			</thead>
 			<tbody>
 			  {teamRows}
