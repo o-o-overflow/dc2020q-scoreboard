@@ -131,6 +131,10 @@ input {
 	justify-content: space-between;
 }
 
+.menu-item:hover {
+	filter: brightness(150%);
+}
+
 .menu-lower {
 	display: flex;
 	justify-content: space-between;
@@ -145,6 +149,11 @@ input {
 .menu-solved {
 	filter: brightness(50%);
 }
+
+.menu-solved:hover {
+	filter: brightness(50%) !important;
+}
+
 
 .menu-header-solved {
   color: green;
@@ -323,6 +332,10 @@ table.solves * {
 	flex-direction: column-reverse;
 	justify-content: space-between;
 	align-items: stretch;
+}
+
+.race-log-element:hover {
+	filter: brightness(150%);
 }
 
 .race-name {
