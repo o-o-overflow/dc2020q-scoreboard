@@ -52,7 +52,7 @@ function Scoreboard(props) {
 		  <div>{youLink}</div>
 		  <table className="scoreboard">
 			<thead>
-			  <tr><th>#</th><th>Team</th><th>Completed</th><th>Speedrun Individual</th><th>Speedrun Overall</th><th>Points</th></tr>
+			  <tr><th>#</th><th>Team</th><th>Completed</th><th>Speedrun<br /> Individual</th><th>Speedrun<br /> Overall</th><th>Points</th></tr>
 			</thead>
 			<tbody>
 			  {teamRows}

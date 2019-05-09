@@ -208,6 +208,16 @@ input {
 	text-transform: none !important;
 }
 
+.scoreboard * {
+	text-transform: none !important;
+}
+
+table.scoreboard  {
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+
 .scoreboard td {
   border-bottom: 1px solid grey;
   padding: 5px;
