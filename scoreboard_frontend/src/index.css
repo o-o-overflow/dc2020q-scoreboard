@@ -196,6 +196,10 @@ input {
 	margin-top: 1rem;
 }
 
+.modal a, .modal a:visited {
+	color: #82609B;
+}
+
 .modal h1 {
 	margin: 0;
 }
