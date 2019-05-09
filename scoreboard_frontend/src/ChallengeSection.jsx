@@ -21,11 +21,18 @@ function ChallengeSection(props) {
       />
     );
   });
-  const classes = `section-title ${props.style}`;
+  const classes = `lcars-title center lcars-black-bg ${props.style}`;
   return (
-    <div>
-      <h2 className={classes}>{props.title}</h2>
-      {challenges}
+      <div className="lcars-column lcars-u-4">
+		<div className="lcars-row fill">
+		  <div className="lcars-bar lcars-lilac-bg horizontal left-end decorated"></div>
+		  <div className="lcars-bar horizontal round lcars-lilac-bg">
+			<h2 className={classes}>{props.title}</h2>
+		  </div>
+		  <div className="lcars-bar lcars-lilac-bg horizontal right-end decorated"></div>
+		</div>		  
+		  {challenges}
+
     </div>
   );
 }

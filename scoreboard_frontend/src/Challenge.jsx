@@ -13,11 +13,11 @@ function Challenge(props) {
 
   let status;
   if (solveCount > 1) {
-    status = `(Ordered by ${solveCount} teams)`;
+    status = `(Solved by ${solveCount} cadets)`;
   } else if (solveCount === 1) {
-    status = '(Ordered by 1 team)';
+    status = '(Solved by 1 team)';
   } else {
-    status = '(Be the first one to order it)';
+    status = '(Be the first one to solve it)';
   }
 
   let onClick = null;
@@ -27,7 +27,7 @@ function Challenge(props) {
     menuClasses += ' logged-in';
   }
 	let point_display = (
-		<span className="menu-points">{points}pt</span>
+		<div className="menu-points">{points} pts</div>
 	);
 	if (props.isSpeedrun) {
 		point_display = (
@@ -37,19 +37,23 @@ function Challenge(props) {
 
   return (
     <div
-      className={menuClasses}
+      className={`lcars-element lcars-u-3-2 rounded ${menuClasses}`}
       onClick={onClick}
       onKeyPress={() => {}}
       role="presentation"
-    >
-      <h3 className={className}>{title}</h3>
-      <div className="menu-box">
-        <div className="menu-text">
-          {tags}<br />
-          {status}
-        </div>
-		{point_display}
-      </div>
+      >
+	  {point_display}
+	  <div className="menu-lower">
+		<h3 className={className}>{title}</h3>
+		<div className="menu-box">
+          <div className="menu-text">
+			{tags}
+          </div>
+		  <div className="menu-text">		
+			{status}
+		  </div>
+		</div>
+	  </div>
     </div>
   );
 }
