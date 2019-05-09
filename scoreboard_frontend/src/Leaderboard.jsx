@@ -42,7 +42,7 @@ class Leaderboard extends React.Component {
 				<Link to={`/leaderboard/${race.id}`}>
 				  <div className="race-log-element lcars-element button round lcars-u-2-2">
 					<div className="race-name">{race.id}</div>
-					<div className="race-open">Stardate {race.open_time}</div>
+					<div className="race-open">Stardate {race.open_time.toFixed(0)}</div>
 				  </div>
 				</Link>
 			);
