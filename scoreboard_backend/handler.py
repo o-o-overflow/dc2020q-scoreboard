@@ -12,6 +12,7 @@ from const import (
     COMPETITION_START,
     REGISTRATION_PROOF_OF_WORK,
     SUBMISSION_DELAY,
+    SUBMISSION_DELAY_SPEEDRUN,
     TOKEN_PROOF_OF_WORK,
     TWELVE_HOURS,
 )
@@ -84,7 +85,7 @@ def challenge_open(event, _context):
                 "DELETE FROM unopened_challenges WHERE id=%s", (challenge_id,)
             )
             cursor.execute(
-                "INSERT INTO challenges VALUES (%s, now(), %s, %s, " "%s, %s, %s);",
+                "INSERT INTO challenges VALUES (%s, now(), %s, %s, %s, %s, %s);",
                 (challenge_id, *result),
             )
         psql.commit()
@@ -264,27 +265,31 @@ def submit(data, stage):
     flag = data["flag"].strip()
     user_id = jwt.decode(data["token"], verify=False)["user_id"]
 
+    submission_delay = SUBMISSION_DELAY_SPEEDRUN if 'speedrun-0' in challenge_id else SUBMISSION_DELAY
+
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
         with psql.cursor() as cursor:
+            # Verify if valid ID before doing anything else
+            cursor.execute("SELECT 1 FROM challenges WHERE id=%s", (challenge_id,))
+            response = cursor.fetchone()
+            if not response:
+                LOGGER.warning("INVALID SUBMIT {} {} {}".format(user_id, challenge_id, flag))
+                return api_response(422, "invalid challenge_id")
+
             cursor.execute(
-                "SELECT EXTRACT(EPOCH FROM (now() - "
-                "date_last_submitted)) FROM users WHERE id=%s;",
-                (user_id,),
+                "SELECT EXTRACT(EPOCH FROM (now() - date_created)) FROM submissions "
+                "WHERE challenge_id=%s AND user_id=%s order by date_created desc limit 1",
+                (challenge_id, user_id),
             )
             response = cursor.fetchone()
-            if response[0] and response[0] < SUBMISSION_DELAY:
-                wait_time = SUBMISSION_DELAY - response[0]
+            if response and response[0] < submission_delay:
+                wait_time = submission_delay - response[0]
                 return api_response(429, {"seconds": wait_time})
             LOGGER.info("SUBMIT {} {} {}".format(user_id, challenge_id, flag))
-            cursor.execute(
-                "UPDATE users SET date_last_submitted=now() " "WHERE id=%s;", (user_id,)
-            )
-            # Ensure the rate limit time is updated even if the following fails
-            psql.commit()
 
-            # Check to see if they've already solved it
+            # Check to see if they've already solved the challenge
             cursor.execute(
-                "SELECT 1 FROM solves where challenge_id=%s AND " "user_id=%s",
+                "SELECT 1 FROM solves where challenge_id=%s AND user_id=%s",
                 (challenge_id, user_id),
             )
             response = cursor.fetchone()
@@ -294,7 +299,7 @@ def submit(data, stage):
             # Check if correct solution
             flag_hash = hashlib.sha256(flag.encode()).hexdigest()
             cursor.execute(
-                "SELECT 1 FROM challenges WHERE id=%s AND " "flag_hash=%s",
+                "SELECT 1 FROM challenges WHERE id=%s AND flag_hash=%s",
                 (challenge_id, flag_hash),
             )
             response = cursor.fetchone()
@@ -387,12 +392,12 @@ def user_confirm(data, stage):
             response = cursor.fetchone()
             if not response:
                 return api_response(
-                    409, "invalid confirmation or confirmation" " already completed"
+                    409, "invalid confirmation or confirmation already completed"
                 )
             user_id = response[0]
             cursor.execute("DELETE FROM confirmations where id=%s;", (confirmation_id,))
             cursor.execute(
-                "UPDATE users SET date_confirmed=now() " "where id=%s;", (user_id,)
+                "UPDATE users SET date_confirmed=now() where id=%s;", (user_id,)
             )
             cursor.execute("SELECT email FROM users where id=%s;", (user_id,))
             email = cursor.fetchone()[0]
