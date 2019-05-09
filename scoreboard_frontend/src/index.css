@@ -26,7 +26,9 @@ body {
 
 a {
 	text-decoration: none;
+	color: white;
 }
+
 a:visited {
 	color: white;
 }
@@ -201,6 +203,18 @@ input {
 
 .rules li {
   list-style: none;
+}
+
+.rules * {
+	text-transform: none;
+}
+
+.rules h1 {
+	text-transform: uppercase;
+}
+
+.rules a, .rules a:visited {
+	color: #82609B;
 }
 
 .scoreboard {
