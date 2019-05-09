@@ -267,22 +267,17 @@ def submit(data, stage):
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
         with psql.cursor() as cursor:
             cursor.execute(
-                "SELECT EXTRACT(EPOCH FROM (now() - "
-                "date_last_submitted)) FROM users WHERE id=%s;",
-                (user_id,),
+                "SELECT EXTRACT(EPOCH FROM (now() - date_created)) FROM submissions "
+                "WHERE challenge_id=%s AND user_id=%s order by date_created desc limit 1",
+                (challenge_id, user_id),
             )
             response = cursor.fetchone()
-            if response[0] and response[0] < SUBMISSION_DELAY:
+            if response and response[0] < SUBMISSION_DELAY:
                 wait_time = SUBMISSION_DELAY - response[0]
                 return api_response(429, {"seconds": wait_time})
             LOGGER.info("SUBMIT {} {} {}".format(user_id, challenge_id, flag))
-            cursor.execute(
-                "UPDATE users SET date_last_submitted=now() " "WHERE id=%s;", (user_id,)
-            )
-            # Ensure the rate limit time is updated even if the following fails
-            psql.commit()
 
-            # Check to see if they've already solved it
+            # Check to see if they've already solved the challenge
             cursor.execute(
                 "SELECT 1 FROM solves where challenge_id=%s AND user_id=%s",
                 (challenge_id, user_id),

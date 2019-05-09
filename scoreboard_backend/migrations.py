@@ -77,6 +77,9 @@ MIGRATIONS = [
     "ALTER TABLE unopened_challenges ALTER COLUMN id TYPE varchar(32);",
     "ALTER TABLE submissions ALTER COLUMN challenge_id TYPE varchar(32);",
     "ALTER TABLE solves ALTER COLUMN challenge_id TYPE varchar(32);",
+    "CREATE INDEX submissions_challenge_id_user_id ON submissions (challenge_id, user_id);",
+    "CREATE INDEX submissions_date_created ON submissions (date_created);",
+    "ALTER TABLE users DROP COLUMN date_last_submitted;",
 ]
 
 
