@@ -12,29 +12,32 @@ def extract_headers(**headers):
         def wrapped(event, _context):
             result = {}
             for variable, header in headers.items():
-                result[variable] = event['headers'].get(header, None)
+                result[variable] = event["headers"].get(header, None)
                 if not result[variable]:
-                    return api_response(422, '{} header missing'
-                                        .format(header))
+                    return api_response(422, "{} header missing".format(header))
             return function(event, **result)
+
         return wrapped
+
     return initial_wrap
 
 
 def proof_of_work(fields, prefix):
-    fields.extend(['timestamp', 'nonce'])
+    fields.extend(["timestamp", "nonce"])
 
     def initial_wrap(function):
         @wraps(function)
         def wrapped(data, stage, **headers):
-            message = '!'.join([str(data[x]) for x in fields])
+            message = "!".join([str(data[x]) for x in fields])
             digest = hashlib.sha256(message.encode()).hexdigest()
             if not digest.startswith(prefix):
-                return api_response(422, 'incorrect nonce')
-            del data['nonce']
-            del data['timestamp']
+                return api_response(422, "incorrect nonce")
+            del data["nonce"]
+            del data["timestamp"]
             return function(data, stage, **headers)
+
         return wrapped
+
     return initial_wrap
 
 
@@ -47,8 +50,13 @@ def valid_confirmation(confirmation):
 
 
 def valid_email(email):
-    return isinstance(email, str) and 6 <= len(email) <= 320 and \
-        '@' in email and '.' in email and ' ' not in email
+    return (
+        isinstance(email, str)
+        and 6 <= len(email) <= 320
+        and "@" in email
+        and "." in email
+        and " " not in email
+    )
 
 
 def valid_flag(flag):
@@ -60,7 +68,7 @@ def valid_int(data):
 
 
 def valid_int_as_string(value):
-    if value is '':
+    if value is "":
         return True
     if not isinstance(value, str) or not value.isnumeric():
         return False
@@ -77,12 +85,16 @@ def valid_team(team):
 
 def valid_timestamp(timestamp):
     if not isinstance(timestamp, int):
-        return 'invalid timestamp'
+        return "invalid timestamp"
     now = int(time.time())
     if timestamp > now:
-        return 'POW timestamp is ahead of server time by {:0.2f}'.format(timestamp - now)
+        return "POW timestamp is ahead of server time by {:0.2f}".format(
+            timestamp - now
+        )
     if now - timestamp > TIMESTAMP_MAX_DELTA:
-        return 'POW timestamp expired {:0.2f} seconds ago'.format(now - timestamp - TIMESTAMP_MAX_DELTA)
+        return "POW timestamp expired {:0.2f} seconds ago".format(
+            now - timestamp - TIMESTAMP_MAX_DELTA
+        )
     return True
 
 
@@ -93,9 +105,9 @@ def validate(validate_data=True, **validators):
             if validate_data:
                 data = parse_json_request(event)
             else:
-                data = event['pathParameters']
+                data = event["pathParameters"]
             if data is None:
-                return api_response(422, 'invalid request')
+                return api_response(422, "invalid request")
 
             log_request(data)
 
@@ -103,7 +115,7 @@ def validate(validate_data=True, **validators):
             for parameter, validator in validators.items():
                 result = validator(data.get(parameter))
                 if result is False:
-                    return api_response(422, 'invalid {}'.format(parameter))
+                    return api_response(422, "invalid {}".format(parameter))
                 elif isinstance(result, dict):
                     return api_response(**result)
                 elif not isinstance(result, bool):
@@ -111,9 +123,9 @@ def validate(validate_data=True, **validators):
                 parameters[parameter] = data[parameter]
                 del data[parameter]
             if data:
-                return api_response(422, 'unexpected {}'
-                                    .format(list(data)[0]))
-            return function(parameters, event['requestContext']['stage'],
-                            **headers)
+                return api_response(422, "unexpected {}".format(list(data)[0]))
+            return function(parameters, event["requestContext"]["stage"], **headers)
+
         return wrapped
+
     return initial_wrap
