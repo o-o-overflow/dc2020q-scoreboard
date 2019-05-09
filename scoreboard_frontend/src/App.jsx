@@ -300,73 +300,82 @@ class App extends React.Component {
   render() {
     let tokenLink;
     if (this.state.token !== '') {
-      tokenLink = (<button onClick={this.handleLogOut}>Log Out {this.state.team}</button>);
+      tokenLink = (<button className="lcars-title right lcars-black-bg" onClick={this.handleLogOut}>Log Out {this.state.team}</button>);
     } else {
-      tokenLink = (<button onClick={this.handleOpenLogInModal}>Log In</button>);
+      tokenLink = (<button className="lcars-title right lcars-black-bg" onClick={this.handleOpenLogInModal}>Log In</button>);
     }
 
     const teamSolves = this.state.solvesByTeam[this.state.team] || [];
     const solved = teamSolves.includes(this.state.showChallengeId);
-    const registerLink = this.state.team ? null : <a href="https://register.oooverflow.io">Register</a>;
+    const registerLink = this.state.team ? null : <div className="lcars-title left lcars-black-bg"><a href="https://register.oooverflow.io">Register</a></div>;
 
     return (
-      <div>
-        <nav>
-          <div className="nav-title"><a href="https://www.oooverflow.io">Order-of-the-Overflow</a></div>
-          <input type="checkbox" id="nav-toggle" />
-          <label htmlFor="nav-toggle" className="label-toggle">☰</label>
-          <div className="nav-items">
+      <div className="lcars-app-container lcars-black-bg">
+        <div id="header" className="lcars-row header lcars-black-bg">
+		  <div className="lcars-elbow left-bottom lcars-blue-bg">
+		  </div>
+		  <div className="lcars-bar lcars-blue-bg horizontal">
+			<div className="lcars-title left lcars-black-bg"><a href="https://www.oooverflow.io">OOO</a></div>
+			<div className="lcars-title left lcars-black-bg">DC 27 Quals</div>
             {tokenLink}
 			{registerLink}
-            <Link to="/">À La Carte</Link>
-            <Link to="/rules">Rules</Link>
-            <Link to="/scoreboard">Scoreboard</Link>
-            <Link to="/solves">Solves</Link>
-            <Link to="/leaderboard">Leaderboard</Link>
-            <a href="https://twitter.com/oooverflow">Announcements</a>
-          </div>
-        </nav>
-        <div>
-          <div className="background">
-            <div className="background-fade" />
-            <div className="container">
-              <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} onUnload={this.handleCloseChallengeModal} unopened={this.state.unopened} />} />
-              <Route exact path="/rules" component={Rules} />
-              <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} teamScoreboardOrder={this.state.teamScoreboardOrder} team={this.state.team} />} />
-			  <Route exact path="/solves" render={() => <GameMatrix challenges={this.state.challenges} teamScoreboardOrder={this.state.teamScoreboardOrder}/>}/>
-				<Route path="/leaderboard" render={() => <Leaderboard races={this.state.races} currentRace={this.state.currentRace} teamOverallSpeedrunOrder={this.state.teamOverallSpeedrunOrder} teamSpeedrunSolveOrder={this.state.teamSpeedrunSolveOrder} />}/>
-            </div>
-          </div>
-        </div>
-        <ReactModal
-          className="modal"
-          contentLabel="Log In Modal"
-          isOpen={this.state.showLogInModal}
-          onRequestClose={this.handleCloseLogInModal}
-        >
-          <LogInModal
-            onClose={this.handleCloseLogInModal}
-            setAuthentication={this.setAuthentication}
-          />
-        </ReactModal>
-        <ReactModal
-          className="modal"
-          contentLabel="Challenge Modal"
-          isOpen={this.state.showChallengeModal}
-          onRequestClose={this.handleCloseChallengeModal}
-        >
-          <ChallengeModal
-            challengeId={this.state.showChallengeId}
-            challengeTitle={this.challengeTitlesById[this.state.showChallengeId] || ''}
-            onClose={this.handleCloseChallengeModal}
-            onTokenExpired={this.handleLogOut}
-            onSolve={this.loadData}
-            solved={solved}
-            token={this.state.token}
-          />
-        </ReactModal>
+            <a className="lcars-title right lcars-black-bg" href="https://twitter.com/oooverflow">Announcements</a>
+            <Link className="lcars-title right lcars-black-bg" to="/leaderboard">Leaderboard</Link>
+            <Link className="lcars-title right lcars-black-bg" to="/solves">Solves</Link>			
+            <Link className="lcars-title right lcars-black-bg" to="/scoreboard">Scoreboard</Link>			
+            <Link className="lcars-title right lcars-black-bg" to="/rules">Rules</Link>			
+            <Link className="lcars-title right lcars-black-bg" to="/">Training</Link>			
+		  </div>
+		  <div className="lcars-bar lcars-blue-bg horizontal right-end decorated"></div>
+		</div>
+		<div id="left-menu" className="lcars-column start-space lcars-u-1">
+			<div className="lcars-bar lcars-blue-bg lcars-u-1"></div>
+		</div>
+		<div id="footer" className="lcars-row ">
+			<div className="lcars-elbow left-top lcars-blue-bg"></div>
+			<div className="lcars-bar horizontal both-divider bottom lcars-blue-bg"></div>
+			<div className="lcars-bar horizontal right-end left-divider bottom lcars-blue-bg"></div>
+		</div>
+		
+		
+        <div id="container">
+		  <div className="lcars-row fill">
+          <Route exact path="/" render={() => <ChallengeMenu authenticated={this.state.token !== ''} challenges={this.state.challenges} onClick={this.handleOpenChallengeModal} onUnload={this.handleCloseChallengeModal} unopened={this.state.unopened} />} />
+            <Route exact path="/rules" component={Rules} />
+            <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} teamScoreboardOrder={this.state.teamScoreboardOrder} team={this.state.team} />} />
+			<Route exact path="/solves" render={() => <GameMatrix challenges={this.state.challenges} teamScoreboardOrder={this.state.teamScoreboardOrder}/>}/>
+			<Route path="/leaderboard" render={() => <Leaderboard races={this.state.races} currentRace={this.state.currentRace} teamOverallSpeedrunOrder={this.state.teamOverallSpeedrunOrder} teamSpeedrunSolveOrder={this.state.teamSpeedrunSolveOrder} />}/>
 
-      </div>
+			<ReactModal
+			  className="modal"
+			  contentLabel="Log In Modal"
+			  isOpen={this.state.showLogInModal}
+			  onRequestClose={this.handleCloseLogInModal}
+			  >
+			  <LogInModal
+				onClose={this.handleCloseLogInModal}
+				setAuthentication={this.setAuthentication}
+				/>
+			</ReactModal>
+			<ReactModal
+			  className="modal"
+			  contentLabel="Challenge Modal"
+			  isOpen={this.state.showChallengeModal}
+			  onRequestClose={this.handleCloseChallengeModal}
+			  >
+			  <ChallengeModal
+				challengeId={this.state.showChallengeId}
+				challengeTitle={this.challengeTitlesById[this.state.showChallengeId] || ''}
+				onClose={this.handleCloseChallengeModal}
+				onTokenExpired={this.handleLogOut}
+				onSolve={this.loadData}
+				solved={solved}
+				token={this.state.token}
+				/>
+			</ReactModal>
+		</div>
+		</div>
+	  </div>
     );
   }
 }

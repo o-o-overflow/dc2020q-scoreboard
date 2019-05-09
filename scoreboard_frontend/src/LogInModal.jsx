@@ -96,7 +96,7 @@ class LogInModal extends React.Component {
 
   render() {
     let status;
-    const buttonText = this.state.buttonDisabled ? 'Please Wait' : 'LogIn';
+    const buttonText = this.state.buttonDisabled ? 'Please Wait' : 'Log In';
     if (this.state.status !== '') {
       status = (<div className="wrapped">Status: {this.state.status}</div>);
     }
