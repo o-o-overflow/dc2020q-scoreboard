@@ -71,6 +71,11 @@ function Rules() {
 		<p>All game announcements will be made through our Twitter account <a href="https://twitter.com/oooverflow">@oooverflow</a>.</p>
 
 		<p>You can hang out with us on IRC <a href="https://hackint.org">hackint.org</a> in #defconctf</p>
+
+		<h1 id="submission-delay">Flag Submission Delay</h1>
+
+		<p>Flags can be submitted once every 30 seconds per challenge, speedrun's limit is lower.</p>
+		
 		
 		<h1 id="team-size">Team Size</h1>
 
