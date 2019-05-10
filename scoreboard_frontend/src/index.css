@@ -36,6 +36,10 @@ a:visited {
 	color: white;
 }
 
+code {
+	font-family: monospace;
+}
+
 button {
 	border: none;
 	cursor: pointer;
