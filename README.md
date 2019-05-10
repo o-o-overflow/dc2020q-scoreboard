@@ -74,6 +74,7 @@ Install using
 
 ```sh
 npm install -g serverless
+npm install --save-dev serverless-kms-secrets
 ```
 
 
