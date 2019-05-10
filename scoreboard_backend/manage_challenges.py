@@ -42,11 +42,15 @@ class CommandHandler:
     def update(self, arguments):
         challenges = parse_json(arguments.json)
         try:
-            challenge = next(x for x in challenges if x['id'] == arguments.challenge)
+            challenge = next(x for x in challenges if x["id"] == arguments.challenge)
         except StopIteration:
             print(f"Invalid challenge: {arguments.challenge}")
             return 1
-        data = {"id": challenge["id"], "description": challenge["description"], "flag_hash": challenge["flag_hash"]}
+        data = {
+            "id": challenge["id"],
+            "description": challenge["description"],
+            "flag_hash": challenge["flag_hash"],
+        }
         return self._run_command("challenge_update", "-d", json.dumps(data))
 
     def _run_command(self, *sls_arguments):

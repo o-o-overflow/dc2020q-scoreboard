@@ -104,8 +104,10 @@ def challenge_update(event, _context):
             cursor.execute("SELECT 1 FROM challenges WHERE id=%s", (challenge_id,))
             result = cursor.fetchone()
             table = "challenges" if result else "unopened_challenges"
-            cursor.execute(f"UPDATE {table} set description=%s, flag_hash=%s where id=%s;",
-                           (description, flag_hash, challenge_id))
+            cursor.execute(
+                f"UPDATE {table} set description=%s, flag_hash=%s where id=%s;",
+                (description, flag_hash, challenge_id),
+            )
         psql.commit()
     return api_response(200)
 
