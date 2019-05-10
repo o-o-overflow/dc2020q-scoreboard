@@ -57,7 +57,7 @@ class Leaderboard extends React.Component {
 				<h2>Overall Leaderboard</h2>
 				{this.overallLeaders()}
 			  </div>
-			  <div className="race-list lcars-u-3 lcars-column">
+			  <div className="race-log lcars-u-3 lcars-column">
 				<h2>Race Log</h2>
 				{this.raceList()}
 			  </div>

@@ -335,6 +335,19 @@ table.solves * {
 	margin-right: 3rem;
 }
 
+.overall-leaderboard {
+	margin-right: .5rem;
+}
+
+.race-log {
+	margin-left: .5rem;
+	margin-right: .5rem;
+}
+
+.race-list {
+	margin-left: .5rem;
+}
+
 #leaderboard h2 {
 	background-color: #82609B;
 	border-radius: 1.5rem;
