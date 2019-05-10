@@ -88,7 +88,7 @@ def valid_timestamp(timestamp):
         return "invalid timestamp"
     now = int(time.time())
     if timestamp > now:
-        return "POW timestamp is ahead of server time by {:0.2f}".format(
+        return "POW timestamp is ahead of server time by {:0.2f} seconds".format(
             timestamp - now
         )
     if now - timestamp > TIMESTAMP_MAX_DELTA:
