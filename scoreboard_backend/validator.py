@@ -2,8 +2,15 @@ from functools import wraps
 import hashlib
 import time
 
-from const import TIMESTAMP_MAX_DELTA
+from const import TIMESTAMP_MAX_DELTA, TOKEN_PROOF_OF_WORK
 from helper import api_response, log_request, parse_json_request
+
+
+def callback_submit_proof_of_work(digest, data):
+    if data["challenge_id"].startswith("speedrun-0"):
+        return digest.startswith("abc")
+    else:
+        return digest.startswith(TOKEN_PROOF_OF_WORK)
 
 
 def extract_headers(**headers):
@@ -30,7 +37,14 @@ def proof_of_work(fields, prefix):
         def wrapped(data, stage, **headers):
             message = "!".join([str(data[x]) for x in fields])
             digest = hashlib.sha256(message.encode()).hexdigest()
-            if not digest.startswith(prefix):
+
+            passed = False
+            if callable(prefix):
+                passed = prefix(digest, data)
+            else:
+                passed = digest.startswith(prefix)
+
+            if not passed:
                 return api_response(422, "incorrect nonce")
             del data["nonce"]
             del data["timestamp"]
