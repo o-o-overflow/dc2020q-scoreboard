@@ -12,6 +12,9 @@
 	     url('./klingon_font-webfont.svg#webfont') format('svg');
 }
 
+html {
+}
+
 * {
 	box-sizing: border-box;
 	font-family: 'Saira Extra Condensed';
@@ -204,6 +207,10 @@ input {
 	margin: 0;
 }
 
+.ReactModal__Overlay {
+  z-index: 20;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -349,47 +356,9 @@ table.solves * {
 	text-align: right;
 }
 
-
-@media screen and (max-width: 575px) {
-  .label-toggle {
-    cursor: pointer;
-    display: block;
-    float: right;
-  }
-
-  #nav-toggle:checked ~ .nav-items {
-    height: 100%;
-    opacity: 1;
-    visibility: visible;
-  }
-
+@media screen and (max-width: 988px) {
+	html {
+		font-size: 90%;
+	}
 }
 
-/* @media screen and (min-width: 576px) { */
-/*   .container { */
-/*     max-width:540px */
-/*   } */
-/* } */
-
-/* @media screen and (min-width: 768px) { */
-/*   .column { */
-/*     flex: 0 0 50%; */
-/*     max-width: 50%; */
-/*   } */
-
-/*   .container { */
-/*     max-width: 720px; */
-/*   } */
-/* } */
-
-/* @media screen and (min-width: 992px) { */
-/*   .container { */
-/*     max-width: 960px; */
-/*   } */
-/* } */
-
-/* @media screen and (min-width: 1200px) { */
-/*   .container { */
-/*     max-width: 1140px; */
-/*   } */
-/* } */

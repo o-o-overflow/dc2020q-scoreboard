@@ -15,7 +15,7 @@ class ChallengeMenu extends React.Component {
       appetizers: {
         column: 'left',
         style: 'category-space',
-		newName: 'Space',
+		newName: 'Final Frontier',
       },
       'from the grill': {
           column: 'left',

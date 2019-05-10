@@ -315,16 +315,19 @@ class App extends React.Component {
 		  <div className="lcars-elbow left-bottom lcars-blue-bg">
 		  </div>
 		  <div className="lcars-bar lcars-blue-bg horizontal">
-			<div className="lcars-title left lcars-black-bg"><a href="https://www.oooverflow.io">OOO</a></div>
 			<div className="lcars-title left lcars-black-bg">DC 27 Quals</div>
+			<input type="checkbox" id="nav-toggle" />
+			<label htmlFor="nav-toggle" className="label-toggle">☰</label>
+			<span className="nav-items">
             {tokenLink}
 			{registerLink}
-            <a className="lcars-title right lcars-black-bg" href="https://twitter.com/oooverflow">Announcements</a>
-            <Link className="lcars-title right lcars-black-bg" to={`/leaderboard/${this.state.currentRace.id}`}>Leaderboard</Link>
-            <Link className="lcars-title right lcars-black-bg" to="/solves">Solves</Link>			
-            <Link className="lcars-title right lcars-black-bg" to="/scoreboard">Scoreboard</Link>			
-            <Link className="lcars-title right lcars-black-bg" to="/rules">Rules</Link>			
-            <Link className="lcars-title right lcars-black-bg" to="/">Training</Link>			
+              <a className="lcars-title right lcars-black-bg" href="https://twitter.com/oooverflow">Announcements</a>
+              <Link className="lcars-title right lcars-black-bg" to={`/leaderboard/${this.state.currentRace ? this.state.currentRace.id : ''}`}>Leaderboard</Link>
+              <Link className="lcars-title right lcars-black-bg" to="/solves">Solves</Link>			
+              <Link className="lcars-title right lcars-black-bg" to="/scoreboard">Scoreboard</Link>			
+              <Link className="lcars-title right lcars-black-bg" to="/rules">Rules</Link>			
+              <Link className="lcars-title right lcars-black-bg" to="/">Training</Link>
+			</span>
 		  </div>
 		  <div className="lcars-bar lcars-blue-bg horizontal right-end decorated"></div>
 		</div>
