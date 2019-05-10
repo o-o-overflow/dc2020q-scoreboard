@@ -40,7 +40,7 @@ class Leaderboard extends React.Component {
 		return this.props.races.map((race) => {
 			return (
 				<Link to={`/leaderboard/${race.id}`}>
-				  <div className="race-log-element lcars-element button round lcars-u-2-2">
+				  <div className="race-log-element lcars-element button rounded lcars-u-2-2">
 					<div className="race-name">{race.id}</div>
 					<div className="race-open">Stardate {race.open_time.toFixed(0)}</div>
 				  </div>
@@ -61,13 +61,11 @@ class Leaderboard extends React.Component {
 				<h2>Race Log</h2>
 				{this.raceList()}
 			  </div>
-			  <div className="race-results lcars-u-3 lcars-column">
 			  <Route path="/leaderboard/:race" render={(props) =>
 													   (
 														   <RaceResults teamSpeedrunSolveOrder={this.props.teamSpeedrunSolveOrder[props.match.params.race] || []} race={props.match.params.race}/>
 													   )}/>
 				</div>
-			</div>
 		);
 	}
 }

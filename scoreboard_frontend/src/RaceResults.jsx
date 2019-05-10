@@ -9,7 +9,7 @@ class RaceResults extends React.Component {
 				  <td>{idx+1}</td>
 				  <td key={team.name}>{team.name}</td>
 				  <td>{team.solve_time.toFixed(2)} s</td>
-				  <td>{team.points}</td>				  
+				  <td>{team.points}</td>
 				</tr>
 			);
 		});
@@ -17,7 +17,7 @@ class RaceResults extends React.Component {
 	
 	render () {
 		return (
-			<div id="race-results">
+			<div className="race-list lcars-u-3 lcars-column">
 			  <h2>{this.props.race}</h2>
 			  <table className="overall-leaders">
 				<thead>

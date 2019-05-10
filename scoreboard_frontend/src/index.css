@@ -249,11 +249,11 @@ input {
 	text-transform: none !important;
 }
 
-table.overall-leaders * {
+.overall-leaders * {
 	text-transform: none !important;
 }
 
-table.scoreboard, table.overall-leaders  {
+table.scoreboard, .overall-leaders  {
 	border-spacing: 0;
 	border-collapse: collapse;
 }

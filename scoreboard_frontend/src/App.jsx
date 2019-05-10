@@ -211,7 +211,7 @@ class App extends React.Component {
 
 	  Object.keys(teamSpeedrunSolveOrder).forEach((chal) => {
 		  teamSpeedrunSolveOrder[chal].sort((a, b) => {
-			  return a.time_for_overall - b.time_for_overall;
+			  return a.solve_time - b.solve_time;
 		  });
 
 		  teamSpeedrunSolveOrder[chal].forEach((solve, idx) => {
