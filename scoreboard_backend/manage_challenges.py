@@ -15,6 +15,9 @@ def parse_json(json_file):
 
 
 class CommandHandler:
+    def __init__(self, environment):
+        self.environment = environment
+
     def add(self, arguments):
         challenges = parse_json(arguments.json)
         return self._run_command("challenges_add", "--path", arguments.json.name)
@@ -24,7 +27,7 @@ class CommandHandler:
         return self._run_command("challenge_open", "-d", json.dumps(data))
 
     def openall(self, arguments):
-        if arguments.environment != "dev":
+        if self.environment != "dev":
             print("Can only run openall in the dev environment.")
             return 1
         for challenge in parse_json(arguments.json):
@@ -48,7 +51,7 @@ class CommandHandler:
 
     def _run_command(self, *sls_arguments):
         process = subprocess.run(
-            ["sls", "invoke", "-lf"] + list(sls_arguments),
+            ["sls", "invoke", "--stage", self.environment, "-lf"] + list(sls_arguments),
             cwd=os.path.dirname(__file__),
         )
         return process.returncode
@@ -127,7 +130,7 @@ def main():
     if arguments.command is None:
         argument_parser.error("command is required")
 
-    command_handler = CommandHandler()
+    command_handler = CommandHandler(arguments.environment)
     return getattr(command_handler, arguments.command)(arguments)
 
 
