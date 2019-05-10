@@ -93,6 +93,25 @@ def challenge_open(event, _context):
     return api_response(201)
 
 
+def challenge_update(event, _context):
+    if not event:
+        return api_response(422, "data must be provided")
+    challenge_id = event["id"]
+    description = event["description"]
+    flag_hash = event["flag_hash"]
+    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+        with psql.cursor() as cursor:
+            cursor.execute("SELECT 1 FROM challenges WHERE id=%s", (challenge_id,))
+            result = cursor.fetchone()
+            table = "challenges" if result else "unopened_challenges"
+            cursor.execute(
+                f"UPDATE {table} set description=%s, flag_hash=%s where id=%s;",
+                (description, flag_hash, challenge_id),
+            )
+        psql.commit()
+    return api_response(200)
+
+
 def challenges(event, _context):
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
         with psql.cursor() as cursor:
