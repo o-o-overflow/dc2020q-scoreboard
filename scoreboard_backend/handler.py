@@ -376,8 +376,6 @@ def test_email(_event, context):
 @proof_of_work(["email", "password"], TOKEN_PROOF_OF_WORK)
 def token(data, stage):
     now = int(time.time())
-    if stage == "prod" and now < COMPETITION_START:
-        return api_response(400, "the competition has not yet started")
     if now >= COMPETITION_END:
         return api_response(400, "the competition is over")
 
