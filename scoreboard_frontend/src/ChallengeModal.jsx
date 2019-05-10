@@ -46,6 +46,7 @@ class ChallengeModal extends React.Component {
   }
 
   handleSubmit = () => {
+    let prefix;
     let validation;
     if (this.state.flag.length < 1 || this.state.flag.length > 160) {
       validation = 'invalid flag';
@@ -56,8 +57,13 @@ class ChallengeModal extends React.Component {
         buttonDisabled: true,
         status: 'computing proof of work',
       });
+      if (this.props.challengeId.startsWith('speedrun-0')) {
+        prefix = 'abc';
+      } else {
+        prefix = '0123';
+      }
       this.worker.postMessage({
-        prefix: '0123',
+        prefix,
         value: `${this.props.challengeId}!${this.state.flag}!${this.props.token}!${this.hashTimestamp}`,
       });
       return;
