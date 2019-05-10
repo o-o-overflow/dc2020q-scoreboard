@@ -18,6 +18,7 @@ from const import (
 )
 from helper import api_response, decrypt_secrets, psql_connection, send_email
 from validator import (
+    callback_submit_proof_of_work,
     extract_headers,
     proof_of_work,
     valid_challenge_id,
@@ -259,13 +260,15 @@ def ping(_event, _context):
     timestamp=valid_timestamp,
     token=valid_token,
 )
-@proof_of_work(["challenge_id", "flag", "token"], TOKEN_PROOF_OF_WORK)
+@proof_of_work(["challenge_id", "flag", "token"], callback_submit_proof_of_work)
 def submit(data, stage):
     challenge_id = data["challenge_id"]
     flag = data["flag"].strip()
     user_id = jwt.decode(data["token"], verify=False)["user_id"]
 
-    submission_delay = SUBMISSION_DELAY_SPEEDRUN if 'speedrun-0' in challenge_id else SUBMISSION_DELAY
+    submission_delay = (
+        SUBMISSION_DELAY_SPEEDRUN if "speedrun-0" in challenge_id else SUBMISSION_DELAY
+    )
 
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
         with psql.cursor() as cursor:
@@ -273,7 +276,9 @@ def submit(data, stage):
             cursor.execute("SELECT 1 FROM challenges WHERE id=%s", (challenge_id,))
             response = cursor.fetchone()
             if not response:
-                LOGGER.warning("INVALID SUBMIT {} {} {}".format(user_id, challenge_id, flag))
+                LOGGER.warning(
+                    "INVALID SUBMIT {} {} {}".format(user_id, challenge_id, flag)
+                )
                 return api_response(422, "invalid challenge_id")
 
             cursor.execute(
