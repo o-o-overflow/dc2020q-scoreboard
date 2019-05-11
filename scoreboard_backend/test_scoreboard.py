@@ -25,7 +25,7 @@ PATHS = {
 }
 
 REGISTER_EMAIL = "a{}@a.co".format(int(time.time()))
-VALID_CHALLENGE_ID = "puzzle"
+VALID_CHALLENGE_ID = "redacted-puzzle"
 VALID_EMAIL = "bb@bb.comm"
 VALID_PASSWORD = "bb@bb.comm"
 
@@ -441,7 +441,7 @@ def test_token_with_expired_timestamp(stage):
         },
     )
     assert_failure(
-        response, r"POW timestamp expired \d+\.\d{2} seconds ago$", regex=True
+        response, r"POW timestamp expired \d+ second\(s\) ago$", regex=True
     )
 
 
@@ -460,7 +460,7 @@ def test_token_with_future_timestamp(stage):
     )
     assert_failure(
         response,
-        r"POW timestamp is ahead of server time by \d+\.\d{2} seconds$",
+        r"POW timestamp is ahead of server time by \d+ second\(s\)$",
         regex=True,
     )
 
