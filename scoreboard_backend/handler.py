@@ -387,7 +387,7 @@ def token(data, stage):
                 "SELECT id, team_name FROM users where "
                 "date_confirmed IS NOT NULL AND "
                 "lower(email)=%s AND password=crypt(%s, password);",
-                (email, data["password"]),
+                (email.lower(), data["password"]),
             )
             response = cursor.fetchone()
     if not response:
@@ -504,11 +504,13 @@ def user_reset_password(event, _context):
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
         with psql.cursor() as cursor:
             cursor.execute(
-                "UPDATE users set password=crypt(%s, gen_salt('bf', 10)) where email=%s;",
-                (password, email),
+                "UPDATE users set password=crypt(%s, gen_salt('bf', 10)) where lower(email)=%s;",
+                (password, email.lower()),
             )
+            if cursor.rowcount != 1:
+                return api_response(422, "invalid email")
         psql.commit()
-    return api_response(200)
+    return api_response(200, "password updated")
 
 
 def users(_event, _context):
