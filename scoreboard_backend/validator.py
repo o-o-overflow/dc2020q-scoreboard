@@ -101,9 +101,9 @@ def valid_timestamp(timestamp):
     if not isinstance(timestamp, int):
         return "invalid timestamp"
     now = int(time.time())
-    if timestamp > now:
+    if timestamp - 30 > now:
         return "POW timestamp is ahead of server time by {:0.2f} seconds".format(
-            timestamp - now
+            30 + timestamp - now
         )
     if now - timestamp > TIMESTAMP_MAX_DELTA:
         return "POW timestamp expired {:0.2f} seconds ago".format(
