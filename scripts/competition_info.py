@@ -16,7 +16,7 @@ DB_HOST = {
 }
 
 
-def decrypt_secrets(environment="dev"):
+def decrypt_secrets(environment="prod"):
     session = boto3.session.Session(profile_name="ooo")
     kms = session.client("kms")
     with open(
@@ -37,7 +37,7 @@ def main():
 
 
 @contextmanager
-def psql_connection(db_password, environment="dev"):
+def psql_connection(db_password, environment="prod"):
     psql = psycopg2.connect(
         dbname="scoreboard",
         host=DB_HOST[environment],

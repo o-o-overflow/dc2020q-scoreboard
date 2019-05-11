@@ -16,7 +16,7 @@ DB_HOST = {
 }
 
 
-ENVIRONMENT = "dev"
+ENVIRONMENT = "prod"
 
 
 def decrypt_secrets():
@@ -174,7 +174,7 @@ def info_team(psql, team):
 
 def timeline(psql):
     now = datetime.datetime.now(datetime.timezone.utc)
-    start = datetime.datetime(2018, 5, 12, 0, 0, 0, tzinfo=datetime.timezone.utc)
+    start = datetime.datetime(2019, 5, 11, 0, 0, 0, tzinfo=datetime.timezone.utc)
     slots = [[0, set()] for i in range(49)]
     diff = now - start
     current = int(diff.total_seconds() // 60 // 60)
@@ -354,7 +354,7 @@ def stats(psql):
             max_solved = max_solved[-1][0]
 
     now = datetime.datetime.now(datetime.timezone.utc)
-    start = datetime.datetime(2018, 5, 12, 0, 0, 0, tzinfo=datetime.timezone.utc)
+    start = datetime.datetime(2019, 5, 11, 0, 0, 0, tzinfo=datetime.timezone.utc)
     diff = now - start
     diffm = diff.days * 24 * 60 + diff.seconds // 60
     progress = diffm * 100 / (48 * 60)
