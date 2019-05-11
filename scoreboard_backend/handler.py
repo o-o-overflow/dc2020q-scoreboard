@@ -142,6 +142,7 @@ def challenges(event, _context):
             "solves": solves,
             "unopened_by_category": unopened_by_category,
         },
+        log_message=False,
     )
 
 
