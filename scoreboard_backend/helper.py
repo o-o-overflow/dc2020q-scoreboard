@@ -13,11 +13,19 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
 
-def api_response(status_code=200, message=None):
+def api_response(status_code=200, message=None, log_message=True):
     body = {"success": status_code < 400}
+    logged = False
     if message:
+        if not log_message:
+            log_body = body.copy()
+            log_body["message_size"] = len(json.dumps(message))
+            LOGGER.info(log_body)
+            logged = True
         body["message"] = message
-    LOGGER.info(body)
+
+    if not logged:
+        LOGGER.info(body)
     return {
         "body": json.dumps(body),
         "headers": {"Access-Control-Allow-Origin": "*"},

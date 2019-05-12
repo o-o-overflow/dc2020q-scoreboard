@@ -62,6 +62,26 @@ def challenge(data, stage):
     return api_response(200, result[0])
 
 
+def challenge_delete(event, _context):
+    if not event:
+        return api_response(422, "data must be provided")
+    challenge_id = event.get("id", None)
+    if not challenge_id:
+        return api_response(422, "invalid challenge id")
+
+    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+        with psql.cursor() as cursor:
+            cursor.execute(
+                "DELETE FROM unopened_challenges WHERE id=%s", (challenge_id,)
+            )
+            if cursor.rowcount != 1:
+                return api_response(
+                    400, "that challenge does not exist or was already opened"
+                )
+        psql.commit()
+    return api_response(200)
+
+
 def challenge_open(event, _context):
     if not event:
         return api_response(422, "data must be provided")
@@ -142,6 +162,7 @@ def challenges(event, _context):
             "solves": solves,
             "unopened_by_category": unopened_by_category,
         },
+        log_message=False,
     )
 
 

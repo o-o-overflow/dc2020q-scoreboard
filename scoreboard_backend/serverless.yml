@@ -13,6 +13,8 @@ functions:
                 id: true
                 token: true
     handler: handler.challenge
+  challenge_delete:
+    handler: handler.challenge_delete
   challenge_open:
     handler: handler.challenge_open
   challenge_update:
