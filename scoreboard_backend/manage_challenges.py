@@ -22,6 +22,10 @@ class CommandHandler:
         challenges = parse_json(arguments.json)
         return self._run_command("challenges_add", "--path", arguments.json.name)
 
+    def delete(self, arguments):
+        data = {"id": arguments.challenge}
+        return self._run_command("challenge_delete", "-d", json.dumps(data))
+
     def open(self, arguments):
         data = {"id": arguments.challenge}
         return self._run_command("challenge_open", "-d", json.dumps(data))
@@ -91,6 +95,13 @@ def main():
         default=json_default,
         help=f"The path to the scoreboard json file (default: {json_default})",
         type=argparse.FileType(),
+    )
+
+    delete_parser = subparsers.add_parser(
+        "delete", help="Delete an unopened challenge."
+    )
+    delete_parser.add_argument(
+        "challenge", help="The ID of the unopened challenge to delete."
     )
 
     open_parser = subparsers.add_parser("open", help="Open a challenge.")
