@@ -440,9 +440,7 @@ def test_token_with_expired_timestamp(stage):
             "timestamp": int(time.time()) - TIMESTAMP_MAX_DELTA - 1,
         },
     )
-    assert_failure(
-        response, r"POW timestamp expired \d+ second\(s\) ago$", regex=True
-    )
+    assert_failure(response, r"POW timestamp expired \d+ second\(s\) ago$", regex=True)
 
 
 def test_token_with_future_timestamp(stage):
