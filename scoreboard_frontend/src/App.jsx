@@ -8,6 +8,7 @@ import LogInModal from './LogInModal';
 import Rules from './Rules';
 import Scoreboard from './Scoreboard';
 import Leaderboard from './Leaderboard';
+import CtfTimeScoreboard from './CtfTimeScoreboard';
 
 ReactModal.setAppElement('#root');
 
@@ -348,6 +349,7 @@ class App extends React.Component {
             <Route exact path="/scoreboard" render={() => <Scoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} teamScoreboardOrder={this.state.teamScoreboardOrder} team={this.state.team} />} />
 			<Route exact path="/solves" render={() => <GameMatrix challenges={this.state.challenges} teamScoreboardOrder={this.state.teamScoreboardOrder}/>}/>
 			<Route path="/leaderboard" render={() => <Leaderboard races={this.state.races} currentRace={this.state.currentRace} teamOverallSpeedrunOrder={this.state.teamOverallSpeedrunOrder} teamSpeedrunSolveOrder={this.state.teamSpeedrunSolveOrder} />}/>
+            <Route exact path="/scoreboard-ctftime" render={() => <CtfTimeScoreboard categoryByChallenge={this.categoryByChallenge} lastSolveTimeByTeam={this.state.lastSolveTimeByTeam} pointsByTeam={this.state.pointsByTeam} solvesByTeam={this.state.solvesByTeam} teamScoreboardOrder={this.state.teamScoreboardOrder} team={this.state.team} />} />
 
 			<ReactModal
 			  className="modal"
