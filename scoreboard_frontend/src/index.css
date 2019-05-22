@@ -12,9 +12,6 @@
         url("./klingon_font-webfont.svg#webfont") format("svg");
 }
 
-html {
-}
-
 * {
     box-sizing: border-box;
     font-family: "Saira Extra Condensed";
@@ -49,10 +46,6 @@ button {
 input {
     font-size: 1rem;
     width: 100%;
-}
-
-.lcars-title {
-    font-size: 115% !important;
 }
 
 #nav-toggle {
@@ -159,12 +152,6 @@ input {
 
 .menu-header-solved:after {
     content: " (completed)";
-}
-
-.menu-points {
-}
-
-.menu-title {
 }
 
 .menu-box {
@@ -321,56 +308,4 @@ table.solves * {
 .solves .solved {
     color: #739f75;
     font-size: 1.6em;
-}
-
-#leaderboard {
-    display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    width: 100%;
-    margin-right: 3rem;
-}
-
-.overall-leaderboard {
-    margin-right: 0.5rem;
-}
-
-.race-log {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-}
-
-.race-list {
-    margin-left: 0.5rem;
-}
-
-#leaderboard h2 {
-    background-color: #82609b;
-    border-radius: 1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-
-.race-log-element {
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: space-between;
-    align-items: stretch;
-}
-
-.race-log-element:hover {
-    filter: brightness(150%);
-}
-
-.race-name {
-    text-align: left;
-}
-.race-open {
-    text-align: right;
-}
-
-@media screen and (max-width: 988px) {
-    html {
-        font-size: 90%;
-    }
 }

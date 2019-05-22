@@ -49,7 +49,7 @@ class GameMatrix extends React.Component {
     this.challenges.sort();
 
     return (
-      <table className="lcars-u-7 solves">
+      <table className="solves">
         <thead>
           <tr>
             <th>Team</th>

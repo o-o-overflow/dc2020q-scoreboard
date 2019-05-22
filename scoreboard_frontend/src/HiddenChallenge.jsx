@@ -3,7 +3,7 @@ import React from "react";
 
 function HiddenChallenge(props) {
   return (
-    <div className="lcars-element lcars-u-3-2 lcars-hopbush-bg rounded hidden-menu-item menu-item">
+    <div className="hidden-menu-item menu-item">
       <div className="menu-points">some pts</div>
       <div className="menu-lower">
         <h3 className="menu-header">CHALLANGE{props.id}</h3>

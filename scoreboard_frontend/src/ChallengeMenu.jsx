@@ -70,11 +70,9 @@ class ChallengeMenu extends React.Component {
 
     return (
       <div>
-        <h1 className="lcars-row fill">Cadet Training Program</h1>
-        <div className="lcars-row fill">
-          <div className="lcars-column fill">{leftSections}</div>
-          <div className="lcars-column fill">{rightSections}</div>
-        </div>
+        <h1>Cadet Training Program</h1>
+        <div>{leftSections}</div>
+        <div>{rightSections}</div>
       </div>
     );
   }

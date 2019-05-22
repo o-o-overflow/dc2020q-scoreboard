@@ -31,7 +31,7 @@ function Challenge(props) {
 
   return (
     <div
-      className={`lcars-element lcars-u-3-2 rounded ${menuClasses}`}
+      className={menuClasses}
       onClick={onClick}
       onKeyPress={() => {}}
       role="presentation"
