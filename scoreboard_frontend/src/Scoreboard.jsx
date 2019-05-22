@@ -47,9 +47,9 @@ function Scoreboard(props) {
   }
 
   const youLink = props.team ? (
-    <a className="toTeam" onClick={handleClick}>
-      YOU
-    </a>
+    <div className="toTeam" href="#" onClick={handleClick}>
+      YOUR TEAM
+    </div>
   ) : null;
 
   return (

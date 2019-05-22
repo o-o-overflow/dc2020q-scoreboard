@@ -1,18 +1,4 @@
-import PropTypes from "prop-types";
 import React from "react";
-
-const CATEGORY_TO_CSS_CLASS = {
-  "amuse bouche": "first-contact",
-  appetizers: "space",
-  "from the grill": "weapons",
-  "signature dishes": "science",
-  "fruits and desserts": "diplomacy"
-};
-
-function categoryIcons(categoryByChallenge, challengeId) {
-  const cssClass = CATEGORY_TO_CSS_CLASS[categoryByChallenge[challengeId]];
-  return `<span title="${challengeId}" class="category-${cssClass}"></span>`;
-}
 
 function CtfTimeScoreboard(props) {
   var ctfTimeOutput = {};
