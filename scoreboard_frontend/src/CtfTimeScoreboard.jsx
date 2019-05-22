@@ -1,12 +1,12 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 
 const CATEGORY_TO_CSS_CLASS = {
-  'amuse bouche': 'first-contact',
-  appetizers: 'space',
-  'from the grill': 'weapons',
-  'signature dishes': 'science',
-  'fruits and desserts': 'diplomacy',
+  "amuse bouche": "first-contact",
+  appetizers: "space",
+  "from the grill": "weapons",
+  "signature dishes": "science",
+  "fruits and desserts": "diplomacy"
 };
 
 function categoryIcons(categoryByChallenge, challengeId) {
@@ -15,22 +15,17 @@ function categoryIcons(categoryByChallenge, challengeId) {
 }
 
 function CtfTimeScoreboard(props) {
+  var ctfTimeOutput = {};
+  ctfTimeOutput["tasks"] = Object.keys(props.categoryByChallenge);
 
-	var ctfTimeOutput = {};
-	ctfTimeOutput["tasks"] = Object.keys(props.categoryByChallenge);
+  var num = 1;
+  ctfTimeOutput["standings"] = props.teamScoreboardOrder.map(team => ({
+    team: team.name,
+    pos: num++,
+    score: props.pointsByTeam[team.name]
+  }));
 
-	var num = 1;
-	ctfTimeOutput["standings"] = props.teamScoreboardOrder.map(team => ({
-		team: team.name,
-		pos: num++,
-		score: props.pointsByTeam[team.name],
-	}));
-
-
-	return (
-		<pre>{JSON.stringify(ctfTimeOutput, null, ' ')}</pre>
-	);
-
+  return <pre>{JSON.stringify(ctfTimeOutput, null, " ")}</pre>;
 }
 
 export default CtfTimeScoreboard;

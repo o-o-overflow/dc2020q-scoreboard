@@ -1,43 +1,36 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import PropTypes from "prop-types";
+import React from "react";
 
 function Challenge(props) {
-  const {
-    tags, points, solveCount, solved, title,
-  } = props;
+  const { tags, points, solveCount, solved, title } = props;
 
-  let className = 'menu-header';
+  let className = "menu-header";
   if (solved) {
-    className += ' menu-header-solved';
+    className += " menu-header-solved";
   }
 
   let status;
   if (solveCount > 1) {
     status = `(Completed by ${solveCount} cadets)`;
   } else if (solveCount === 1) {
-    status = '(Completed by 1 cadet)';
+    status = "(Completed by 1 cadet)";
   } else {
-    status = '(Be the first)';
+    status = "(Be the first)";
   }
 
   let onClick = null;
-  let menuClasses = 'menu-item';
+  let menuClasses = "menu-item";
   if (props.authenticated) {
     onClick = () => props.onClick(props);
-    menuClasses += ' logged-in';
+    menuClasses += " logged-in";
   }
-	if (solved)
-	{
-		menuClasses += ' menu-solved';
-	}
-	let point_display = (
-		<div className="menu-points">{points} pts</div>
-	);
-	if (props.isSpeedrun) {
-		point_display = (
-			<span></span>
-		);
-	}
+  if (solved) {
+    menuClasses += " menu-solved";
+  }
+  let point_display = <div className="menu-points">{points} pts</div>;
+  if (props.isSpeedrun) {
+    point_display = <span />;
+  }
 
   return (
     <div
@@ -45,19 +38,15 @@ function Challenge(props) {
       onClick={onClick}
       onKeyPress={() => {}}
       role="presentation"
-      >
-	  {point_display}
-	  <div className="menu-lower">
-		<h3 className={className}>{title}</h3>
-		<div className="menu-box">
-          <div className="menu-text">
-			{tags}
-          </div>
-		  <div className="menu-text">		
-			{status}
-		  </div>
-		</div>
-	  </div>
+    >
+      {point_display}
+      <div className="menu-lower">
+        <h3 className={className}>{title}</h3>
+        <div className="menu-box">
+          <div className="menu-text">{tags}</div>
+          <div className="menu-text">{status}</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -69,6 +58,6 @@ Challenge.propTypes = {
   solved: PropTypes.bool.isRequired,
   tags: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  isSpeedrun: PropTypes.bool.isRequired,
+  isSpeedrun: PropTypes.bool.isRequired
 };
 export default Challenge;
