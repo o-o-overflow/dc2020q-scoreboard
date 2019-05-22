@@ -18,7 +18,6 @@ function ChallengeSection(props) {
         key={challenge.id}
         onClick={props.onClick}
         section={props.title}
-        isSpeedrun={props.isSpeedrun}
       />
     );
   });

@@ -4,26 +4,6 @@ function Rules() {
   return (
     <div className="rules">
       <h1 id="intro">Intro</h1>
-
-      <p>
-        Hackers rejoice, as all prepare for the wondrous journey ahead for us.
-        Technology has lifted us up from the burden of our everyday life, and we
-        shall complete the final journey ahead to the long-awaited land: a land
-        free of software vulnerabilities. We are brothers and sisters on this
-        journey, part of the same whole.
-      </p>
-
-      <p>
-        Unfortunately, not all can start on this journey right now, so we’ve
-        arranged a bit of a training exercise. We’ll need all the security
-        expertise we can get on this mission, but we have limited space.
-      </p>
-
-      <p>
-        Prove yourself worthy, demonstrate your mastery of technology and
-        security, and emerge victorious to compete at DEF CON CTF.
-      </p>
-
       <h1 id="rules">Rules</h1>
 
       <ul>
@@ -38,60 +18,12 @@ function Rules() {
         <li>No automated scanning—For these challenges, do better</li>
       </ul>
 
-      <h1 id="new-challenge-type-speedrun">New Challenge Type: Speedrun</h1>
-
-      <p>
-        We want to see who the fastest hackers are on the planet. So we created
-        a new type of challenge: the{" "}
-        <code classname="highlighter-rouge">speedrun</code>. There will be one
-        speedrun challenge released every 2 hours starting at May 11th 03:00 UTC
-        for 24 hours (for a total of 12 challenges). Every speedrun challenge is
-        running on the latest Ubuntu 18.04 with libc-2.27 md5 hash of
-        50390b2ae8aaa73c47745040f54e602f. To the winner go the spoils.
-      </p>
-
       <h1 id="scoring">Scoring</h1>
 
       <p>
-        As in 2018, all challenges (except for speedruns) will be adaptive
-        scoring based on the number of solves: starting at 500 and decreasing
-        from there (based on the total number of teams that solved the
-        challenge).
-      </p>
-
-      <p>
-        Speedrun challenges have two ways to earn points: individual and
-        overall.
-      </p>
-
-      <p>
-        Individual challenge scoring is based on the solve order of the
-        speedrun:
-      </p>
-
-      <ul>
-        <li>First to solve: 25 points</li>
-        <li>Second to solve: 20 points</li>
-        <li>Third to solve: 15 points</li>
-        <li>Fourth to solve: 10 points</li>
-        <li>All other solves: 5 points</li>
-      </ul>
-
-      <p>
-        Overall speedrun scoring is based on the total solve time of a team over
-        all speedruns (max of 2 hours for unsolved challenges):
-      </p>
-
-      <ul>
-        <li>First place: 300 points</li>
-        <li>Second place: 200 points</li>
-        <li>Third place: 100 points</li>
-      </ul>
-
-      <p>
-        For example, if one team solves all speedrun challenges first, they
-        would receive 300 (25*12) points on individual speedrun and 300 points
-        for being in first place overall.
+        All challenges will be adaptive scoring based on the number of solves:
+        starting at 500 and decreasing from there (based on the total number of
+        teams that solved the challenge).
       </p>
 
       <h1 id="flag-format">Flag Format</h1>
@@ -145,10 +77,7 @@ function Rules() {
 
       <h1 id="submission-delay">Flag Submission Delay</h1>
 
-      <p>
-        Flags can be submitted once every 30 seconds per challenge, speedrun's
-        limit is lower.
-      </p>
+      <p>Flags can be submitted once every 30 seconds per challenge.</p>
 
       <h1 id="team-size">Team Size</h1>
 

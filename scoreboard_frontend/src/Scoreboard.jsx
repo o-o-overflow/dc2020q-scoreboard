@@ -21,11 +21,7 @@ function Scoreboard(props) {
     name: team.name,
     num: num++,
     points: props.pointsByTeam[team.name],
-    solves: team.solves
-      .filter(id => props.categoryByChallenge[id] !== "speedrun")
-      .map(id => categoryIcons(props.categoryByChallenge, id)),
-    speedrunOverall: team.speedrunOverall,
-    speedrunIndividual: team.speedrunIndividual
+    solves: team.solves.map(id => categoryIcons(props.categoryByChallenge, id))
   }));
 
   const teamRows = teams.map(team => (
@@ -33,8 +29,6 @@ function Scoreboard(props) {
       <td>{team.num}</td>
       <td>{team.name}</td>
       <td dangerouslySetInnerHTML={{ __html: team.solves.join("") }} />
-      <td>{team.speedrunIndividual}</td>
-      <td>{team.speedrunOverall}</td>
       <td>{team.points}</td>
     </tr>
   ));
@@ -61,14 +55,6 @@ function Scoreboard(props) {
             <th>#</th>
             <th>Team</th>
             <th>Completed</th>
-            <th>
-              Speedrun
-              <br /> Individual
-            </th>
-            <th>
-              Speedrun
-              <br /> Overall
-            </th>
             <th>Points</th>
           </tr>
         </thead>

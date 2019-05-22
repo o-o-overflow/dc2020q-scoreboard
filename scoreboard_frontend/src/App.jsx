@@ -7,15 +7,11 @@ import GameMatrix from "./GameMatrix";
 import LogInModal from "./LogInModal";
 import Rules from "./Rules";
 import Scoreboard from "./Scoreboard";
-import Leaderboard from "./Leaderboard";
 import CtfTimeScoreboard from "./CtfTimeScoreboard";
 
 ReactModal.setAppElement("#root");
 
 function challengePoints(solvers, category) {
-  if (category === "speedrun") {
-    return 0;
-  }
   if (!Number.isInteger(solvers) || solvers < 2) return 500;
   return parseInt(100 + 400 / (1 + 0.08 * solvers * Math.log(solvers)), 10);
 }
@@ -28,8 +24,6 @@ class App extends React.Component {
       lastSolveTimeByTeam: {},
       pointsByTeam: {},
       teamScoreboardOrder: [],
-      teamSpeedrunSolveOrder: {},
-      teamOverallSpeedrunOrder: [],
       showChallengeId: "",
       showChallengeModal: false,
       showLogInModal: false,
@@ -38,9 +32,7 @@ class App extends React.Component {
       team: window.localStorage.getItem("team") || "",
       token: window.localStorage.getItem("token") || "",
       intervalID: -1,
-      unopened: {},
-      currentRace: false,
-      races: []
+      unopened: {}
     };
     this.categoryByChallenge = {};
     this.challengeTitlesById = {};
@@ -171,70 +163,6 @@ class App extends React.Component {
       }
     });
 
-    const teamSpeedrunSolveOrder = {};
-    const teamOverallSpeedrunOrder = [];
-    Object.keys(solvesByTeam).forEach(team => {
-      let overall_time = 0;
-      if (!("speedrun" in challenges)) {
-        return;
-      }
-      challenges["speedrun"].forEach(chal => {
-        let time_for_overall = 60 * 60 * 2;
-        if (solvesByTeam[team].includes(chal.id)) {
-          let solve_time = solvesByTeamChallengeTime[team][chal.id];
-          let open_time = chal.open_time;
-          let diff = solve_time - open_time;
-          if (diff < time_for_overall) {
-            time_for_overall = diff;
-          }
-
-          if (!(chal.id in teamSpeedrunSolveOrder)) {
-            teamSpeedrunSolveOrder[chal.id] = [];
-          }
-          teamSpeedrunSolveOrder[chal.id].push({
-            name: team,
-            solve_time: diff,
-            points: 0
-          });
-        }
-        overall_time += time_for_overall;
-      });
-      teamOverallSpeedrunOrder.push({
-        name: team,
-        overallSpeedrun: overall_time
-      });
-    });
-
-    teamOverallSpeedrunOrder.sort((a, b) => {
-      return a.overallSpeedrun - b.overallSpeedrun;
-    });
-
-    const individual_place_points = {
-      1: 25,
-      2: 20,
-      3: 15,
-      4: 10,
-      default: 5
-    };
-
-    const speedrunPointsByTeam = { overall: {}, individual: {} };
-
-    Object.keys(teamSpeedrunSolveOrder).forEach(chal => {
-      teamSpeedrunSolveOrder[chal].sort((a, b) => {
-        return a.solve_time - b.solve_time;
-      });
-
-      teamSpeedrunSolveOrder[chal].forEach((solve, idx) => {
-        solve.points =
-          individual_place_points[idx + 1] || individual_place_points.default;
-
-        if (!(solve.name in speedrunPointsByTeam.individual)) {
-          speedrunPointsByTeam.individual[solve.name] = 0;
-        }
-        speedrunPointsByTeam.individual[solve.name] += solve.points;
-      });
-    });
-
     const pointsByTeam = {};
     Object.keys(solvesByTeam).forEach(team => {
       let points = 0;
@@ -244,43 +172,11 @@ class App extends React.Component {
       pointsByTeam[team] = points;
     });
 
-    const overall_place_points = {
-      1: 300,
-      2: 200,
-      3: 100,
-      default: 0
-    };
-
-    teamOverallSpeedrunOrder.forEach((team, idx) => {
-      const place = idx + 1;
-      if (place in overall_place_points) {
-        speedrunPointsByTeam.overall[team.name] = overall_place_points[place];
-      }
-    });
-
-    // increase points by the speedrun overall
-    Object.keys(speedrunPointsByTeam.overall).map((team, index) => {
-      pointsByTeam[team] += speedrunPointsByTeam.overall[team];
-    });
-
-    // increase points by the speedrun individual
-    Object.keys(speedrunPointsByTeam.individual).map((team, index) => {
-      pointsByTeam[team] += speedrunPointsByTeam.individual[team];
-    });
-
     const teamScoreboardOrder = Object.keys(pointsByTeam).map(name => ({
       lastSolveTime: lastSolveTimeByTeam[name],
       name,
       points: pointsByTeam[name],
-      solves: solvesByTeam[name],
-      speedrunOverall:
-        name in speedrunPointsByTeam.overall
-          ? speedrunPointsByTeam.overall[name]
-          : 0,
-      speedrunIndividual:
-        name in speedrunPointsByTeam.individual
-          ? speedrunPointsByTeam.individual[name]
-          : 0
+      solves: solvesByTeam[name]
     }));
     teamScoreboardOrder.sort((a, b) => {
       if (a.points === b.points) {
@@ -289,15 +185,6 @@ class App extends React.Component {
       return b.points - a.points;
     });
 
-    const races =
-      "speedrun" in challenges
-        ? challenges["speedrun"].concat().sort((a, b) => {
-            return b.open_time - a.open_time;
-          })
-        : [];
-
-    const currentRace = races[0];
-
     this.setState({
       ...this.state,
       challenges,
@@ -305,10 +192,6 @@ class App extends React.Component {
       pointsByTeam,
       teamScoreboardOrder,
       solvesByTeam,
-      currentRace,
-      races,
-      teamOverallSpeedrunOrder,
-      teamSpeedrunSolveOrder,
       unopened: data.unopened_by_category
     });
   };
@@ -362,14 +245,6 @@ class App extends React.Component {
               >
                 Announcements
               </a>
-              <Link
-                className="lcars-title right lcars-black-bg"
-                to={`/leaderboard/${
-                  this.state.currentRace ? this.state.currentRace.id : ""
-                }`}
-              >
-                Leaderboard
-              </Link>
               <Link className="lcars-title right lcars-black-bg" to="/solves">
                 Solves
               </Link>
@@ -435,17 +310,6 @@ class App extends React.Component {
                 <GameMatrix
                   challenges={this.state.challenges}
                   teamScoreboardOrder={this.state.teamScoreboardOrder}
-                />
-              )}
-            />
-            <Route
-              path="/leaderboard"
-              render={() => (
-                <Leaderboard
-                  races={this.state.races}
-                  currentRace={this.state.currentRace}
-                  teamOverallSpeedrunOrder={this.state.teamOverallSpeedrunOrder}
-                  teamSpeedrunSolveOrder={this.state.teamSpeedrunSolveOrder}
                 />
               )}
             />

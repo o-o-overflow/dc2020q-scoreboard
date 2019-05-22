@@ -28,9 +28,6 @@ function Challenge(props) {
     menuClasses += " menu-solved";
   }
   let point_display = <div className="menu-points">{points} pts</div>;
-  if (props.isSpeedrun) {
-    point_display = <span />;
-  }
 
   return (
     <div
@@ -57,7 +54,6 @@ Challenge.propTypes = {
   solveCount: PropTypes.number.isRequired,
   solved: PropTypes.bool.isRequired,
   tags: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  isSpeedrun: PropTypes.bool.isRequired
+  title: PropTypes.string.isRequired
 };
 export default Challenge;

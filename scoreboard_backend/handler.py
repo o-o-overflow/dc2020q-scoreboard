@@ -12,7 +12,6 @@ from const import (
     COMPETITION_START,
     REGISTRATION_PROOF_OF_WORK,
     SUBMISSION_DELAY,
-    SUBMISSION_DELAY_SPEEDRUN,
     TOKEN_PROOF_OF_WORK,
     TWELVE_HOURS,
 )
@@ -306,10 +305,6 @@ def submit(data, stage):
     flag = data["flag"].strip()
     user_id = jwt.decode(data["token"], verify=False)["user_id"]
 
-    submission_delay = (
-        SUBMISSION_DELAY_SPEEDRUN if "speedrun-0" in challenge_id else SUBMISSION_DELAY
-    )
-
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
         with psql.cursor() as cursor:
             # Verify if valid ID before doing anything else
@@ -327,8 +322,8 @@ def submit(data, stage):
                 (challenge_id, user_id),
             )
             response = cursor.fetchone()
-            if response and response[0] < submission_delay:
-                wait_time = submission_delay - response[0]
+            if response and response[0] < SUBMISSION_DELAY:
+                wait_time = SUBMISSION_DELAY - response[0]
                 return api_response(429, {"seconds": wait_time})
             LOGGER.info("SUBMIT {} {} {}".format(user_id, challenge_id, flag))
 

@@ -31,11 +31,6 @@ class ChallengeMenu extends React.Component {
         column: "right",
         style: "category-diplomacy",
         newName: "Diplomacy"
-      },
-      speedrun: {
-        column: "right",
-        style: "category-speedrun",
-        newName: "Speedrun"
       }
     };
   }
@@ -52,7 +47,6 @@ class ChallengeMenu extends React.Component {
       Array(this.props.unopened[sectionTitle] || 0),
       (_, i) => ({ unopened: i + 1000 })
     );
-    const isSpeedrun = sectionTitle === "speedrun";
 
     return (
       <ChallengeSection
@@ -62,7 +56,6 @@ class ChallengeMenu extends React.Component {
         key={section.newName}
         onClick={this.props.onClick}
         title={section.newName}
-        isSpeedrun={isSpeedrun}
       />
     );
   };
