@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "immutability-helper": "^2.6.6",
-    "prop-types": "^15.6.1",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1",
-    "react-modal": "^3.4.4",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4",
-    "showdown": "^1.8.6"
+    "immutability-helper": "^3.0.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-modal": "^3.8.1",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "^3.0.1",
+    "showdown": "^1.9.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -20,10 +20,22 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.3",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.7.0"
+    "babel-eslint": "^10.0.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
