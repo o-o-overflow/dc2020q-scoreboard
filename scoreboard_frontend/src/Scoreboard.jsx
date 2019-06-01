@@ -25,35 +25,37 @@ function Scoreboard(props) {
   const teamRows = teams.map(team => (
     <tr key={team.name} id={team.name}>
       <td>{team.num}</td>
+      <td>{team.points}</td>
       <td>{team.name}</td>
       <td>{team.solves}</td>
-      <td>{team.points}</td>
     </tr>
   ));
 
   function handleClick() {
     const element = document.getElementById(props.team);
     if (element) {
-      element.scrollIntoView();
+      window.scroll({
+        behavior: "smooth",
+        top: element.offsetTop
+      });
     }
   }
 
-  const youLink = props.team ? (
-    <div className="toTeam" href="#" onClick={handleClick}>
-      YOUR TEAM
-    </div>
+  const teamLink = props.team ? (
+    <button type="button" className="btn btn-link" onClick={handleClick}>
+      (My Team)
+    </button>
   ) : null;
 
   return (
-    <div>
-      <div>{youLink}</div>
-      <table className="scoreboard">
+    <div className="table-responsive">
+      <table className="table table-hover table-sm">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Team</th>
-            <th>Completed</th>
-            <th>Points</th>
+            <th scope="col">Place</th>
+            <th scope="col">Points</th>
+            <th scope="col">Team {teamLink}</th>
+            <th scope="col">Completed</th>
           </tr>
         </thead>
         <tbody>{teamRows}</tbody>
