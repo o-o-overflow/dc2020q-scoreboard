@@ -1,0 +1,29 @@
+.category-amuse-bouche:before {
+  content: "🍡";
+  padding-right: 0.25em;
+}
+
+.category-appetizers:before {
+  content: "🍴";
+  padding-right: 0.25em;
+}
+
+.category-from-the-grill:before {
+  content: "🍗";
+  padding-right: 0.25em;
+}
+
+.category-fruits-and-desserts:before {
+  content: "🍒";
+  padding-right: 0.25em;
+}
+
+.category-signature-dishes:before {
+  content: "🍜";
+  padding-right: 0.25em;
+}
+
+.category-speedrun:before {
+  content: "🍳";
+  padding-right: 0.25em;
+}

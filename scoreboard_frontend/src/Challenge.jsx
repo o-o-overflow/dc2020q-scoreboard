@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 function Challenge(props) {
-  const { tags, points, solveCount, solved, title } = props;
+  const { id, points, solveCount, solved, tags } = props;
 
   let className = "menu-header";
   if (solved) {
@@ -38,7 +38,7 @@ function Challenge(props) {
     >
       {point_display}
       <div className="menu-lower">
-        <h3 className={className}>{title}</h3>
+        <h3 className={className}>{id}</h3>
         <div className="menu-box">
           <div className="menu-text">{tags}</div>
           <div className="menu-text">{status}</div>
@@ -49,11 +49,11 @@ function Challenge(props) {
 }
 Challenge.propTypes = {
   authenticated: PropTypes.bool.isRequired,
+  id: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   points: PropTypes.number.isRequired,
   solveCount: PropTypes.number.isRequired,
   solved: PropTypes.bool.isRequired,
-  tags: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired
+  tags: PropTypes.string.isRequired
 };
 export default Challenge;

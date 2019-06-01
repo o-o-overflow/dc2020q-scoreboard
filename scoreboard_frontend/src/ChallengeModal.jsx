@@ -211,7 +211,7 @@ class ChallengeModal extends React.Component {
     return (
       <div className="container">
         <button onClick={this.props.onClose}>X</button>
-        <h1>{this.props.challengeTitle}</h1>
+        <h1>{this.props.challengeId}</h1>
         <div dangerouslySetInnerHTML={{ __html: this.state.description }} />
         {form}
         {status}
@@ -221,7 +221,6 @@ class ChallengeModal extends React.Component {
 }
 ChallengeModal.propTypes = {
   challengeId: PropTypes.string.isRequired,
-  challengeTitle: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onSolve: PropTypes.func.isRequired,
   onTokenExpired: PropTypes.func.isRequired,

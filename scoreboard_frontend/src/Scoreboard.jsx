@@ -1,17 +1,15 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-const CATEGORY_TO_CSS_CLASS = {
-  "amuse bouche": "first-contact",
-  appetizers: "space",
-  "from the grill": "weapons",
-  "signature dishes": "science",
-  "fruits and desserts": "diplomacy"
-};
-
-function categoryIcons(categoryByChallenge, challengeId) {
-  const cssClass = CATEGORY_TO_CSS_CLASS[categoryByChallenge[challengeId]];
-  return `<span title="${challengeId}" class="category-${cssClass}"></span>`;
+function categoryIcon(categoryByChallenge, challengeId) {
+  const cssClass = categoryByChallenge[challengeId].replace(/ /g, "-");
+  return (
+    <span
+      className={`category-${cssClass}`}
+      key={challengeId}
+      title={challengeId}
+    />
+  );
 }
 
 function Scoreboard(props) {
@@ -21,14 +19,14 @@ function Scoreboard(props) {
     name: team.name,
     num: num++,
     points: props.pointsByTeam[team.name],
-    solves: team.solves.map(id => categoryIcons(props.categoryByChallenge, id))
+    solves: team.solves.map(id => categoryIcon(props.categoryByChallenge, id))
   }));
 
   const teamRows = teams.map(team => (
     <tr key={team.name} id={team.name}>
       <td>{team.num}</td>
       <td>{team.name}</td>
-      <td dangerouslySetInnerHTML={{ __html: team.solves.join("") }} />
+      <td>{team.solves}</td>
       <td>{team.points}</td>
     </tr>
   ));
