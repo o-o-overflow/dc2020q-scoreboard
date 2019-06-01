@@ -27,3 +27,9 @@
   content: "🍳";
   padding-right: 0.25em;
 }
+
+.sticky-left {
+  position: sticky;
+  left: 0;
+  background-color: white;
+}

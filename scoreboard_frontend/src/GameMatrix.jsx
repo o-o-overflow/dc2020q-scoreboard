@@ -1,40 +1,34 @@
 import React from "react";
 
 class GameMatrix extends React.Component {
+  body() {
+    return this.props.teamScoreboardOrder.map(team => {
+      return (
+        <tr key={team.name}>
+          <td className="sticky-left" key={team.name}>
+            {team.name}
+          </td>
+          {this.solvedRow(new Set(team.solves))}
+        </tr>
+      );
+    });
+  }
+
   header() {
     const theHeaders = this.challenges.map(id => {
-      return <th key={id}>{id}</th>;
+      return (
+        <th key={id} scope="row">
+          {id}
+        </th>
+      );
     });
 
     return theHeaders;
   }
 
   solvedRow(solves) {
-    const solved = this.challenges.map(id => {
-      const isSolved = solves.has(id);
-      const theClass = isSolved ? "solved" : "not-solved";
-      return (
-        <td
-          className={theClass}
-          dangerouslySetInnerHTML={{
-            __html: isSolved ? "&#10004;" : "&#10060;"
-          }}
-        />
-      );
-    });
-    return solved;
-  }
-
-  body() {
-    // Go through each team in order of score
-
-    return this.props.teamScoreboardOrder.map(team => {
-      return (
-        <tr key={team.name}>
-          <td key={team.name}>{team.name}</td>
-          {this.solvedRow(new Set(team.solves))}
-        </tr>
-      );
+    return this.challenges.map(id => {
+      return <td key={id}>{solves.has(id) ? "✔" : "❌"}</td>;
     });
   }
 
@@ -49,15 +43,19 @@ class GameMatrix extends React.Component {
     this.challenges.sort();
 
     return (
-      <table className="solves">
-        <thead>
-          <tr>
-            <th>Team</th>
-            {this.header()}
-          </tr>
-        </thead>
-        <tbody>{this.body()}</tbody>
-      </table>
+      <div className="table-responsive">
+        <table className="table table-hover table-sm">
+          <thead>
+            <tr>
+              <th className="sticky-left" scope="column">
+                Team
+              </th>
+              {this.header()}
+            </tr>
+          </thead>
+          <tbody>{this.body()}</tbody>
+        </table>
+      </div>
     );
   }
 }
