@@ -47,7 +47,7 @@ function Navbar(context, props) {
     ));
 
     return (
-        <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+        <nav className="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
             <Link className="navbar-brand" to="/">
                 DC28 Quals
             </Link>
