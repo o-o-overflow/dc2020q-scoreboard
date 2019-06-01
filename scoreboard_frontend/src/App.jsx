@@ -1,10 +1,11 @@
 import React from "react";
 import ReactModal from "react-modal";
-import { Link, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import ChallengeMenu from "./ChallengeMenu";
 import ChallengeModal from "./ChallengeModal";
 import GameMatrix from "./GameMatrix";
 import LogInModal from "./LogInModal";
+import Navbar from "./Navbar";
 import Rules from "./Rules";
 import Scoreboard from "./Scoreboard";
 import CtfTimeScoreboard from "./CtfTimeScoreboard";
@@ -197,39 +198,18 @@ class App extends React.Component {
   };
 
   render() {
-    let tokenLink;
-    if (this.state.token !== "") {
-      tokenLink = (
-        <button onClick={this.handleLogOut}>Log Out {this.state.team}</button>
-      );
-    } else {
-      tokenLink = <button onClick={this.handleOpenLogInModal}>Log In</button>;
-    }
-
     const teamSolves = this.state.solvesByTeam[this.state.team] || [];
     const solved = teamSolves.includes(this.state.showChallengeId);
-    const registerLink = this.state.team ? null : (
-      <a href="https://register.oooverflow.io">Register</a>
-    );
 
     return (
-      <div>
-        <div>DC 27 Quals</div>
-        <input type="checkbox" id="nav-toggle" />
-        <label htmlFor="nav-toggle" className="label-toggle">
-          ☰
-        </label>
-        <span className="nav-items">
-          {tokenLink}
-          {registerLink}
-          <a href="https://twitter.com/oooverflow">Announcements</a>
-          <Link to="/solves">Solves</Link>
-          <Link to="/scoreboard">Scoreboard</Link>
-          <Link to="/rules">Rules</Link>
-          <Link to="/">Training</Link>
-        </span>
-
-        <div id="container">
+      <>
+        <Navbar
+          handleLogOut={this.handleLogOut}
+          handleOpenLogInModal={this.handleOpenLogInModal}
+          team={this.state.team}
+          token={this.state.token}
+        />
+        <main role="main" className="container-fluid">
           <Route
             exact
             path="/"
@@ -312,8 +292,8 @@ class App extends React.Component {
               token={this.state.token}
             />
           </ReactModal>
-        </div>
-      </div>
+        </main>
+      </>
     );
   }
 }
