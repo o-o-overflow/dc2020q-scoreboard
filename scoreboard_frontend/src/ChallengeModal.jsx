@@ -175,47 +175,69 @@ class ChallengeModal extends React.Component {
       ? "Please Wait"
       : "Submit Flag";
     if (this.state.status !== "") {
-      status = <div className="wrapped">Status: {this.state.status}</div>;
+      status = (
+        <div className="alert alert-secondary">Status: {this.state.status}</div>
+      );
     }
 
-    let form = "";
+    let form_submission = "";
+
     if (!this.props.solved) {
-      form = (
-        <div>
-          <div className="form-group">
-            <label htmlFor="flag">
-              Flag
-              <br />
-              <input
-                id="flag"
-                onChange={this.handleFlagChange}
-                onKeyPress={this.handleKeyPress}
-                readOnly={this.state.buttonDisabled}
-                type="text"
-                value={this.state.flag}
-              />
-            </label>
-          </div>
-          <div className="form-group">
-            <input
-              className="button"
-              disabled={this.state.buttonDisabled}
-              onClick={this.handleSubmit}
-              type="button"
-              value={buttonText}
-            />
-          </div>
-        </div>
+      form_submission = (
+        <>
+          <label htmlFor="flag" className="sr-only">
+            Flag
+          </label>
+          <input
+            id="flag"
+            className="form-control"
+            placeholder="flag (format: OOO{…})"
+            onChange={this.handleFlagChange}
+            onKeyPress={this.handleKeyPress}
+            readOnly={this.state.buttonDisabled}
+            type="text"
+            value={this.state.flag}
+          />
+          <input
+            className="btn btn-primary"
+            disabled={this.state.buttonDisabled}
+            onClick={this.handleSubmit}
+            type="button"
+            value={buttonText}
+          />
+        </>
       );
     }
 
     return (
-      <div className="container">
-        <button onClick={this.props.onClose}>X</button>
-        <h1>{this.props.challengeId}</h1>
-        <div dangerouslySetInnerHTML={{ __html: this.state.description }} />
-        {form}
-        {status}
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">{this.props.challengeId}</h5>
+            <button
+              aria-label="Close"
+              className="close"
+              onClick={this.props.onClose}
+              type="button"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className="modal-body">
+            <div dangerouslySetInnerHTML={{ __html: this.state.description }} />
+            {status}
+          </div>
+          <div className="modal-footer">
+            {form_submission}
+            <button
+              className="btn btn-secondary"
+              onClick={this.props.onClose}
+              type="button"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
