@@ -1,3 +1,7 @@
+.ReactModal__Overlay {
+  z-index: 1021 !important;
+}
+
 .category-amuse-bouche:before {
   content: "🍡";
   padding-right: 0.25em;

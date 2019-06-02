@@ -119,46 +119,66 @@ class LogInModal extends React.Component {
     }
 
     return (
-      <div className="container">
-        <button onClick={this.props.onClose}>X</button>
-        <h1>Log In</h1>
-        <div className="form-group">
-          <label htmlFor="email">
-            Email Address
-            <br />
+      <div className="modal-dialog" role="document">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Log In</h5>
+            <button
+              aria-label="Close"
+              className="close"
+              onClick={this.props.onClose}
+              type="button"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div className="modal-body">
+            <label className="sr-only" htmlFor="email">
+              Email Address
+            </label>
             <input
+              autoComplete="email"
+              className="form-control"
               id="email"
               onChange={this.handleEmailChange}
               onKeyPress={this.handleKeyPress}
+              placeholder="Email Address"
               readOnly={this.state.buttonDisabled}
               type="text"
               value={this.state.email}
             />
-          </label>
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">
-            Password
-            <br />
+            <label className="sr-only" htmlFor="current-password">
+              Password
+            </label>
             <input
+              autoComplete="current-password"
+              className="form-control"
               id="password"
               onChange={this.handlePasswordChange}
               onKeyPress={this.handleKeyPress}
+              placeholder="Password"
               type="password"
               value={this.state.password}
             />
-          </label>
+          </div>
+          <div className="modal-footer">
+            {status}
+            <input
+              className="btn btn-primary"
+              disabled={this.state.buttonDisabled}
+              onClick={this.handleLogIn}
+              type="button"
+              value={buttonText}
+            />
+            <button
+              className="btn btn-secondary"
+              onClick={this.props.onClose}
+              type="button"
+            >
+              Close
+            </button>
+          </div>
         </div>
-        <div className="form-group">
-          <input
-            className="button"
-            disabled={this.state.buttonDisabled}
-            onClick={this.handleLogIn}
-            type="button"
-            value={buttonText}
-          />
-        </div>
-        {status}
       </div>
     );
   }

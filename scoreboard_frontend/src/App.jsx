@@ -255,7 +255,7 @@ class App extends React.Component {
           />
 
           <ReactModal
-            className="modal"
+            className="anthing-but-the-default"
             contentLabel="Log In Modal"
             isOpen={this.state.showModal === "logIn"}
             onRequestClose={this.handleCloseModal}
@@ -266,7 +266,7 @@ class App extends React.Component {
             />
           </ReactModal>
           <ReactModal
-            className="modal"
+            className="anything-but-the-default"
             contentLabel="Challenge Modal"
             isOpen={this.state.showModal === "challenge"}
             onRequestClose={this.handleCloseModal}
