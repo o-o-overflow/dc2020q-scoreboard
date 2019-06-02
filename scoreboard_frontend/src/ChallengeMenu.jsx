@@ -6,33 +6,13 @@ class ChallengeMenu extends React.Component {
   constructor(props) {
     super(props);
 
-    this.sectionInfo = {
-      "amuse bouche": {
-        column: "left",
-        style: "category-first-contact",
-        newName: "First Contact"
-      },
-      appetizers: {
-        column: "left",
-        style: "category-space",
-        newName: "Final Frontier"
-      },
-      "from the grill": {
-        column: "left",
-        style: "category-weapons",
-        newName: "Weapons"
-      },
-      "signature dishes": {
-        column: "left",
-        style: "category-science",
-        newName: "Science"
-      },
-      "fruits and desserts": {
-        column: "right",
-        style: "category-diplomacy",
-        newName: "Diplomacy"
-      }
-    };
+    this.sectionOrder = [
+      "amuse bouche",
+      "appetizers",
+      "from the grill",
+      "signature dishes",
+      "fruits and desserts"
+    ];
   }
 
   componentWillUnmount = () => {
@@ -40,8 +20,6 @@ class ChallengeMenu extends React.Component {
   };
 
   buildSections = sectionTitle => {
-    const section = this.sectionInfo[sectionTitle];
-
     const openChallenges = this.props.challenges[sectionTitle] || [];
     const unopenedChallenges = Array.from(
       Array(this.props.unopened[sectionTitle] || 0),
@@ -50,31 +28,18 @@ class ChallengeMenu extends React.Component {
 
     return (
       <ChallengeSection
-        {...section}
         authenticated={this.props.authenticated}
         challenges={openChallenges.concat(unopenedChallenges)}
-        key={section.newName}
+        key={sectionTitle}
         onClick={this.props.onClick}
-        title={section.newName}
+        title={sectionTitle}
       />
     );
   };
 
   render() {
-    const leftSections = Object.keys(this.sectionInfo)
-      .filter(sectionTitle => this.sectionInfo[sectionTitle].column === "left")
-      .map(this.buildSections);
-    const rightSections = Object.keys(this.sectionInfo)
-      .filter(sectionTitle => this.sectionInfo[sectionTitle].column === "right")
-      .map(this.buildSections);
-
-    return (
-      <div>
-        <h1>Cadet Training Program</h1>
-        <div>{leftSections}</div>
-        <div>{rightSections}</div>
-      </div>
-    );
+    const sections = this.sectionOrder.map(this.buildSections);
+    return <div className="row">{sections}</div>;
   }
 }
 ChallengeMenu.propTypes = {

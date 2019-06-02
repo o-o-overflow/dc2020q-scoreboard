@@ -21,9 +21,10 @@ function ChallengeSection(props) {
       />
     );
   });
+  const cssClass = props.title.replace(/ /g, "-");
   return (
-    <div>
-      <h2 className={props.style}>{props.title}</h2>
+    <div className="col">
+      <h2 className={`category-${cssClass}`}>{props.title}</h2>
       {challenges}
     </div>
   );
@@ -32,7 +33,6 @@ ChallengeSection.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   challenges: PropTypes.arrayOf(PropTypes.object).isRequired,
   onClick: PropTypes.func.isRequired,
-  style: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired
 };
 export default ChallengeSection;
