@@ -12,6 +12,9 @@ import CtfTimeScoreboard from "./CtfTimeScoreboard";
 
 ReactModal.setAppElement("#root");
 
+const LOCAL_STORAGE_TEAM = "dc29_team";
+const LOCAL_STORAGE_TOKEN = "dc29_token";
+
 function challengePoints(solvers, category) {
   if (!Number.isInteger(solvers) || solvers < 2) return 500;
   return parseInt(100 + 400 / (1 + 0.08 * solvers * Math.log(solvers)), 10);
@@ -30,8 +33,8 @@ class App extends React.Component {
       showLogInModal: false,
       solvesByTeam: {},
       openedByCategory: {},
-      team: window.localStorage.getItem("team") || "",
-      token: window.localStorage.getItem("token") || "",
+      team: window.localStorage.getItem(LOCAL_STORAGE_TEAM) || "",
+      token: window.localStorage.getItem(LOCAL_STORAGE_TOKEN) || "",
       intervalID: -1,
       unopened: {}
     };
@@ -50,8 +53,8 @@ class App extends React.Component {
 
   setAuthentication = data => {
     this.setState({ ...this.state, ...data });
-    window.localStorage.setItem("team", data.team);
-    window.localStorage.setItem("token", data.token);
+    window.localStorage.setItem(LOCAL_STORAGE_TEAM, data.team);
+    window.localStorage.setItem(LOCAL_STORAGE_TOKEN, data.token);
     this.handleCloseLogInModal();
     this.loadData();
   };
@@ -71,8 +74,8 @@ class App extends React.Component {
       team: "",
       token: ""
     });
-    window.localStorage.removeItem("team");
-    window.localStorage.removeItem("token");
+    window.localStorage.removeItem(LOCAL_STORAGE_TEAM);
+    window.localStorage.removeItem(LOCAL_STORAGE_TOKEN);
     this.loadData();
   };
 
@@ -197,14 +200,13 @@ class App extends React.Component {
   render() {
     const teamSolves = this.state.solvesByTeam[this.state.team] || [];
     const solved = teamSolves.includes(this.state.showChallengeId);
-
     return (
       <>
         <Navbar
+          authenticated={this.state.token !== ""}
           handleLogOut={this.handleLogOut}
           handleOpenLogInModal={this.handleOpenLogInModal}
           team={this.state.team}
-          token={this.state.token}
         />
         <main role="main" className="container-fluid">
           <Route

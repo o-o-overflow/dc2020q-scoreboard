@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
@@ -9,7 +10,8 @@ function Navbar(context, props) {
     );
 
     let tokenLink;
-    if (props.token !== "") {
+
+    if (props.authenticated) {
         tokenLink = (
             <Link className="nav-link" onClick={props.handleLogOut} to="#">
                 Log Out {props.team}
@@ -58,4 +60,8 @@ function Navbar(context, props) {
         </nav>
     );
 }
+Navbar.propTypes = {
+    authenticated: PropTypes.bool.isRequired
+};
+
 export default Navbar;
