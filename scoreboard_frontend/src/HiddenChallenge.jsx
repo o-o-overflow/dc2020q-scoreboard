@@ -3,14 +3,14 @@ import React from "react";
 
 function HiddenChallenge(props) {
   return (
-    <div className="hidden-menu-item menu-item">
-      <div className="menu-points">some pts</div>
-      <div className="menu-lower">
-        <h3 className="menu-header">CHALLANGE{props.id}</h3>
-        <div className="menu-box">
-          <div className="menu-text">tags</div>
-          <div className="menu-text">Access denied{props.id + 13}</div>
+    <div className="challenge challenge-hidden">
+      <h3>CHALLENGE{props.id}</h3>
+      <div className="d-flex justify-content-around">
+        <div>
+          <div>tags</div>
+          <div>Access denied{props.id + 13}</div>
         </div>
+        <div>some pts</div>
       </div>
     </div>
   );

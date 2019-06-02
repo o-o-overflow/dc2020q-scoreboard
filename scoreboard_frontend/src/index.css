@@ -28,6 +28,25 @@
   padding-right: 0.25em;
 }
 
+.challenge {
+  border: 1px solid lightgrey;
+  margin-bottom: 10px;
+}
+
+.challenge h3 {
+  text-align: center;
+}
+
+.challenge-hidden {
+  border-color: grey;
+  background-color: lightgrey;
+}
+
+.challenge-section h2 {
+  text-align: center;
+  text-transform: capitalize;
+}
+
 .sticky-left {
   position: sticky;
   left: 0;

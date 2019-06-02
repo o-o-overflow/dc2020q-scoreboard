@@ -23,7 +23,7 @@ function ChallengeSection(props) {
   });
   const cssClass = props.title.replace(/ /g, "-");
   return (
-    <div className="col">
+    <div className="col-xl-3 col-lg-4 col-md-6 col-sm-12 challenge-section">
       <h2 className={`category-${cssClass}`}>{props.title}</h2>
       {challenges}
     </div>
