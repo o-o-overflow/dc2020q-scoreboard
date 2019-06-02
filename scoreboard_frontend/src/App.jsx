@@ -29,8 +29,7 @@ class App extends React.Component {
       pointsByTeam: {},
       teamScoreboardOrder: [],
       showChallengeId: "",
-      showChallengeModal: false,
-      showLogInModal: false,
+      showModal: null,
       solvesByTeam: {},
       openedByCategory: {},
       team: window.localStorage.getItem(LOCAL_STORAGE_TEAM) || "",
@@ -55,22 +54,18 @@ class App extends React.Component {
     this.setState({ ...this.state, ...data });
     window.localStorage.setItem(LOCAL_STORAGE_TEAM, data.team);
     window.localStorage.setItem(LOCAL_STORAGE_TOKEN, data.token);
-    this.handleCloseLogInModal();
+    this.handleCloseModal();
     this.loadData();
   };
 
-  handleCloseChallengeModal = () => {
-    this.setState({ ...this.state, showChallengeModal: false });
-  };
-
-  handleCloseLogInModal = () => {
-    this.setState({ ...this.state, showLogInModal: false });
+  handleCloseModal = () => {
+    this.setState({ ...this.state, showModal: null });
   };
 
   handleLogOut = () => {
     this.setState({
       ...this.state,
-      showChallengeModal: false,
+      showModal: null,
       team: "",
       token: ""
     });
@@ -83,15 +78,14 @@ class App extends React.Component {
     this.setState({
       ...this.state,
       showChallengeId: event.id,
-      showChallengeModal: true
+      showModal: "challenge"
     });
   };
 
   handleOpenLogInModal = () => {
     this.setState({
       ...this.state,
-      showLogInModal: true,
-      showChallengeModal: false
+      showModal: "logIn"
     });
   };
 
@@ -215,7 +209,7 @@ class App extends React.Component {
                 authenticated={this.state.token !== ""}
                 challenges={this.state.challenges}
                 onClick={this.handleOpenChallengeModal}
-                onUnload={this.handleCloseChallengeModal}
+                onUnload={this.handleCloseModal}
                 unopened={this.state.unopened}
               />
             )}
@@ -263,23 +257,23 @@ class App extends React.Component {
           <ReactModal
             className="modal"
             contentLabel="Log In Modal"
-            isOpen={this.state.showLogInModal}
-            onRequestClose={this.handleCloseLogInModal}
+            isOpen={this.state.showModal === "logIn"}
+            onRequestClose={this.handleCloseModal}
           >
             <LogInModal
-              onClose={this.handleCloseLogInModal}
+              onClose={this.handleCloseModal}
               setAuthentication={this.setAuthentication}
             />
           </ReactModal>
           <ReactModal
             className="modal"
             contentLabel="Challenge Modal"
-            isOpen={this.state.showChallengeModal}
-            onRequestClose={this.handleCloseChallengeModal}
+            isOpen={this.state.showModal === "challenge"}
+            onRequestClose={this.handleCloseModal}
           >
             <ChallengeModal
               challengeId={this.state.showChallengeId}
-              onClose={this.handleCloseChallengeModal}
+              onClose={this.handleCloseModal}
               onTokenExpired={this.handleLogOut}
               onSolve={this.loadData}
               solved={solved}
