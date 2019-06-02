@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import exact from "prop-types-exact";
 import React from "react";
 
 const strip = text => text.replace(/^\s+|\s+$/g, "");
@@ -162,8 +163,8 @@ class LogInModal extends React.Component {
     );
   }
 }
-LogInModal.propTypes = {
+LogInModal.propTypes = exact({
   onClose: PropTypes.func.isRequired,
   setAuthentication: PropTypes.func.isRequired
-};
+});
 export default LogInModal;

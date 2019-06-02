@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import exact from "prop-types-exact";
 import React from "react";
 
 function HiddenChallenge(props) {
@@ -15,7 +16,7 @@ function HiddenChallenge(props) {
     </div>
   );
 }
-HiddenChallenge.propTypes = {
+HiddenChallenge.propTypes = exact({
   id: PropTypes.number.isRequired
-};
+});
 export default HiddenChallenge;

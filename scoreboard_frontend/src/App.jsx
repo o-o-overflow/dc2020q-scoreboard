@@ -144,7 +144,7 @@ class App extends React.Component {
 
     const pointsByChallenge = {};
     const challenges = {};
-    data.open.forEach(([id, tags, category, open_time]) => {
+    data.open.forEach(([id, tags, category, _openTime]) => {
       this.categoryByChallenge[id] = category;
       pointsByChallenge[id] = challengePoints(solvesByChallenge[id], category);
 
@@ -153,8 +153,6 @@ class App extends React.Component {
         points: pointsByChallenge[id],
         solveCount: solvesByChallenge[id] || 0,
         solved: (solvesByTeam[this.state.team] || []).includes(id),
-        open_time: open_time,
-        category: category,
         tags
       };
       if (category in challenges) {

@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import exact from "prop-types-exact";
 import React from "react";
 import ChallengeSection from "./ChallengeSection";
 
@@ -42,12 +43,12 @@ class ChallengeMenu extends React.Component {
     return <div className="row">{sections}</div>;
   }
 }
-ChallengeMenu.propTypes = {
+ChallengeMenu.propTypes = exact({
   authenticated: PropTypes.bool.isRequired,
   challenges: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.object))
     .isRequired,
   onClick: PropTypes.func.isRequired,
   onUnload: PropTypes.func.isRequired,
   unopened: PropTypes.objectOf(PropTypes.number).isRequired
-};
+});
 export default ChallengeMenu;

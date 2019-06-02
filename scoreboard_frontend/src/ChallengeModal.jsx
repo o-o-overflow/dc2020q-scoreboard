@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import exact from "prop-types-exact";
 import React from "react";
 import showdown from "showdown";
 
@@ -219,12 +220,12 @@ class ChallengeModal extends React.Component {
     );
   }
 }
-ChallengeModal.propTypes = {
+ChallengeModal.propTypes = exact({
   challengeId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onSolve: PropTypes.func.isRequired,
   onTokenExpired: PropTypes.func.isRequired,
   solved: PropTypes.bool.isRequired,
   token: PropTypes.string.isRequired
-};
+});
 export default ChallengeModal;

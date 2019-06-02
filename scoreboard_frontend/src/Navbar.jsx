@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
+import exact from "prop-types-exact";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
-function Navbar(context, props) {
+function Navbar(props) {
     const registerLink = props.team ? null : (
         <a className="nav-link" href="https://register.oooverflow.io">
             Register
@@ -19,13 +20,13 @@ function Navbar(context, props) {
         );
     } else {
         tokenLink = (
-            <Link
-                className="nav-link"
+            <button
+                type="button"
+                className="btn btn-link nav-link"
                 onClick={props.handleOpenLogInModal}
-                to="#"
             >
                 Log In
-            </Link>
+            </button>
         );
     }
 
@@ -60,8 +61,11 @@ function Navbar(context, props) {
         </nav>
     );
 }
-Navbar.propTypes = {
-    authenticated: PropTypes.bool.isRequired
-};
+Navbar.propTypes = exact({
+    authenticated: PropTypes.bool.isRequired,
+    handleOpenLogInModal: PropTypes.func.isRequired,
+    handleLogOut: PropTypes.func.isRequired,
+    team: PropTypes.string.isRequired
+});
 
 export default Navbar;

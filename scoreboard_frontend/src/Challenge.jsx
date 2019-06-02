@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import exact from "prop-types-exact";
 import React from "react";
 
 function Challenge(props) {
@@ -34,7 +35,7 @@ function Challenge(props) {
     </div>
   );
 }
-Challenge.propTypes = {
+Challenge.propTypes = exact({
   authenticated: PropTypes.bool.isRequired,
   id: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
@@ -42,5 +43,5 @@ Challenge.propTypes = {
   solveCount: PropTypes.number.isRequired,
   solved: PropTypes.bool.isRequired,
   tags: PropTypes.string.isRequired
-};
+});
 export default Challenge;
