@@ -99,13 +99,10 @@ provider:
   profile: ooo
   region: us-east-2
   runtime: python3.6
-  stage: dev
+  stage: development
   vpc:
     securityGroupIds:
-      - sg-00d15b6f6446af81e
-    subnetIds:
-      - subnet-0cdd1cd843fe7b14f
-      - subnet-06e45b4af8eb26116
-      - subnet-052dffd800fb23613
+      - ${file(config/${opt:stage, self:provider.stage}-config.yml):securityGroupId}
+    subnetIds: ${file(config/${opt:stage, self:provider.stage}-config.yml):subnetIds}
 
-service: sb
+service: scoreboard

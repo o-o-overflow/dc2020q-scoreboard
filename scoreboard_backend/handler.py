@@ -223,7 +223,10 @@ def challenges_set(event, context):
     if not isinstance(event, list):
         return api_response(422, "invalid scoreboard data")
 
-    if "-dev-" not in context.function_name and int(time.time()) > COMPETITION_START:
+    if (
+        "-development-" not in context.function_name
+        and int(time.time()) > COMPETITION_START
+    ):
         LOGGER.error("Cannot set challenges once the competition has started")
         return api_response(400, "competition has already started")
 
@@ -277,7 +280,7 @@ def challenges_set(event, context):
 
 
 def migrate(event, context):
-    prod = "-dev-" not in context.function_name
+    prod = "-development-" not in context.function_name
     reset = event.get("reset")
     if prod and reset:
         reset = False
