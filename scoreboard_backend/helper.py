@@ -66,22 +66,24 @@ def parse_json_request(event, min_body_size=2, max_body_size=512):
 
 
 @contextmanager
-def psql_connection(db_password, db_username):
+def psql_connection(db_password, db_username, reset=False):
     psql = psycopg2.connect(
-        dbname="scoreboard",
+        dbname="postgres" if reset else "scoreboard",
         host=os.getenv("DB_HOST"),
         password=db_password,
         user=db_username,
     )
+    if reset:
+        psql.autocommit = True
     try:
         yield psql
     finally:
         psql.close()
 
 
-def send_email(from_email, to_email, subject, body, stage="dev"):
-    if stage != "prod":
-        # Only send actual emails in the prod stage.
+def send_email(from_email, to_email, subject, body, stage):
+    if stage != "production":
+        # Only send actual emails in the production stage.
         to_email = "team+{}@oooverflow.io".format(stage)
         subject = "[Stage: {}] {}".format(stage, subject)
 

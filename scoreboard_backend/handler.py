@@ -280,13 +280,17 @@ def challenges_set(event, context):
 
 
 def migrate(event, context):
-    prod = "-development-" not in context.function_name
+    production = "-development-" not in context.function_name
     reset = event.get("reset")
-    if prod and reset:
+    if production and reset:
         reset = False
-        LOGGER.warn("Cannot reset the prod environment")
+        LOGGER.warn("Cannot reset the production environment")
+    if reset:
+        with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"], reset=True) as psql:
+            migrations.reset(psql)
+
     with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
-        result = migrations.run_migrations(psql, reset_db=reset)
+        result = migrations.run_migrations(psql)
         psql.commit()
     return api_response(200, result)
 
@@ -347,8 +351,8 @@ def submit(data, stage):
             )
             response = cursor.fetchone()
 
-            # Allow a special flag in the dev environment
-            if not response and stage == "dev" and flag == "OOO{DEV_VALID}":
+            # Allow a special flag in the development environment
+            if not response and stage == "development" and flag == "OOO{DEV_VALID}":
                 response = True
 
             if response:
@@ -379,7 +383,7 @@ def submit(data, stage):
 
 
 def test_email(_event, context):
-    stage = "prod" if "-prod-" in context.function_name else "dev"
+    stage = "production" if "-production-" in context.function_name else "development"
     print("Sending test email in stage {}".format(stage))
     email = "OOO Debug <debug@oooverflow.io>"
     send_email(email, email, "[OOO] Debug Email", "", stage=stage)
@@ -481,10 +485,10 @@ def user_register(data, stage, app_url):
             LOGGER.info("USER REGISTER {}".format(email))
             try:
                 cursor.execute(
-                    "INSERT INTO users VALUES (DEFAULT, now(), "
-                    "NULL, %s, crypt(%s, gen_salt('bf', 10)), "
-                    "%s, %s)",
-                    (email, password, team_name, team_id),
+                    "INSERT INTO users (id, date_created, date_updated, ctf_time_team_id, "
+                    "email, password, team_name) VALUES (DEFAULT, now(), now(), %s, %s, "
+                    "crypt(%s, gen_salt('bf', 10)), %s)",
+                    (team_id, email, password, team_name),
                 )
             except psycopg2.IntegrityError as exception:
                 if "email" in exception.diag.constraint_name:
@@ -494,7 +498,8 @@ def user_register(data, stage, app_url):
             user_id = cursor.fetchone()[0]
             confirmation_id = str(uuid.uuid4())
             cursor.execute(
-                "INSERT INTO confirmations VALUES (%s, %s);", (confirmation_id, user_id)
+                "INSERT INTO confirmations (id, user_id) VALUES (%s, %s);",
+                (confirmation_id, user_id)
             )
         psql.commit()
 
