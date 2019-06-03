@@ -30,11 +30,14 @@ class ChallengeModal extends React.Component {
   }
 
   componentWillUnmount() {
+    this.controller.abort();
     this.worker.terminate();
     if (this.timerID !== null) {
       clearInterval(this.timerID);
     }
   }
+
+  controller = new AbortController();
 
   handleFlagChange = event => {
     this.setState({ ...this.state, flag: event.target.value });
@@ -73,7 +76,7 @@ class ChallengeModal extends React.Component {
       `${process.env.REACT_APP_BACKEND_URL}/challenge/${
         this.props.challengeId
       }/${this.props.token}`,
-      { method: "GET" }
+      { method: "GET", signal: this.controller.signal }
     )
       .then(response =>
         response.json().then(body => ({ body, status: response.status }))
@@ -96,7 +99,9 @@ class ChallengeModal extends React.Component {
         this.setState({ ...this.state, description });
       })
       .catch(error => {
-        console.log(error);
+        if (error.name !== "AbortError") {
+          console.log(error);
+        }
       });
   };
 
@@ -112,7 +117,8 @@ class ChallengeModal extends React.Component {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/submit`, {
       body: JSON.stringify(requestData),
       headers: { "Content-Type": "application/json" },
-      method: "POST"
+      method: "POST",
+      signal: this.controller.signal
     })
       .then(response =>
         response.json().then(body => ({ body, status: response.status }))
@@ -137,12 +143,14 @@ class ChallengeModal extends React.Component {
         });
       })
       .catch(error => {
-        this.setState({
-          ...this.state,
-          buttonDisabled: false,
-          status: "(error) see console for info"
-        });
-        console.log(error);
+        if (error.name !== "AbortError") {
+          this.setState({
+            ...this.state,
+            buttonDisabled: false,
+            status: "(error) see console for info"
+          });
+          console.log(error);
+        }
       });
   };
 
