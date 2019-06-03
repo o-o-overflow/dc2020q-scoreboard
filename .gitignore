@@ -24,6 +24,5 @@ var/
 
 # Terraform stuff
 .terraform
-terraform.tfstate.backup
 
 node_modules

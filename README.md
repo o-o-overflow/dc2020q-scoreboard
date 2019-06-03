@@ -279,7 +279,7 @@ Note: the password must be at least 10 characters
 
 ## Other Comments
 
-Run `terraform apply` to build/update the scoreboard infrastructure in AWS.
+Run `terraform apply` in `./terraform` to build/update the scoreboard infrastructure in AWS.
 
 After running for the first time a few values have to be updated:
 
