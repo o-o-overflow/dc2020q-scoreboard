@@ -51,6 +51,10 @@
   text-transform: capitalize;
 }
 
+.challenge-solved {
+  background-color: pink;
+}
+
 .modal-body {
   overflow: auto;
 }
