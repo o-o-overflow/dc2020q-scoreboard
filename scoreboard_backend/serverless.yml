@@ -50,6 +50,13 @@ functions:
           method: POST
           path: token
     handler: handler.token
+  token_refresh:
+    events:
+      - http:
+          cors: true
+          method: POST
+          path: token_refresh
+    handler: handler.token_refresh
   user_confirm:
     events:
       - http:

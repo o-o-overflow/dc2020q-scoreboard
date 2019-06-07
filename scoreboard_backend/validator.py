@@ -55,15 +55,15 @@ def proof_of_work(fields, prefix):
     return initial_wrap
 
 
-def valid_challenge_id(challenge_id):
+def valid_challenge_id(challenge_id, _stage):
     return isinstance(challenge_id, str) and 1 <= len(challenge_id) <= 32
 
 
-def valid_confirmation(confirmation):
+def valid_confirmation(confirmation, _stage):
     return isinstance(confirmation, str) and len(confirmation) == 36
 
 
-def valid_email(email):
+def valid_email(email, _stage):
     return (
         isinstance(email, str)
         and 6 <= len(email) <= 320
@@ -73,31 +73,31 @@ def valid_email(email):
     )
 
 
-def valid_flag(flag):
+def valid_flag(flag, _stage):
     return isinstance(flag, str) and 1 <= len(flag) <= 160
 
 
-def valid_int(data):
+def valid_int(data, _stage):
     return isinstance(data, int)
 
 
-def valid_int_as_string(value):
-    if value is "":
+def valid_int_as_string(value, _stage):
+    if value == "":
         return True
     if not isinstance(value, str) or not value.isnumeric():
         return False
     return 1 <= int(value) <= 100000
 
 
-def valid_password(password):
+def valid_password(password, _stage):
     return isinstance(password, str) and 10 <= len(password) <= 72
 
 
-def valid_team(team):
+def valid_team(team, _stage):
     return isinstance(team, str) and 0 < len(team) <= 80
 
 
-def valid_timestamp(timestamp):
+def valid_timestamp(timestamp, _stage):
     if not isinstance(timestamp, int):
         return "invalid timestamp"
     now = int(time.time())
@@ -125,9 +125,11 @@ def validate(validate_data=True, **validators):
 
             log_request(data)
 
+            stage = event["requestContext"]["stage"]
+
             parameters = {}
             for parameter, validator in validators.items():
-                result = validator(data.get(parameter))
+                result = validator(data.get(parameter), stage)
                 if result is False:
                     return api_response(422, "invalid {}".format(parameter))
                 elif isinstance(result, dict):
@@ -138,7 +140,7 @@ def validate(validate_data=True, **validators):
                 del data[parameter]
             if data:
                 return api_response(422, "unexpected {}".format(list(data)[0]))
-            return function(parameters, event["requestContext"]["stage"], **headers)
+            return function(parameters, stage, **headers)
 
         return wrapped
 
