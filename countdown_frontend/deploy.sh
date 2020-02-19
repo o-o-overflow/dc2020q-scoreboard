@@ -8,14 +8,14 @@ fi
 
 # Allow BUILD=prod to be set.
 if [ -z "$BUILD" ]; then
-    BUILD=dev
-elif [[ $BUILD != "prod" ]]; then
-    echo "Only BUILD=prod is supported. Goodbye!"
+    BUILD=development
+elif [[ $BUILD != "production" ]]; then
+    echo "Only BUILD=production is supported. Goodbye!"
     exit 1
 fi
 
 # Production safety check
-if [[ $BUILD == "prod" ]]; then
+if [[ $BUILD == "production" ]]; then
     echo "Are you sure you want to deploy to production? (y|N) "
     read response
     if [[ $response != "y" ]]; then
