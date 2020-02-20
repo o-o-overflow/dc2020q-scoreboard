@@ -88,15 +88,15 @@ S3 bucket under the `dev` and `prod` prefixes.
 Cloudfront distributions are configured to serve files out of that S3 bucket
 mapped to an appropriate prefix.
 
-* (prod) https://scoreboard.oooverflow.io
-* (dev) https://d2b8nk094e89za.cloudfront.net
+* (production) https://scoreboard.oooverflow.io
+* (development) https://d2b8nk094e89za.cloudfront.net
 
 The S3 bucket is accessible via `Coudfront` through the `access-identity`
 Origin Access Identity:
-https://console.aws.amazon.com/cloudfront/home?region=us-east-1#oai:
+https://console.aws.amazon.com/cloudfront/home?#oai:
 
-The `dev` distribution is protected by HTTP basic authentication using the
-attached `scoreboard-basic-auth` lambda function:
+The `development` distribution is protected by HTTP basic authentication using
+the attached `scoreboard-basic-auth` lambda function:
 https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions/scoreboard-basic-auth?tab=graph
 
 ## Countdown
@@ -158,7 +158,7 @@ https://register.oooverflow.io via:
 
 ```sh
 cd registration_frontend
-BUILD=prod ./deploy.sh
+BUILD=production ./deploy.sh
 ```
 
 You will be prompted to confirm that you want to deploy to production.
@@ -199,7 +199,7 @@ to https://scoreboard.oooverflow.io via:
 
 ```sh
 cd countdown_frontend
-BUILD=prod ./deploy.sh
+BUILD=production ./deploy.sh
 ```
 
 You will be prompted to confirm that you want to deploy to production.
@@ -220,20 +220,21 @@ are only meant to be invoked directly.
 
 ## Development
 
-By default, all the commands listed below are set up to deploy to the `dev`
-environment. When making changes, first deploy to development via `sls deploy`,
-or `sls deploy -f FUNCTION` to quickly push code changes to a single
-function. Then re-run the test suite via `pytest`.
+By default, all the commands listed below are set up to deploy to the
+`development` environment. When making changes, first deploy to development via
+`sls deploy`, or `sls deploy -f FUNCTION` to quickly push code changes to a
+single function. Then re-run the test suite via `pytest`.
 
 __Note__: If you make changes to registration, run the slow tests via `pytest
 --runslow`.
 
 Once the tests have passed on development (you've written new tests for your
-changes, right?), deploy to production via `sls deploy --stage prod`. Make sure
-you've coordinated the release of any respective front-end changes as well.
+changes, right?), deploy to production via `sls deploy --stage
+production`. Make sure you've coordinated the release of any respective
+front-end changes as well.
 
-__Note__: For all the following `sls` commands, add `--stage prod` in order to
-issue that command in the production environment.
+__Note__: For all the following `sls` commands, add `--stage production` in
+order to issue that command in the production environment.
 
 ## Setting the challenges
 
@@ -270,7 +271,7 @@ sls invoke -lf challenge_open -d '{"id": "CHALLENGE_ID"}'
 
 ```sh
 cd scoreboard_backend
-STAGE=prod ./scripts/reset_password.sh USERNAME PASSWORD
+STAGE=production ./scripts/reset_password.sh USERNAME PASSWORD
 ```
 
 Note: the password must be at least 10 characters
