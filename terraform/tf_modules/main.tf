@@ -4,6 +4,73 @@ provider "aws" {
   version = "~> 2.13"
 }
 
+provider "aws" {
+  alias   = "us-east-1"
+  profile = var.aws_profile
+  region  = "us-east-1"
+  version = "~> 2.13"
+}
+
+data "aws_iam_policy_document" "oai-read-bucket" {
+  statement {
+    actions = ["s3:GetObject"]
+    principals {
+      type        = "AWS"
+      identifiers = ["${aws_cloudfront_origin_access_identity.default.iam_arn}"]
+    }
+    resources = ["${aws_s3_bucket.frontend.arn}/*"]
+  }
+}
+
+data "aws_lambda_function" "auth" {
+  function_name = "HTTP-Basic-Auth"
+  provider      = aws.us-east-1
+  qualifier     = 4
+}
+
+resource "aws_cloudfront_distribution" "s3_distribution" {
+  default_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
+    forwarded_values {
+      cookies {
+        forward = "none"
+      }
+      query_string = false
+    }
+    lambda_function_association {
+      event_type   = "viewer-request"
+      lambda_arn   = data.aws_lambda_function.auth.qualified_arn
+      include_body = false
+    }
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = aws_s3_bucket.frontend.bucket
+  }
+  default_root_object = "index.html"
+  enabled             = true
+  is_ipv6_enabled     = true
+  origin {
+    domain_name = aws_s3_bucket.frontend.bucket_regional_domain_name
+    origin_id   = aws_s3_bucket.frontend.bucket
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+    }
+  }
+  price_class = "PriceClass_200"
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
+resource "aws_cloudfront_origin_access_identity" "default" {
+  comment = aws_s3_bucket.frontend.bucket
+}
+
 resource "aws_db_instance" "scoreboard" {
   allocated_storage           = 16
   allow_major_version_upgrade = false
@@ -32,7 +99,7 @@ resource "aws_db_subnet_group" "group" {
 
 resource "aws_eip" "eip" {
   count      = var.aws_nat_gateways
-  depends_on = ["aws_internet_gateway.gateway"]
+  depends_on = [aws_internet_gateway.gateway]
   tags       = { Name = "scoreboard-${var.environment}-${element(lookup(var.aws_availability_zones, var.aws_region), count.index)}" }
   vpc        = true
 }
@@ -41,7 +108,7 @@ resource "aws_instance" "util" {
   ami                         = "ami-0b59bfac6be064b78"
   associate_public_ip_address = true
   availability_zone           = "us-east-2a"
-  depends_on                  = ["aws_internet_gateway.gateway"]
+  depends_on                  = [aws_internet_gateway.gateway]
   disable_api_termination     = false
   instance_type               = "t3.nano"
   key_name                    = "bboe"
@@ -91,6 +158,17 @@ resource "aws_route_table_association" "public" {
   count          = length(lookup(var.aws_availability_zones, var.aws_region))
   route_table_id = aws_route_table.public.id
   subnet_id      = aws_subnet.public[count.index].id
+}
+
+resource "aws_s3_bucket" "frontend" {
+  acl           = "private"
+  bucket        = "ooodc2020q-scoreboard-${var.environment}"
+  force_destroy = false
+}
+
+resource "aws_s3_bucket_policy" "frontent" {
+  bucket = aws_s3_bucket.frontend.id
+  policy = data.aws_iam_policy_document.oai-read-bucket.json
 }
 
 resource "aws_security_group" "database" {

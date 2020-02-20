@@ -6,9 +6,10 @@ module processor {
 
 terraform {
   backend "s3" {
-    bucket  = "ooo.terraform"
-    key     = "scoreboard-development.tfstate"
-    profile = "ooo"
-    region  = "us-east-2"
+    bucket         = "ooo.terraform"
+    dynamodb_table = "terraform"
+    key            = "scoreboard-development.tfstate"
+    profile        = "ooo"
+    region         = "us-east-2"
   }
 }
