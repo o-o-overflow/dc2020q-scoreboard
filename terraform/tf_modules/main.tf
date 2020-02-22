@@ -36,6 +36,7 @@ resource "aws_cloudfront_distribution" "registration-development" {
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
+    default_ttl     = 3600
     forwarded_values {
       cookies {
         forward = "none"
@@ -79,6 +80,7 @@ resource "aws_cloudfront_distribution" "registration-production" {
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
+    default_ttl     = 3600
     forwarded_values {
       cookies {
         forward = "none"
@@ -117,6 +119,7 @@ resource "aws_cloudfront_distribution" "scoreboard-development" {
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
+    default_ttl     = 3600
     forwarded_values {
       cookies {
         forward = "none"
@@ -160,6 +163,7 @@ resource "aws_cloudfront_distribution" "scoreboard-production" {
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
+    default_ttl     = 3600
     forwarded_values {
       cookies {
         forward = "none"
