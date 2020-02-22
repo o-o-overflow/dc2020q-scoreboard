@@ -110,6 +110,87 @@ resource "aws_cloudfront_distribution" "registration-production" {
   }
 }
 
+resource "aws_cloudfront_distribution" "scoreboard-development" {
+  count = var.environment == "development" ? 1 : 0
+
+  comment = "scoreboard"
+  default_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
+    forwarded_values {
+      cookies {
+        forward = "none"
+      }
+      query_string = false
+    }
+    lambda_function_association {
+      event_type   = "viewer-request"
+      lambda_arn   = data.aws_lambda_function.auth[0].qualified_arn
+      include_body = false
+    }
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = aws_s3_bucket.frontend.bucket
+  }
+  default_root_object = "index.html"
+  enabled             = true
+  is_ipv6_enabled     = true
+  origin {
+    domain_name = aws_s3_bucket.frontend.bucket_regional_domain_name
+    origin_id   = aws_s3_bucket.frontend.bucket
+    origin_path = "/scoreboard"
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+    }
+  }
+  price_class = "PriceClass_200"
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
+resource "aws_cloudfront_distribution" "scoreboard-production" {
+  count = var.environment == "development" ? 0 : 1
+
+  comment = "scoreboard"
+  default_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
+    forwarded_values {
+      cookies {
+        forward = "none"
+      }
+      query_string = false
+    }
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = aws_s3_bucket.frontend.bucket
+  }
+  default_root_object = "index.html"
+  enabled             = true
+  is_ipv6_enabled     = true
+  origin {
+    domain_name = aws_s3_bucket.frontend.bucket_regional_domain_name
+    origin_id   = aws_s3_bucket.frontend.bucket
+    origin_path = "/scoreboard"
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+    }
+  }
+  price_class = "PriceClass_200"
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
 resource "aws_cloudfront_origin_access_identity" "default" {
   comment = aws_s3_bucket.frontend.bucket
 }
