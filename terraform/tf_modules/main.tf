@@ -208,6 +208,14 @@ resource "aws_s3_bucket_policy" "frontend" {
   policy = data.aws_iam_policy_document.oai-read-bucket.json
 }
 
+resource "aws_s3_bucket_public_access_block" "frontend" {
+  block_public_acls       = true
+  block_public_policy     = true
+  bucket                  = aws_s3_bucket.frontend.id
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 resource "aws_security_group" "database" {
   description = "Allow only Postgres traffic"
   ingress {
