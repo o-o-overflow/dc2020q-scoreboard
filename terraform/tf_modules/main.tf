@@ -11,6 +11,20 @@ provider "aws" {
   version = "~> 2.13"
 }
 
+data "aws_acm_certificate" "register" {
+  domain   = "register.oooverflow.io"
+  provider = aws.us-east-1
+  statuses = ["ISSUED"]
+  types    = ["AMAZON_ISSUED"]
+}
+
+data "aws_acm_certificate" "scoreboard" {
+  domain   = "scoreboard.oooverflow.io"
+  provider = aws.us-east-1
+  statuses = ["ISSUED"]
+  types    = ["AMAZON_ISSUED"]
+}
+
 data "aws_iam_policy_document" "oai-read-bucket" {
   statement {
     actions = ["s3:GetObject"]
@@ -29,6 +43,10 @@ data "aws_lambda_function" "auth" {
   qualifier     = 4
 }
 
+data "aws_route53_zone" "ooo" {
+  name = "oooverflow.io."
+}
+
 resource "aws_cloudfront_distribution" "registration-development" {
   count = var.environment == "development" ? 1 : 0
 
@@ -45,7 +63,7 @@ resource "aws_cloudfront_distribution" "registration-development" {
     }
     lambda_function_association {
       event_type   = "viewer-request"
-      lambda_arn   = data.aws_lambda_function.auth[0].qualified_arn
+      lambda_arn   = data.aws_lambda_function.auth[count.index].qualified_arn
       include_body = false
     }
     viewer_protocol_policy = "redirect-to-https"
@@ -62,7 +80,7 @@ resource "aws_cloudfront_distribution" "registration-development" {
       origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
     }
   }
-  price_class = "PriceClass_200"
+  price_class = "PriceClass_100"
   restrictions {
     geo_restriction {
       restriction_type = "none"
@@ -76,6 +94,7 @@ resource "aws_cloudfront_distribution" "registration-development" {
 resource "aws_cloudfront_distribution" "registration-production" {
   count = var.environment == "development" ? 0 : 1
 
+  aliases = ["register.oooverflow.io"]
   comment = "registration"
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
@@ -108,7 +127,9 @@ resource "aws_cloudfront_distribution" "registration-production" {
     }
   }
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = data.aws_acm_certificate.register.arn
+    minimum_protocol_version = "TLSv1.2_2018"
+    ssl_support_method       = "sni-only"
   }
 }
 
@@ -128,7 +149,7 @@ resource "aws_cloudfront_distribution" "scoreboard-development" {
     }
     lambda_function_association {
       event_type   = "viewer-request"
-      lambda_arn   = data.aws_lambda_function.auth[0].qualified_arn
+      lambda_arn   = data.aws_lambda_function.auth[count.index].qualified_arn
       include_body = false
     }
     viewer_protocol_policy = "redirect-to-https"
@@ -145,7 +166,7 @@ resource "aws_cloudfront_distribution" "scoreboard-development" {
       origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
     }
   }
-  price_class = "PriceClass_200"
+  price_class = "PriceClass_100"
   restrictions {
     geo_restriction {
       restriction_type = "none"
@@ -159,6 +180,7 @@ resource "aws_cloudfront_distribution" "scoreboard-development" {
 resource "aws_cloudfront_distribution" "scoreboard-production" {
   count = var.environment == "development" ? 0 : 1
 
+  aliases = ["scoreboard.oooverflow.io"]
   comment = "scoreboard"
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
@@ -191,7 +213,9 @@ resource "aws_cloudfront_distribution" "scoreboard-production" {
     }
   }
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = data.aws_acm_certificate.scoreboard.arn
+    minimum_protocol_version = "TLSv1.2_2018"
+    ssl_support_method       = "sni-only"
   }
 }
 
@@ -255,6 +279,32 @@ resource "aws_nat_gateway" "gateway" {
   count         = var.aws_nat_gateways
   subnet_id     = aws_subnet.public[count.index].id
   tags          = { Name = "scoreboard-${var.environment}-${element(lookup(var.aws_availability_zones, var.aws_region), count.index)}" }
+}
+
+resource "aws_route53_record" "scoreboard-a" {
+  count = var.environment == "development" ? 0 : 1
+
+  alias {
+    name                   = aws_cloudfront_distribution.scoreboard-production[count.index].domain_name
+    evaluate_target_health = false
+    zone_id                = aws_cloudfront_distribution.scoreboard-production[count.index].hosted_zone_id
+  }
+  name    = "scoreboard.${data.aws_route53_zone.ooo.name}"
+  type    = "A"
+  zone_id = data.aws_route53_zone.ooo.zone_id
+}
+
+resource "aws_route53_record" "scoreboard-aaaa" {
+  count = var.environment == "development" ? 0 : 1
+
+  alias {
+    name                   = aws_cloudfront_distribution.scoreboard-production[count.index].domain_name
+    evaluate_target_health = false
+    zone_id                = aws_cloudfront_distribution.scoreboard-production[count.index].hosted_zone_id
+  }
+  name    = "scoreboard.${data.aws_route53_zone.ooo.name}"
+  type    = "AAAA"
+  zone_id = data.aws_route53_zone.ooo.zone_id
 }
 
 resource "aws_route_table" "private" {
