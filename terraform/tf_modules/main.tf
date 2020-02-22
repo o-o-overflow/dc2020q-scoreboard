@@ -29,8 +29,10 @@ data "aws_lambda_function" "auth" {
   qualifier     = 4
 }
 
-resource "aws_cloudfront_distribution" "s3-distribution-development" {
+resource "aws_cloudfront_distribution" "registration-development" {
   count = var.environment == "development" ? 1 : 0
+
+  comment = "registration"
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
@@ -54,6 +56,7 @@ resource "aws_cloudfront_distribution" "s3-distribution-development" {
   origin {
     domain_name = aws_s3_bucket.frontend.bucket_regional_domain_name
     origin_id   = aws_s3_bucket.frontend.bucket
+    origin_path = "/registration"
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
     }
@@ -69,8 +72,10 @@ resource "aws_cloudfront_distribution" "s3-distribution-development" {
   }
 }
 
-resource "aws_cloudfront_distribution" "s3-distribution-production" {
+resource "aws_cloudfront_distribution" "registration-production" {
   count = var.environment == "development" ? 0 : 1
+
+  comment = "registration"
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
@@ -89,6 +94,7 @@ resource "aws_cloudfront_distribution" "s3-distribution-production" {
   origin {
     domain_name = aws_s3_bucket.frontend.bucket_regional_domain_name
     origin_id   = aws_s3_bucket.frontend.bucket
+    origin_path = "/registration"
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
     }
