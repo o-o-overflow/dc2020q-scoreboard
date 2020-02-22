@@ -23,12 +23,14 @@ data "aws_iam_policy_document" "oai-read-bucket" {
 }
 
 data "aws_lambda_function" "auth" {
+  count         = var.environment == "development" ? 1 : 0
   function_name = "HTTP-Basic-Auth"
   provider      = aws.us-east-1
   qualifier     = 4
 }
 
-resource "aws_cloudfront_distribution" "s3_distribution" {
+resource "aws_cloudfront_distribution" "s3-distribution-development" {
+  count = var.environment == "development" ? 1 : 0
   default_cache_behavior {
     allowed_methods = ["GET", "HEAD"]
     cached_methods  = ["GET", "HEAD"]
@@ -40,8 +42,43 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
     lambda_function_association {
       event_type   = "viewer-request"
-      lambda_arn   = data.aws_lambda_function.auth.qualified_arn
+      lambda_arn   = data.aws_lambda_function.auth[0].qualified_arn
       include_body = false
+    }
+    viewer_protocol_policy = "redirect-to-https"
+    target_origin_id       = aws_s3_bucket.frontend.bucket
+  }
+  default_root_object = "index.html"
+  enabled             = true
+  is_ipv6_enabled     = true
+  origin {
+    domain_name = aws_s3_bucket.frontend.bucket_regional_domain_name
+    origin_id   = aws_s3_bucket.frontend.bucket
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.default.cloudfront_access_identity_path
+    }
+  }
+  price_class = "PriceClass_200"
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+
+resource "aws_cloudfront_distribution" "s3-distribution-production" {
+  count = var.environment == "development" ? 0 : 1
+  default_cache_behavior {
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
+    forwarded_values {
+      cookies {
+        forward = "none"
+      }
+      query_string = false
     }
     viewer_protocol_policy = "redirect-to-https"
     target_origin_id       = aws_s3_bucket.frontend.bucket
@@ -166,7 +203,7 @@ resource "aws_s3_bucket" "frontend" {
   force_destroy = false
 }
 
-resource "aws_s3_bucket_policy" "frontent" {
+resource "aws_s3_bucket_policy" "frontend" {
   bucket = aws_s3_bucket.frontend.id
   policy = data.aws_iam_policy_document.oai-read-bucket.json
 }
