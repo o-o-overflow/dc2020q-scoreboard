@@ -6,7 +6,7 @@ if [ "$#" -ne 2 ]; then
 fi
 
 if [ -z ${STAGE+x} ]; then
-    stage="dev"
+    stage="development"
 else
     stage=$STAGE
 fi

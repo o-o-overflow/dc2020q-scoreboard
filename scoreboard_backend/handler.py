@@ -600,7 +600,7 @@ def user_reset_password(event, _context):
     password = event.get("password", None)
     if not email or not password:
         return api_response(422, "both email and password must be set")
-    if not valid_password(password):
+    if not valid_password(password, None):
         return api_response(422, "invalid password")
 
     with psql_connection(DB_PASSWORD, "scoreboard") as psql:
