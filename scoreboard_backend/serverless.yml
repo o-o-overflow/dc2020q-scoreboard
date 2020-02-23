@@ -1,5 +1,3 @@
-custom:
-  kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
 functions:
   challenge:
     events:
@@ -81,22 +79,16 @@ functions:
     handler: handler.users
 package:
   exclude:
-    - kms-secrets.*.us-east-2.yml
     - node_modules/**
     - package-lock.json
     - test*.py
     - "*.sh"
-plugins:
-  - serverless-kms-secrets
 provider:
   environment:
     DB_HOST: sb-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
-    SECRETS: ${self:custom.kmsSecrets.secrets.SECRETS}
+    DB_PASSWORD: ${ssm:/${opt:stage, self:provider.stage}/db_password~true}
+    JWT_SECRET: ${ssm:/${opt:stage, self:provider.stage}/jwt_secret~true}
   iamRoleStatements:
-    - Action:
-      - KMS:Decrypt
-      Effect: Allow
-      Resource: ${self:custom.kmsSecrets.keyArn}
     - Action:
       - ses:SendEmail
       Effect: Allow

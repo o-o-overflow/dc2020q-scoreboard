@@ -1,6 +1,7 @@
 module processor {
   db_password = "password"
   environment = "development"
+  jwt_secret  = "development"
   source      = "../tf_modules/"
 }
 

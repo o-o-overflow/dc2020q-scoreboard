@@ -1,5 +1,6 @@
 import logging
 import hashlib
+import os
 import time
 import uuid
 from datetime import datetime
@@ -16,7 +17,7 @@ from const import (
     SUBMISSION_DELAY,
     TOKEN_PROOF_OF_WORK,
 )
-from helper import api_response, decrypt_secrets, psql_connection, send_email
+from helper import api_response, psql_connection, send_email
 from validator import (
     callback_submit_proof_of_work,
     extract_headers,
@@ -34,10 +35,12 @@ from validator import (
 )
 
 
+DB_PASSWORD = os.environ["DB_PASSWORD"]
+JWT_SECRET = os.environ["JWT_SECRET"]
+
+
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
-
-SECRETS = decrypt_secrets()
 
 
 def valid_token(token_type):
@@ -49,13 +52,13 @@ def valid_token(token_type):
 
     def validate(token, stage):
         try:
-            payload = jwt.decode(token, SECRETS["JWT_SECRET"], algorithms=["HS256"])
+            payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
         except jwt.InvalidTokenError:
             if stage != "development":
                 return fail()
             try:
                 payload = jwt.decode(
-                    token, SECRETS["JWT_SECRET"], algorithms=["HS256"], verify=False
+                    token, JWT_SECRET, algorithms=["HS256"], verify=False
                 )
             except jwt.InvalidTokenError:
                 return fail()
@@ -69,7 +72,7 @@ def valid_token(token_type):
 
 @validate(id=valid_challenge_id, token=valid_token("access"), validate_data=False)
 def challenge(data, _stage):
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
                 "SELECT description FROM challenges where id=%s", (data["id"],)
@@ -87,7 +90,7 @@ def challenge_delete(event, _context):
     if not challenge_id:
         return api_response(422, "invalid challenge id")
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
                 "DELETE FROM unopened_challenges WHERE id=%s", (challenge_id,)
@@ -107,7 +110,7 @@ def challenge_open(event, _context):
     if not challenge_id:
         return api_response(422, "invalid challenge id")
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
                 "SELECT name, description, category_id, flag_hash, "
@@ -137,7 +140,7 @@ def challenge_update(event, _context):
     challenge_id = event["id"]
     description = event["description"]
     flag_hash = event["flag_hash"]
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute("SELECT 1 FROM challenges WHERE id=%s", (challenge_id,))
             result = cursor.fetchone()
@@ -151,7 +154,7 @@ def challenge_update(event, _context):
 
 
 def challenges(event, _context):
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
                 "SELECT challenges.id, challenges.name, "
@@ -189,7 +192,7 @@ def challenges_add(event, _context):
         return api_response(422, "data for the scoreboard must be provided")
     if not isinstance(event, list):
         return api_response(422, "invalid scoreboard data")
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             LOGGER.info("Get category IDs")
             cursor.execute("SELECT id, name FROM categories;")
@@ -265,7 +268,7 @@ def challenges_set(event, context):
     categories_sql = ", ".join(["(DEFAULT, now(), %s)"] * len(categories))
     challenges_sql = ", ".join(["(%s, now(), %s, %s, %s, %s, %s)"] * len(event))
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             LOGGER.info("Empty challenges and categories tables")
             cursor.execute(
@@ -306,11 +309,11 @@ def migrate(event, context):
         LOGGER.warn("Cannot reset the production environment")
     if reset:
         with psql_connection(
-            SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"], reset=True
+            DB_PASSWORD, "scoreboard", reset=True
         ) as psql:
             migrations.reset(psql)
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         result = migrations.run_migrations(psql)
         psql.commit()
     return api_response(200, result)
@@ -333,7 +336,7 @@ def submit(data, stage):
     flag = data["flag"].strip()
     user_id = jwt.decode(data["token"], verify=False)["user_id"]
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             # Verify if valid ID before doing anything else
             cursor.execute("SELECT 1 FROM challenges WHERE id=%s", (challenge_id,))
@@ -424,7 +427,7 @@ def token(data, _stage):
         return api_response(400, "the competition is over")
 
     email = data["email"]
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             LOGGER.info("USER LOGIN {}".format(email))
             cursor.execute(
@@ -444,7 +447,7 @@ def token(data, _stage):
         "user_id": response[1],
     }
     access_token = jwt.encode(
-        access_payload, SECRETS["JWT_SECRET"], algorithm="HS256"
+        access_payload, JWT_SECRET, algorithm="HS256"
     ).decode("utf-8")
 
     refresh_payload = {
@@ -455,7 +458,7 @@ def token(data, _stage):
         "user_updated": datetime.timestamp(response[0]),
     }
     refresh_token = jwt.encode(
-        refresh_payload, SECRETS["JWT_SECRET"], algorithm="HS256"
+        refresh_payload, JWT_SECRET, algorithm="HS256"
     ).decode("utf-8")
 
     return api_response(
@@ -476,7 +479,7 @@ def token_refresh(data, _stage):
     updated = payload["user_updated"]
     user_id = payload["user_id"]
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             LOGGER.info("TOKEN REFRESH {}".format(payload["user_id"]))
             cursor.execute(
@@ -494,7 +497,7 @@ def token_refresh(data, _stage):
         "user_id": payload["user_id"],
     }
     access_token = jwt.encode(
-        access_payload, SECRETS["JWT_SECRET"], algorithm="HS256"
+        access_payload, JWT_SECRET, algorithm="HS256"
     ).decode("utf-8")
 
     return api_response(200, {"access_token": access_token})
@@ -503,7 +506,7 @@ def token_refresh(data, _stage):
 @validate(id=valid_confirmation, validate_data=False)
 def user_confirm(data, stage):
     confirmation_id = data["id"]
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             LOGGER.info("CONFIRM: {}".format(confirmation_id))
             cursor.execute(
@@ -555,7 +558,7 @@ def user_register(data, stage, app_url):
     password = data["password"]
     team_name = data["team_name"]
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             LOGGER.info("USER REGISTER {}".format(email))
             try:
@@ -600,7 +603,7 @@ def user_reset_password(event, _context):
     if not valid_password(password):
         return api_response(422, "invalid password")
 
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
                 "UPDATE users set password=crypt(%s, gen_salt('bf', 10)) where lower(email)=%s;",
@@ -613,7 +616,7 @@ def user_reset_password(event, _context):
 
 
 def users(_event, _context):
-    with psql_connection(SECRETS["DB_PASSWORD"], SECRETS["DB_USERNAME"]) as psql:
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
                 "SELECT date_created, date_confirmed, email, ctf_time_team_id, team_name "

@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import base64
 import copy
 import json
 import logging
@@ -31,13 +30,6 @@ def api_response(status_code=200, message=None, log_message=True):
         "headers": {"Access-Control-Allow-Origin": "*"},
         "statusCode": status_code,
     }
-
-
-def decrypt_secrets():
-    session = boto3.session.Session()
-    kms = session.client("kms")
-    data = base64.b64decode(os.getenv("SECRETS"))
-    return json.loads(kms.decrypt(CiphertextBlob=data)["Plaintext"].decode("utf-8"))
 
 
 def log_request(data):

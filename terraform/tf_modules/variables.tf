@@ -19,7 +19,5 @@ variable "db_password" {}
 variable "db_instance_class" {
   default = "db.t3.micro"
 }
-variable "db_username" {
-  default = "scoreboard"
-}
 variable "environment" {}
+variable "jwt_secret" {}

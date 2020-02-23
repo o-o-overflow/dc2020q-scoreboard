@@ -240,7 +240,7 @@ resource "aws_db_instance" "scoreboard" {
   skip_final_snapshot         = false
   storage_type                = "gp2"
   tags                        = { Name = "scoreboard-${var.environment}" }
-  username                    = var.db_username
+  username                    = "scoreboard"
   vpc_security_group_ids      = [aws_security_group.database.id]
 }
 
@@ -407,6 +407,20 @@ resource "aws_security_group" "util" {
   name   = "scoreboard-${var.environment}-util"
   tags   = { Name = "scoreboard-${var.environment}-util" }
   vpc_id = aws_vpc.vpc.id
+}
+
+resource "aws_ssm_parameter" "db-password" {
+  description = "Database Password"
+  name        = "/${var.environment}/db_password"
+  type        = "SecureString"
+  value       = var.db_password
+}
+
+resource "aws_ssm_parameter" "jwt-secret" {
+  description = "JWT Secret"
+  name        = "/${var.environment}/jwt_secret"
+  type        = "SecureString"
+  value       = var.jwt_secret
 }
 
 resource "aws_subnet" "private" {
