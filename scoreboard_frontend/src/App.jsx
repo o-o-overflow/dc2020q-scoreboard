@@ -12,8 +12,9 @@ import CtfTimeScoreboard from "./CtfTimeScoreboard";
 
 ReactModal.setAppElement("#root");
 
-const LOCAL_STORAGE_TEAM = "dc29_team";
-const LOCAL_STORAGE_TOKEN = "dc29_token";
+const LOCAL_STORAGE_ACCESS_TOKEN = "dc28_access_token";
+const LOCAL_STORAGE_REFRESH_TOKEN = "dc28_refresh_token";
+const LOCAL_STORAGE_TEAM = "dc28_team";
 
 function challengePoints(solvers, category) {
   if (!Number.isInteger(solvers) || solvers < 2) return 500;
@@ -24,17 +25,18 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      accessToken: window.localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN) || "",
       challenges: {},
+      intervalID: -1,
       lastSolveTimeByTeam: {},
+      openedByCategory: {},
       pointsByTeam: {},
-      teamScoreboardOrder: [],
+      refreshToken: window.localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN) || "",
       showChallengeId: "",
       showModal: null,
       solvesByTeam: {},
-      openedByCategory: {},
       team: window.localStorage.getItem(LOCAL_STORAGE_TEAM) || "",
-      token: window.localStorage.getItem(LOCAL_STORAGE_TOKEN) || "",
-      intervalID: -1,
+      teamScoreboardOrder: [],
       unopened: {}
     };
     this.categoryByChallenge = {};
@@ -51,32 +53,37 @@ class App extends React.Component {
   }
 
   setAuthentication = data => {
-    this.setState({ ...this.state, ...data });
+    this.setState({
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      team: data.team
+    });
+    window.localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN, data.access_token);
+    window.localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, data.refresh_token);
     window.localStorage.setItem(LOCAL_STORAGE_TEAM, data.team);
-    window.localStorage.setItem(LOCAL_STORAGE_TOKEN, data.token);
     this.handleCloseModal();
     this.loadData();
   };
 
   handleCloseModal = () => {
-    this.setState({ ...this.state, showModal: null });
+    this.setState({ showModal: null });
   };
 
   handleLogOut = () => {
     this.setState({
-      ...this.state,
+      accessToken: "",
+      refreshToken: "",
       showModal: null,
-      team: "",
-      token: ""
+      team: ""
     });
+    window.localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
+    window.localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN);
     window.localStorage.removeItem(LOCAL_STORAGE_TEAM);
-    window.localStorage.removeItem(LOCAL_STORAGE_TOKEN);
     this.loadData();
   };
 
   handleOpenChallengeModal = event => {
     this.setState({
-      ...this.state,
       showChallengeId: event.id,
       showModal: "challenge"
     });
@@ -84,7 +91,6 @@ class App extends React.Component {
 
   handleOpenLogInModal = () => {
     this.setState({
-      ...this.state,
       showModal: "logIn"
     });
   };
@@ -179,7 +185,6 @@ class App extends React.Component {
     });
 
     this.setState({
-      ...this.state,
       challenges,
       lastSolveTimeByTeam,
       pointsByTeam,
@@ -195,7 +200,7 @@ class App extends React.Component {
     return (
       <>
         <Navbar
-          authenticated={this.state.token !== ""}
+          authenticated={this.state.accessToken !== ""}
           handleLogOut={this.handleLogOut}
           handleOpenLogInModal={this.handleOpenLogInModal}
           team={this.state.team}
@@ -206,7 +211,7 @@ class App extends React.Component {
             path="/"
             render={() => (
               <ChallengeMenu
-                authenticated={this.state.token !== ""}
+                authenticated={this.state.accessToken !== ""}
                 challenges={this.state.challenges}
                 onClick={this.handleOpenChallengeModal}
                 onUnload={this.handleCloseModal}
@@ -277,7 +282,7 @@ class App extends React.Component {
               onTokenExpired={this.handleLogOut}
               onSolve={this.loadData}
               solved={solved}
-              token={this.state.token}
+              token={this.state.accessToken}
             />
           </ReactModal>
         </main>

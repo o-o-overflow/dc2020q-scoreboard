@@ -4,7 +4,7 @@ function Rules() {
   return (
     <>
       <h2>Intro</h2>
-      <p>Some DC29 Quals specific introduction.</p>
+      <p>Some DEF CON Quals specific introduction.</p>
 
       <h2>Specifc Rules</h2>
       <ul>
