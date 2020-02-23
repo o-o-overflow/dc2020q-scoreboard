@@ -14,7 +14,7 @@ function App() {
               src={process.env.PUBLIC_URL + "ooo-logo-175.png"}
             />
           </a>
-          <h1>OOO --- DEF CON CTF</h1>
+          <h1>OOO --- DEF CON CTF Quals</h1>
         </div>
       </header>
       <div className="container">

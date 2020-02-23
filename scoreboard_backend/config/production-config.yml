@@ -1,0 +1,5 @@
+securityGroupId: sg-035524dc93c6d1bf8
+subnetIds:
+  - subnet-06946dc8d29d34826
+  - subnet-042e483aada558b1a
+  - subnet-0502e7742673c7b5b

@@ -1,10 +1,11 @@
-from __future__ import print_function
 import hashlib
 import re
+import subprocess
 import time
 
 import pytest
 import requests
+import jwt
 
 from const import (
     REGISTRATION_PROOF_OF_WORK,
@@ -14,12 +15,12 @@ from const import (
 )
 
 
-BASE_URL = {"dev": "https://yfye35uxgd.execute-api.us-east-2.amazonaws.com/dev"}
 PATHS = {
     "challenge": "challenge/{id}/{token}",
     "challenges": "challenges",
     "submit": "submit",
     "token": "token",
+    "token_refresh": "token_refresh",
     "user_confirm": "user_confirm/{id}",
     "user_register": "user_register",
 }
@@ -39,6 +40,33 @@ def assert_failure(response, message, status=422, regex=False):
         assert re.match(message, data["message"])
     else:
         assert data["message"] == message
+
+
+def base_url_closure():
+    base_url = None
+    prefix = "  GET - "
+
+    def closure():
+        nonlocal base_url
+        if base_url is None:
+            process = subprocess.run(
+                ["sls", "info"], check=True, capture_output=True, text=True
+            )
+            if process.returncode != 0:
+                pytest.exit("sls info failed to run")
+            for line in process.stdout.split("\n"):
+                if line.startswith(prefix):
+                    parts = line[len(prefix) :].split("/", 4)
+                    base_url = "/".join(parts[:-1])
+                    break
+            else:
+                pytest.exit(f"sls info didn't output line with `{prefix}`")
+        return base_url
+
+    return closure
+
+
+base_url = base_url_closure()
 
 
 def compute_nonce(message, prefix):
@@ -115,7 +143,7 @@ def invalid_token_for_url(request):
     return request.param
 
 
-def request_token(stage):
+def request_token(stage, include_refresh=False):
     email = VALID_EMAIL
     password = VALID_PASSWORD
 
@@ -135,15 +163,20 @@ def request_token(stage):
     data = response.json()
     assert data["success"]
     assert data["message"]["team"]
-    token = data["message"]["token"]
-    assert len(token) == 144
-    assert token.count(".") == 2
-    return token
+    access_token = data["message"]["access_token"]
+    assert len(access_token) == 173
+    assert access_token.count(".") == 2
+    refresh_token = data["message"]["refresh_token"]
+    assert len(refresh_token) == 219
+    assert refresh_token.count(".") == 2
+    if include_refresh:
+        return access_token, refresh_token
+    return access_token
 
 
 @pytest.fixture
 def stage():
-    return "dev"
+    return "development"
 
 
 def test_challenge(stage):
@@ -168,7 +201,7 @@ def test_challenge__invalid_token(invalid_token_for_url, stage):
         "challenge", stage, id=VALID_CHALLENGE_ID, token=invalid_token_for_url
     )
     response = requests.get(challenge_url)
-    assert_failure(response, "invalid token", status=401)
+    assert_failure(response, "invalid access token", status=401)
 
 
 def test_challenge__nonexistent_challenge_id(stage):
@@ -352,7 +385,28 @@ def test_submit__invalid_token(invalid_token, stage):
             "timestamp": timestamp,
         },
     )
-    assert_failure(response, "invalid token", status=401)
+    assert_failure(response, "invalid access token", status=401)
+
+
+def test_submit__invalid_token_with_bad_signature(stage):
+    access = request_token(stage)
+    payload = jwt.decode(access, verify=False)
+    bad_access = jwt.encode(payload, "BADSECRET", algorithm="HS256").decode("utf-8")
+    challenge_id = "puzzle"
+    flag = "a"
+    nonce = 0  # Does not matter
+    timestamp = int(time.time())
+    response = requests.post(
+        url("submit", stage),
+        json={
+            "challenge_id": challenge_id,
+            "flag": flag,
+            "nonce": nonce,
+            "token": bad_access,
+            "timestamp": timestamp,
+        },
+    )
+    assert_failure(response, "invalid access token", status=401)
 
 
 def test_submit__invalid_timestamp(invalid_timestamp, stage):
@@ -409,7 +463,7 @@ def test_submit__nonexistent_challenge_id(stage):
     time.sleep(wait_time)  # Wait long enough so rate limit isn't hit again
 
 
-def test_token_with_extra_parameter(stage):
+def test_token__with_extra_parameter(stage):
     email = VALID_EMAIL
     nonce = 0  # Doesn't need to be valid
     password = VALID_PASSWORD
@@ -427,7 +481,7 @@ def test_token_with_extra_parameter(stage):
     assert_failure(response, "unexpected x")
 
 
-def test_token_with_expired_timestamp(stage):
+def test_token__with_expired_timestamp(stage):
     email = VALID_EMAIL
     nonce = 0  # Doesn't need to be valid
     password = VALID_PASSWORD
@@ -443,7 +497,7 @@ def test_token_with_expired_timestamp(stage):
     assert_failure(response, r"POW timestamp expired \d+ second\(s\) ago$", regex=True)
 
 
-def test_token_with_future_timestamp(stage):
+def test_token__with_future_timestamp(stage):
     email = VALID_EMAIL
     nonce = 0  # Doesn't need to be valid
     password = VALID_PASSWORD
@@ -463,7 +517,7 @@ def test_token_with_future_timestamp(stage):
     )
 
 
-def test_token_with_incorrect_nonce(stage):
+def test_token__with_incorrect_nonce(stage):
     email = VALID_EMAIL
     nonce = 0
     password = VALID_PASSWORD
@@ -480,7 +534,7 @@ def test_token_with_incorrect_nonce(stage):
     assert_failure(response, "incorrect nonce")
 
 
-def test_token_with_invalid_email(invalid_email, stage):
+def test_token__with_invalid_email(invalid_email, stage):
     nonce = 0  # Doesn't need to be valid
     password = VALID_PASSWORD
     timestamp = int(time.time())
@@ -496,7 +550,7 @@ def test_token_with_invalid_email(invalid_email, stage):
     assert_failure(response, "invalid email")
 
 
-def test_token_with_invalid_nonce(invalid_int, stage):
+def test_token__with_invalid_nonce(invalid_int, stage):
     email = VALID_EMAIL
     nonce = invalid_int
     password = VALID_PASSWORD
@@ -513,7 +567,7 @@ def test_token_with_invalid_nonce(invalid_int, stage):
     assert_failure(response, "invalid nonce")
 
 
-def test_token_with_invalid_password(invalid_password, stage):
+def test_token__with_invalid_password(invalid_password, stage):
     email = VALID_EMAIL
     nonce = 0  # Doesn't need to be valid
     timestamp = int(time.time())
@@ -529,7 +583,7 @@ def test_token_with_invalid_password(invalid_password, stage):
     assert_failure(response, "invalid password")
 
 
-def test_token_with_invalid_timestamp(invalid_timestamp, stage):
+def test_token__with_invalid_timestamp(invalid_timestamp, stage):
     email = VALID_EMAIL
     nonce = 0  # Doesn't need to be valid
     password = VALID_PASSWORD
@@ -543,6 +597,64 @@ def test_token_with_invalid_timestamp(invalid_timestamp, stage):
         },
     )
     assert_failure(response, "invalid timestamp")
+
+
+def test_token_refresh(stage):
+    access_, refresh = request_token(stage, include_refresh=True)
+    response = requests.post(url("token_refresh", stage), json={"token": refresh})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"]
+    access_token = data["message"]["access_token"]
+    assert len(access_token) == 173
+    assert access_token.count(".") == 2
+
+
+def test_token_refresh__user_id_does_not_match(stage):
+    access_, refresh = request_token(stage, include_refresh=True)
+    payload = jwt.decode(refresh, verify=False)
+
+    payload["user_id"] = -1
+    payload["verify"] = False
+
+    bad_refresh = jwt.encode(payload, "BADSECRET", algorithm="HS256").decode("utf-8")
+
+    response = requests.post(url("token_refresh", stage), json={"token": bad_refresh})
+    assert_failure(
+        response,
+        "cannot find user({}, {})".format(payload["user_id"], payload["user_updated"]),
+        status=401,
+    )
+
+
+def test_token_refresh__user_updated_does_not_match(stage):
+    access_, refresh = request_token(stage, include_refresh=True)
+    payload = jwt.decode(refresh, verify=False)
+
+    payload["user_updated"] -= 1
+    payload["verify"] = False
+
+    bad_refresh = jwt.encode(payload, "BADSECRET", algorithm="HS256").decode("utf-8")
+
+    response = requests.post(url("token_refresh", stage), json={"token": bad_refresh})
+    assert_failure(
+        response,
+        "cannot find user({}, {})".format(payload["user_id"], payload["user_updated"]),
+        status=401,
+    )
+
+
+def test_token_refresh__with_bad_token_signature(stage):
+    access_, refresh = request_token(stage, include_refresh=True)
+    payload = jwt.decode(refresh, verify=False)
+    bad_refresh = jwt.encode(payload, "BADSECRET", algorithm="HS256").decode("utf-8")
+    response = requests.post(url("token_refresh", stage), json={"token": bad_refresh})
+    assert_failure(response, "invalid refresh token", status=401)
+
+
+def test_token_refresh__with_invalid_refresh_token(invalid_token, stage):
+    response = requests.post(url("token_refresh", stage), json={"token": invalid_token})
+    assert_failure(response, "invalid refresh token", status=401)
 
 
 def test_user_confirm_with_incorrect_confirmation_id(stage):
@@ -772,4 +884,4 @@ def test_user_register_with_missing_origin_header(stage):
 
 
 def url(action, stage, **path_params):
-    return "{}/{}".format(BASE_URL[stage], PATHS[action].format(**path_params))
+    return "{}/{}".format(base_url(), PATHS[action].format(**path_params))

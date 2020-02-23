@@ -19,7 +19,7 @@ class CommandHandler:
         self.environment = environment
 
     def add(self, arguments):
-        challenges = parse_json(arguments.json)
+        parse_json(arguments.json)
         return self._run_command("challenges_add", "--path", arguments.json.name)
 
     def delete(self, arguments):
@@ -40,7 +40,7 @@ class CommandHandler:
         return 0
 
     def set(self, arguments):
-        challenges = parse_json(arguments.json)
+        parse_json(arguments.json)
         return self._run_command("challenges_set", "--path", arguments.json.name)
 
     def update(self, arguments):

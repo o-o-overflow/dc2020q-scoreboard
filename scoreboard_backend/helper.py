@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import base64
 import copy
 import json
 import logging
@@ -33,13 +32,6 @@ def api_response(status_code=200, message=None, log_message=True):
     }
 
 
-def decrypt_secrets():
-    session = boto3.session.Session()
-    kms = session.client("kms")
-    data = base64.b64decode(os.getenv("SECRETS"))
-    return json.loads(kms.decrypt(CiphertextBlob=data)["Plaintext"].decode("utf-8"))
-
-
 def log_request(data):
     data = copy.deepcopy(data)
     if "password" in data and isinstance(data["password"], str):
@@ -66,22 +58,24 @@ def parse_json_request(event, min_body_size=2, max_body_size=512):
 
 
 @contextmanager
-def psql_connection(db_password, db_username):
+def psql_connection(db_password, db_username, reset=False):
     psql = psycopg2.connect(
-        dbname="scoreboard",
+        dbname="postgres" if reset else "scoreboard",
         host=os.getenv("DB_HOST"),
         password=db_password,
         user=db_username,
     )
+    if reset:
+        psql.autocommit = True
     try:
         yield psql
     finally:
         psql.close()
 
 
-def send_email(from_email, to_email, subject, body, stage="dev"):
-    if stage != "prod":
-        # Only send actual emails in the prod stage.
+def send_email(from_email, to_email, subject, body, stage):
+    if stage != "production":
+        # Only send actual emails in the production stage.
         to_email = "team+{}@oooverflow.io".format(stage)
         subject = "[Stage: {}] {}".format(stage, subject)
 

@@ -1,5 +1,3 @@
-custom:
-  kmsSecrets: ${file(kms-secrets.${opt:stage, self:provider.stage}.${opt:region, self:provider.region}.yml)}
 functions:
   challenge:
     events:
@@ -50,6 +48,13 @@ functions:
           method: POST
           path: token
     handler: handler.token
+  token_refresh:
+    events:
+      - http:
+          cors: true
+          method: POST
+          path: token_refresh
+    handler: handler.token_refresh
   user_confirm:
     events:
       - http:
@@ -74,22 +79,16 @@ functions:
     handler: handler.users
 package:
   exclude:
-    - kms-secrets.*.us-east-2.yml
     - node_modules/**
     - package-lock.json
     - test*.py
     - "*.sh"
-plugins:
-  - serverless-kms-secrets
 provider:
   environment:
     DB_HOST: sb-${opt:stage, self:provider.stage}.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com
-    SECRETS: ${self:custom.kmsSecrets.secrets.SECRETS}
+    DB_PASSWORD: ${ssm:/${opt:stage, self:provider.stage}/db_password~true}
+    JWT_SECRET: ${ssm:/${opt:stage, self:provider.stage}/jwt_secret~true}
   iamRoleStatements:
-    - Action:
-      - KMS:Decrypt
-      Effect: Allow
-      Resource: ${self:custom.kmsSecrets.keyArn}
     - Action:
       - ses:SendEmail
       Effect: Allow
@@ -99,13 +98,10 @@ provider:
   profile: ooo
   region: us-east-2
   runtime: python3.6
-  stage: dev
+  stage: development
   vpc:
     securityGroupIds:
-      - sg-00d15b6f6446af81e
-    subnetIds:
-      - subnet-0cdd1cd843fe7b14f
-      - subnet-06e45b4af8eb26116
-      - subnet-052dffd800fb23613
+      - ${file(config/${opt:stage, self:provider.stage}-config.yml):securityGroupId}
+    subnetIds: ${file(config/${opt:stage, self:provider.stage}-config.yml):subnetIds}
 
-service: sb
+service: scoreboard
