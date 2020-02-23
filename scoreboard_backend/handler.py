@@ -113,7 +113,7 @@ def challenge_open(event, _context):
     with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
-                "SELECT name, description, category_id, flag_hash, "
+                "SELECT category_id, flag_hash, description, "
                 "tags FROM unopened_challenges WHERE id=%s",
                 (challenge_id,),
             )
@@ -127,7 +127,7 @@ def challenge_open(event, _context):
                 "DELETE FROM unopened_challenges WHERE id=%s", (challenge_id,)
             )
             cursor.execute(
-                "INSERT INTO challenges VALUES (%s, now(), %s, %s, %s, %s, %s);",
+                "INSERT INTO challenges VALUES (%s, now(), %s, %s, %s, %s);",
                 (challenge_id, *result),
             )
         psql.commit()
@@ -157,7 +157,7 @@ def challenges(event, _context):
     with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
-                "SELECT challenges.id, challenges.name, "
+                "SELECT challenges.id, "
                 "challenges.tags, categories.name, "
                 "EXTRACT(EPOCH from challenges.date_created) FROM  "
                 "challenges JOIN categories ON category_id = categories.id "
@@ -199,11 +199,11 @@ def challenges_add(event, _context):
             categories = {x[1]: x[0] for x in cursor.fetchall()}
 
             LOGGER.info("Get opened challenges")
-            cursor.execute("SELECT name FROM challenges;")
+            cursor.execute("SELECT id FROM challenges;")
             existing_challenges = [x[0] for x in cursor.fetchall()]
 
             LOGGER.info("Get unopened challenges")
-            cursor.execute("SELECT name FROM unopened_challenges;")
+            cursor.execute("SELECT id FROM unopened_challenges;")
             existing_challenges.extend(x[0] for x in cursor.fetchall())
             LOGGER.info(f"Existing challenges: {sorted(existing_challenges)}")
 
@@ -215,10 +215,9 @@ def challenges_add(event, _context):
                         continue
                     new_challenges.append(challenge["id"])
                     challenge_values.append(challenge["id"])
-                    challenge_values.append(challenge["title"])
-                    challenge_values.append(challenge["description"])
                     challenge_values.append(categories[challenge["category"]])
                     challenge_values.append(challenge["flag_hash"])
+                    challenge_values.append(challenge["description"])
                     challenge_values.append(", ".join(sorted(challenge["tags"])))
             except (KeyError, TypeError):
                 return api_response(422, "invalid scoreboard data")
@@ -229,7 +228,7 @@ def challenges_add(event, _context):
             LOGGER.info(f"Adding challenges: {sorted(new_challenges)}")
 
             challenges_sql = ", ".join(
-                ["(%s, now(), %s, %s, %s, %s, %s)"] * len(new_challenges)
+                ["(%s, now(), %s, %s, %s, %s)"] * len(new_challenges)
             )
             cursor.execute(
                 "INSERT INTO unopened_challenges VALUES {};".format(challenges_sql),
@@ -258,15 +257,14 @@ def challenges_set(event, context):
         for challenge in event:
             categories[challenge["category"]] = None
             challenge_values.append(challenge["id"])
-            challenge_values.append(challenge["title"])
-            challenge_values.append(challenge["description"])
             challenge_values.append(challenge["category"])
             challenge_values.append(challenge["flag_hash"])
+            challenge_values.append(challenge["description"])
             challenge_values.append(", ".join(sorted(challenge["tags"])))
     except (KeyError, TypeError):
         return api_response(422, "invalid scoreboard data")
     categories_sql = ", ".join(["(DEFAULT, now(), %s)"] * len(categories))
-    challenges_sql = ", ".join(["(%s, now(), %s, %s, %s, %s, %s)"] * len(event))
+    challenges_sql = ", ".join(["(%s, now(), %s, %s, %s, %s)"] * len(event))
 
     with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
@@ -289,7 +287,7 @@ def challenges_set(event, context):
                 categories[category_name] = category_id
 
             # Replace category name with category_id
-            for index in range(3, len(challenge_values), 6):
+            for index in range(1, len(challenge_values), 5):
                 challenge_values[index] = categories[challenge_values[index]]
 
             LOGGER.info("Add challenges")
