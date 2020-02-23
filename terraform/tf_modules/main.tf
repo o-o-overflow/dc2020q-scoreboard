@@ -281,6 +281,32 @@ resource "aws_nat_gateway" "gateway" {
   tags          = { Name = "scoreboard-${var.environment}-${element(lookup(var.aws_availability_zones, var.aws_region), count.index)}" }
 }
 
+resource "aws_route53_record" "register-a" {
+  count = var.environment == "development" ? 0 : 1
+
+  alias {
+    name                   = aws_cloudfront_distribution.registration-production[count.index].domain_name
+    evaluate_target_health = false
+    zone_id                = aws_cloudfront_distribution.registration-production[count.index].hosted_zone_id
+  }
+  name    = "register.${data.aws_route53_zone.ooo.name}"
+  type    = "A"
+  zone_id = data.aws_route53_zone.ooo.zone_id
+}
+
+resource "aws_route53_record" "register-aaaa" {
+  count = var.environment == "development" ? 0 : 1
+
+  alias {
+    name                   = aws_cloudfront_distribution.registration-production[count.index].domain_name
+    evaluate_target_health = false
+    zone_id                = aws_cloudfront_distribution.registration-production[count.index].hosted_zone_id
+  }
+  name    = "register.${data.aws_route53_zone.ooo.name}"
+  type    = "AAAA"
+  zone_id = data.aws_route53_zone.ooo.zone_id
+}
+
 resource "aws_route53_record" "scoreboard-a" {
   count = var.environment == "development" ? 0 : 1
 
