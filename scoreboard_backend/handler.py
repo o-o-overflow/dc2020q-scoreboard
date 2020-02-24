@@ -306,9 +306,7 @@ def migrate(event, context):
         reset = False
         LOGGER.warn("Cannot reset the production environment")
     if reset:
-        with psql_connection(
-            DB_PASSWORD, "scoreboard", reset=True
-        ) as psql:
+        with psql_connection(DB_PASSWORD, "scoreboard", reset=True) as psql:
             migrations.reset(psql)
 
     with psql_connection(DB_PASSWORD, "scoreboard") as psql:
@@ -444,9 +442,9 @@ def token(data, _stage):
         "token_type": "access",
         "user_id": response[1],
     }
-    access_token = jwt.encode(
-        access_payload, JWT_SECRET, algorithm="HS256"
-    ).decode("utf-8")
+    access_token = jwt.encode(access_payload, JWT_SECRET, algorithm="HS256").decode(
+        "utf-8"
+    )
 
     refresh_payload = {
         "exp": COMPETITION_END,
@@ -455,9 +453,9 @@ def token(data, _stage):
         "user_id": response[1],
         "user_updated": datetime.timestamp(response[0]),
     }
-    refresh_token = jwt.encode(
-        refresh_payload, JWT_SECRET, algorithm="HS256"
-    ).decode("utf-8")
+    refresh_token = jwt.encode(refresh_payload, JWT_SECRET, algorithm="HS256").decode(
+        "utf-8"
+    )
 
     return api_response(
         200,
@@ -494,9 +492,9 @@ def token_refresh(data, _stage):
         "token_type": "access",
         "user_id": payload["user_id"],
     }
-    access_token = jwt.encode(
-        access_payload, JWT_SECRET, algorithm="HS256"
-    ).decode("utf-8")
+    access_token = jwt.encode(access_payload, JWT_SECRET, algorithm="HS256").decode(
+        "utf-8"
+    )
 
     return api_response(200, {"access_token": access_token})
 
