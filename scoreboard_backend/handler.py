@@ -395,7 +395,7 @@ def submit(data, stage):
                     cursor.execute(
                         "INSERT INTO submissions VALUES (DEFAULT, "
                         "now(), %s, %s, %s);",
-                        (user_id, challenge_id, flag),
+                        (challenge_id, flag, user_id),
                     )
                 except psycopg2.IntegrityError:
                     return api_response(409, "invalid submission data")
@@ -486,7 +486,7 @@ def token_refresh(data, _stage):
             )
             response = cursor.fetchone()
     if not response:
-        return api_response(401, f"cannot find user({user_id}, {updated})")
+        return api_response(401, f"cannot find matching user ({updated})")
 
     access_payload = {
         "exp": min(COMPETITION_END, now + ACCESS_TOKEN_DURATION),
@@ -604,7 +604,7 @@ def user_reset_password(event, _context):
     with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
-                "UPDATE users set password=crypt(%s, gen_salt('bf', 10)) where lower(email)=%s;",
+                "UPDATE users set date_updated=now(), password=crypt(%s, gen_salt('bf', 10)) where lower(email)=%s;",
                 (password, email.lower()),
             )
             if cursor.rowcount != 1:
