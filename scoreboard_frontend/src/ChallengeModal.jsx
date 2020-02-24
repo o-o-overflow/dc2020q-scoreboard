@@ -8,7 +8,7 @@ class ChallengeModal extends React.Component {
     super(props);
     this.state = {
       buttonDisabled: false,
-      description: "Loading...",
+      description: "",
       flag: "",
       status: ""
     };
@@ -71,6 +71,7 @@ class ChallengeModal extends React.Component {
   };
 
   loadData = () => {
+    this.setState({ description: "Loading..." });
     fetch(
       `${process.env.REACT_APP_BACKEND_URL}/challenge/${
         this.props.challengeId
@@ -82,8 +83,8 @@ class ChallengeModal extends React.Component {
       )
       .then(({ body, status }) => {
         if (status === 401) {
-          this.props.onTokenExpired();
-          console.log("Token expired. Please log in again");
+          this.setState({ description: "Refreshing authentication token..." });
+          this.props.onTokenExpired(this.loadData);
           return;
         } else if (status !== 200) {
           console.log(status);
@@ -126,8 +127,8 @@ class ChallengeModal extends React.Component {
         if (status === 201) {
           this.props.onSolve();
         } else if (status === 401) {
-          this.props.onTokenExpired();
-          console.log("Token expired. Please log in again");
+          this.setState({ status: "refreshing authentication token" });
+          this.props.onTokenExpired(this.handleSubmit);
           return;
         } else if (status === 429) {
           this.countDown = Math.ceil(body.message.seconds) + 1;

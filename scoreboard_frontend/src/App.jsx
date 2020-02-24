@@ -95,6 +95,37 @@ class App extends React.Component {
     });
   };
 
+  handleTokenExpired = (success_callback) => {
+    const requestData = {
+      token: this.state.refreshToken
+    };
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/token_refresh`, {
+      body: JSON.stringify(requestData),
+      headers: { "Content-Type": "application/json" },
+      method: "POST"
+    })
+    .then(response =>
+      response.json().then(body => ({ body, status: response.status }))
+    )
+    .then(({ body, status }) => {
+      if (status !== 200) {
+        console.log(status);
+        console.log(body.message);
+        alert("You have unexpectedly been logged out.");
+        this.handleLogOut();
+        return;
+      }
+      this.setState({
+        accessToken: body.message.access_token
+      });
+      success_callback();
+    })
+    .catch(error => {
+      console.log(error);
+      alert("An unexpected error occurred. Please try again.");
+    });
+  }
+
   loadData = () => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/challenges`, { method: "GET" })
       .then(response =>
@@ -279,7 +310,7 @@ class App extends React.Component {
             <ChallengeModal
               challengeId={this.state.showChallengeId}
               onClose={this.handleCloseModal}
-              onTokenExpired={this.handleLogOut}
+              onTokenExpired={this.handleTokenExpired}
               onSolve={this.loadData}
               solved={solved}
               token={this.state.accessToken}
