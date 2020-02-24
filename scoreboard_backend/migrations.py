@@ -72,6 +72,8 @@ MIGRATIONS = [
     "CREATE INDEX submissions_date_created ON submissions (date_created);",
     "CREATE UNIQUE INDEX users_lower_email on users (lower(email));",
     "CREATE UNIQUE INDEX users_lower_team_name on users (lower(team_name));",
+    "ALTER TABLE challenges DROP COLUMN name;",
+    "ALTER TABLE unopened_challenges DROP COLUMN name;",
 ]
 
 

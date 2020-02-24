@@ -11,7 +11,7 @@ def parse_json(json_file):
         return json.load(json_file)
     except json.decoder.JSONDecodeError:
         print(f"Invalid scoreboard json file: {json_file.name}")
-        return 1
+        sys.exit(1)
 
 
 class CommandHandler:
@@ -31,7 +31,7 @@ class CommandHandler:
         return self._run_command("challenge_open", "-d", json.dumps(data))
 
     def openall(self, arguments):
-        if self.environment != "dev":
+        if self.environment != "development":
             print("Can only run openall in the dev environment.")
             return 1
         for challenge in parse_json(arguments.json):
@@ -59,7 +59,7 @@ class CommandHandler:
 
     def _run_command(self, *sls_arguments):
         process = subprocess.run(
-            ["sls", "invoke", "--stage", self.environment, "-lf"] + list(sls_arguments),
+            ["sls", "invoke", "--stage", self.environment, "-lf", *sls_arguments],
             cwd=os.path.dirname(__file__),
         )
         return process.returncode
@@ -80,8 +80,8 @@ def main():
     argument_parser.add_argument(
         "-e",
         "--environment",
-        choices=["dev", "prod"],
-        default="dev",
+        choices=["development", "production"],
+        default="development",
         help="The environment to run in (default: dev)",
     )
     subparsers = argument_parser.add_subparsers(title="command", dest="command")
@@ -130,7 +130,7 @@ def main():
     )
 
     update_parser = subparsers.add_parser(
-        "update", help="Update the description, flag, and title for a single challenge."
+        "update", help="Update the description and flag for a single challenge."
     )
     update_parser.add_argument(
         "-j",

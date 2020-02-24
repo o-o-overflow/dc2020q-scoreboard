@@ -19,7 +19,7 @@ class LogInModal extends React.Component {
       if (message.data.complete) {
         this.logIn(message.data.nonce);
       } else {
-        this.setState({ ...this.state, status: `${this.state.status} .` });
+        this.setState((state, props) => ({ status: `${state.status} .` }));
       }
     };
   }
@@ -29,7 +29,7 @@ class LogInModal extends React.Component {
   }
 
   handleEmailChange = event => {
-    this.setState({ ...this.state, email: strip(event.target.value) });
+    this.setState({ email: strip(event.target.value) });
   };
 
   handleKeyPress = event => {
@@ -55,7 +55,6 @@ class LogInModal extends React.Component {
     } else {
       this.hashTimestamp = parseInt(Date.now() / 1000, 10);
       this.setState({
-        ...this.state,
         buttonDisabled: true,
         status: "computing proof of work"
       });
@@ -67,11 +66,11 @@ class LogInModal extends React.Component {
       });
       return;
     }
-    this.setState({ ...this.state, status: validation });
+    this.setState({ status: validation });
   };
 
   handlePasswordChange = event => {
-    this.setState({ ...this.state, password: event.target.value });
+    this.setState({ password: event.target.value });
   };
 
   logIn = nonce => {
@@ -81,7 +80,7 @@ class LogInModal extends React.Component {
       password: this.state.password,
       timestamp: this.hashTimestamp
     };
-    this.setState({ ...this.state, status: "logging in" });
+    this.setState({ status: "logging in" });
     fetch(`${process.env.REACT_APP_BACKEND_URL}/token`, {
       body: JSON.stringify(requestData),
       headers: { "Content-Type": "application/json" },
@@ -96,14 +95,12 @@ class LogInModal extends React.Component {
           return;
         }
         this.setState({
-          ...this.state,
           buttonDisabled: false,
           status: body.message
         });
       })
       .catch(error => {
         this.setState({
-          ...this.state,
           buttonDisabled: false,
           status: "(error) see console for info"
         });

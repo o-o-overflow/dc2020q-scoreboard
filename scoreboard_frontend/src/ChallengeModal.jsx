@@ -8,7 +8,7 @@ class ChallengeModal extends React.Component {
     super(props);
     this.state = {
       buttonDisabled: false,
-      description: "Loading...",
+      description: "",
       flag: "",
       status: ""
     };
@@ -20,7 +20,7 @@ class ChallengeModal extends React.Component {
       if (message.data.complete) {
         this.submit(message.data.nonce);
       } else {
-        this.setState({ ...this.state, status: `${this.state.status} .` });
+        this.setState((state, props) => ({ status: `${state.status} .` }));
       }
     };
   }
@@ -40,7 +40,7 @@ class ChallengeModal extends React.Component {
   controller = new AbortController();
 
   handleFlagChange = event => {
-    this.setState({ ...this.state, flag: event.target.value });
+    this.setState({ flag: event.target.value });
   };
 
   handleKeyPress = event => {
@@ -56,7 +56,6 @@ class ChallengeModal extends React.Component {
     } else {
       this.hashTimestamp = parseInt(Date.now() / 1000, 10);
       this.setState({
-        ...this.state,
         buttonDisabled: true,
         status: "computing proof of work"
       });
@@ -68,10 +67,11 @@ class ChallengeModal extends React.Component {
       });
       return;
     }
-    this.setState({ ...this.state, status: validation });
+    this.setState({ status: validation });
   };
 
   loadData = () => {
+    this.setState({ description: "Loading..." });
     fetch(
       `${process.env.REACT_APP_BACKEND_URL}/challenge/${
         this.props.challengeId
@@ -83,8 +83,8 @@ class ChallengeModal extends React.Component {
       )
       .then(({ body, status }) => {
         if (status === 401) {
-          this.props.onTokenExpired();
-          console.log("Token expired. Please log in again");
+          this.setState({ description: "Refreshing authentication token..." });
+          this.props.onTokenExpired(this.loadData);
           return;
         } else if (status !== 200) {
           console.log(status);
@@ -96,7 +96,7 @@ class ChallengeModal extends React.Component {
           simplifiedAutoLink: true
         });
         const description = converter.makeHtml(body.message);
-        this.setState({ ...this.state, description });
+        this.setState({ description });
       })
       .catch(error => {
         if (error.name !== "AbortError") {
@@ -113,7 +113,7 @@ class ChallengeModal extends React.Component {
       timestamp: this.hashTimestamp,
       token: this.props.token
     };
-    this.setState({ ...this.state, status: "submitting flag" });
+    this.setState({ status: "submitting flag" });
     fetch(`${process.env.REACT_APP_BACKEND_URL}/submit`, {
       body: JSON.stringify(requestData),
       headers: { "Content-Type": "application/json" },
@@ -127,8 +127,8 @@ class ChallengeModal extends React.Component {
         if (status === 201) {
           this.props.onSolve();
         } else if (status === 401) {
-          this.props.onTokenExpired();
-          console.log("Token expired. Please log in again");
+          this.setState({ status: "refreshing authentication token" });
+          this.props.onTokenExpired(this.handleSubmit);
           return;
         } else if (status === 429) {
           this.countDown = Math.ceil(body.message.seconds) + 1;
@@ -137,7 +137,6 @@ class ChallengeModal extends React.Component {
           return;
         }
         this.setState({
-          ...this.state,
           buttonDisabled: false,
           status: body.message
         });
@@ -145,7 +144,6 @@ class ChallengeModal extends React.Component {
       .catch(error => {
         if (error.name !== "AbortError") {
           this.setState({
-            ...this.state,
             buttonDisabled: false,
             status: "(error) see console for info"
           });
@@ -161,7 +159,6 @@ class ChallengeModal extends React.Component {
       this.countDown = null;
       this.timerID = null;
       this.setState({
-        ...this.state,
         buttonDisabled: false,
         status: "Okay, you may try again now."
       });
@@ -171,10 +168,7 @@ class ChallengeModal extends React.Component {
     const status = `You are submitting too frequently. Try again in ${
       this.countDown
     } second${plural}.`;
-    this.setState({
-      ...this.state,
-      status
-    });
+    this.setState({ status });
   }
 
   render() {
