@@ -86,7 +86,7 @@ def valid_int_as_string(value, _stage):
         return True
     if not isinstance(value, str) or not value.isnumeric():
         return False
-    return 1 <= int(value) <= 100000
+    return 1 <= int(value) <= 1000000
 
 
 def valid_password(password, _stage):
