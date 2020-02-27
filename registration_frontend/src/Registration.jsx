@@ -52,7 +52,7 @@ class Registration extends React.Component {
     const teamId = parseInt(this.state.ctfTimeTeamId, 10);
     if (this.state.teamName.length === 0 || this.state.teamName.length > 80) {
       validation = "invalid team name";
-    } else if (!Number.isNaN(teamId) && (teamId <= 0 || teamId > 100000)) {
+    } else if (!Number.isNaN(teamId) && (teamId <= 0 || teamId > 1000000)) {
       validation = "invalid CTF Time Team ID";
     } else if (
       this.state.email.length < 6 ||
@@ -173,7 +173,7 @@ class Registration extends React.Component {
               id="ctf-time-team-id"
               onChange={this.handleCtfTimeTeamIdChange}
               onKeyPress={this.handleKeyPress}
-              max="100000"
+              max="1000000"
               min="1"
               placeholder="optional"
               readOnly={this.state.buttonDisabled}
