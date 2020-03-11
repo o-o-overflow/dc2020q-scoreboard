@@ -8,11 +8,12 @@ class ChallengeMenu extends React.Component {
     super(props);
 
     this.sectionOrder = [
-      "amuse bouche",
-      "appetizers",
-      "from the grill",
-      "signature dishes",
-      "fruits and desserts"
+      "haiku",
+      "sonnet",
+      "balad",
+      "epic",
+      "epitaph",
+      "limerick"
     ];
   }
 

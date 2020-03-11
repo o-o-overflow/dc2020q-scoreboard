@@ -2,32 +2,32 @@
   z-index: 1021 !important;
 }
 
-.category-amuse-bouche:before {
+.category-haiku:before {
   content: "🍡";
   padding-right: 0.25em;
 }
 
-.category-appetizers:before {
+.category-sonnet:before {
   content: "🍴";
   padding-right: 0.25em;
 }
 
-.category-from-the-grill:before {
+.category-balad:before {
   content: "🍗";
   padding-right: 0.25em;
 }
 
-.category-fruits-and-desserts:before {
+.category-epic:before {
   content: "🍒";
   padding-right: 0.25em;
 }
 
-.category-signature-dishes:before {
+.category-epitaph:before {
   content: "🍜";
   padding-right: 0.25em;
 }
 
-.category-speedrun:before {
+.category-limerick:before {
   content: "🍳";
   padding-right: 0.25em;
 }

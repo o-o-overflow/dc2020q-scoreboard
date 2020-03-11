@@ -32,7 +32,7 @@ class CommandHandler:
 
     def openall(self, arguments):
         if self.environment != "development":
-            print("Can only run openall in the dev environment.")
+            print("Can only run openall in the development environment.")
             return 1
         for challenge in parse_json(arguments.json):
             data = {"id": challenge["id"]}
@@ -71,7 +71,7 @@ def main():
             os.path.dirname(__file__),
             "..",
             "..",
-            "dc2019q-chalmanager",
+            "dc2020q-chalmanager",
             "scoreboard.json",
         )
     )
@@ -82,7 +82,7 @@ def main():
         "--environment",
         choices=["development", "production"],
         default="development",
-        help="The environment to run in (default: dev)",
+        help="The environment to run in (default: development)",
     )
     subparsers = argument_parser.add_subparsers(title="command", dest="command")
     add_parser = subparsers.add_parser(
@@ -108,7 +108,8 @@ def main():
     open_parser.add_argument("challenge", help="The ID of the challenge to open.")
 
     openall_parser = subparsers.add_parser(
-        "openall", help="Open all challenges (only works in the dev environment)."
+        "openall",
+        help="Open all challenges (only works in the development environment).",
     )
     openall_parser.add_argument(
         "-j",
