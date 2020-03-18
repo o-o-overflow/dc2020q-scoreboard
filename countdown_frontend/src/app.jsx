@@ -17,7 +17,7 @@ function App() {
       </header>
       <div className="container">
         <h1>Countdown to DEF CON CTF Quals</h1>
-        <Counter startTime={1585353600} />
+        <Counter startTime={1589587200} />
         <p>Registration: <a href="https://register.oooverflow.io">https://register.oooverflow.io</a></p>
       </div>
     </div>
