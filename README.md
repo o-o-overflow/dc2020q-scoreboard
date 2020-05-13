@@ -239,12 +239,7 @@ order to issue that command in the production environment.
 ## Setting the challenges
 
 To rewrite the set of challenges (this is a destructive action), first create a
-`scoreboard.json` file by utilizing the
-[challs-manger](https://github.com/o-o-overflow/challs-manager) program:
-
-```sh
-./challenge_loader.py loadall [.challs file path] --dump scoreboard.json
-```
+`scoreboard.json` using chalmanager.
 
 Noting where `scoreboard.json` is saved as `SCOREBOARD_JSON_PATH`, run the
 following command to update the challenges on the scoreboard:
