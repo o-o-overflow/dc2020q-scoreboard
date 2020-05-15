@@ -1,16 +1,35 @@
+body {
+  color: #ccc;
+}
+.table {
+  color: #ccc;
+}
 .ReactModal__Overlay {
   z-index: 1021 !important;
 }
 
-.category-pwn:before {
-  content: "🍡";
+.category-osint:before {
+  content: "🕵️";
   padding-right: .25em;
   font-size: 20pt;
   display: inline-block;
   float:left;
-
 }
 
+.category-misc:before {
+  content: "🤷";
+  padding-right: .25em;
+  font-size: 20pt;
+  display: inline-block;
+  float:left;
+}
+.category-pwn:before {
+  content: "🤼";
+  padding-right: .25em;
+  font-size: 20pt;
+  display: inline-block;
+  float:left;
+}
 .category-reverse:before,
 .category-reversing:before {
   content: "🔄";
@@ -21,28 +40,40 @@
 }
 
 .category-web:before {
-  content: "🍗";
+  content: "🌐";
+  font-size: 20pt;
+  padding-right: 0.25em;
+  float:left;
+}
+.category-golf:before {
+  content: "🏌️";
+  font-size: 20pt;
+  padding-right: 0.25em;
+  float:left;
+}
+.category-kernel:before {
+  content: "🌰";
   font-size: 20pt;
   padding-right: 0.25em;
   float:left;
 }
 
 .category-welcoming:before {
-  content: "🍒";
+  content: "👋";
   font-size: 20pt;
   padding-right: 0.25em;
   float:left;
 }
 
 .category-crypto:before {
-  content: "🍜";
+  content: "😭";
   font-size: 20pt;
   padding-right: 0.25em;
   float:left;
 }
 
 .category-shellcoding:before {
-  content: "🍳";
+  content: "🐚";
   font-size: 20pt;
   padding-right: 0.25em;
   float:left;
