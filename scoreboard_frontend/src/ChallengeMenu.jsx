@@ -44,7 +44,7 @@ class ChallengeMenu extends React.Component {
             <img alt="zoom-video" src="/pics/video_icons.png"/>
           </div>
           <div>
-            <img alt="zoom-chat" src="/pics/chat.png"/>
+            <a href="https://discord.io/ctf" target="_blank"><img alt="zoom-chat" src="/pics/chat.png"/></a>
           </div>
           <h3><span className="badge badge-danger">Leave</span></h3>
         </footer>
