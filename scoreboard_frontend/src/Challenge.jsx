@@ -12,6 +12,7 @@ function Challenge(props) {
     classes += " challenge-authenticated";
     onClick = () => props.onClick(props);
   }
+
   var styles;
 
   if (solved) {
@@ -51,7 +52,7 @@ function Challenge(props) {
             <div>
               {tagclass}
             </div>
-            <div className={"challscore"}>{points}</div>
+            <div className={"challsdcore"}>{points}</div>
           </div>
         </div>
       </td>
