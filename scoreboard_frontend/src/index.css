@@ -1,3 +1,7 @@
+body {
+  background: #111111;
+}
+
 .ReactModal__Overlay {
   z-index: 1021 !important;
 }
