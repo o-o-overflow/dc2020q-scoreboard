@@ -17,7 +17,7 @@ function Challenge(props) {
   if (solved) {
     classes += " closechall";
     styles = {
-      backgroundImage: `url('pics/s/${item_index}.gif')`,
+      backgroundImage: `url('pics/d/${item_index}.gif')`,
     };
   } else {
     classes += " openchall";

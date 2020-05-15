@@ -13,7 +13,7 @@
 
 .category-reverse:before,
 .category-reversing:before {
-  content: "🍴";
+  content: "🔄";
   font-size: 20pt;
   padding-right: 0.25em;
   display: inline-block;
@@ -142,10 +142,11 @@ body {
   position:relative;
   height: 200px;
   width: 300px;
-  background-size: 300px 200px;
+  background-size: cover;
   background: #202223;
 }
 .openchall {
+  background-size: cover;
   background-repeat: no-repeat;
   border: 2px solid black;
   cursor: pointer;

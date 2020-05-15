@@ -32,13 +32,19 @@ function ChallengeSection(props) {
            <table>
              <tbody>
                <tr>
-                   {challenges(0,6)}
+                 {challenges(0,6)}
                </tr>
                <tr>
                  {challenges(6,12)}
                </tr>
                <tr>
                  {challenges(12,18)}
+               </tr>
+               <tr>
+                 {challenges(18, 24)}
+               </tr>
+               <tr>
+                 {challenges(24, 30)}
                </tr>
              </tbody>
            </table>
