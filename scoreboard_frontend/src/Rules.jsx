@@ -2,7 +2,7 @@ import React from "react";
 
 function Rules() {
   return (
-    <>
+    <div className="bg-light">
       <h2>Intro</h2>
       <p>Some DEF CON Quals specific introduction.</p>
 
@@ -96,7 +96,7 @@ function Rules() {
         We reserve the right to change these rules or scoring anytime before the
         competition starts.
       </p>
-    </>
+    </div>
   );
 }
 export default Rules;
