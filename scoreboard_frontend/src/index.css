@@ -53,7 +53,9 @@
 
 .challenge {
   border: 1px solid lightgrey;
+  height: 200px;
   margin-bottom: 10px;
+  width: 400px;
 }
 
 .challenge h3 {

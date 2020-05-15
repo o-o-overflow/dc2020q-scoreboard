@@ -38,15 +38,15 @@ class ChallengeMenu extends React.Component {
     return (
       <>
         <div className="d-flex justify-content-center"><img alt="zoom" src="/pics/zoom.png"/></div>
-        <div className="d-flex footer-padding">{sections}</div>;
-        <footer class="navbar navbar-dark bg-dark fixed-bottom">
+        <div className="footer-padding justify-content-center row">{sections}</div>;
+        <footer className="navbar navbar-dark bg-dark fixed-bottom">
           <div>
             <img alt="zoom-video" src="/pics/video_icons.png"/>
           </div>
           <div>
             <img alt="zoom-chat" src="/pics/chat.png"/>
           </div>
-          <h3><span class="badge badge-danger">Leave</span></h3>
+          <h3><span className="badge badge-danger">Leave</span></h3>
         </footer>
       </>
     )

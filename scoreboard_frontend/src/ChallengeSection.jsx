@@ -8,7 +8,7 @@ function ChallengeSection(props) {
   const challenges = props.challenges.map((challenge, index) => {
       if (challenge.unopened) {
         return (
-            <HiddenChallenge id={challenge.unopened} key={challenge.unopened}/>
+            <HiddenChallenge id={challenge.unopened} key={index}/>
         );
       }
 
@@ -23,7 +23,7 @@ function ChallengeSection(props) {
       );
     });
 
-  return <div>{challenges}</div>;
+  return challenges;
 }
 ChallengeSection.propTypes = exact({
   authenticated: PropTypes.bool.isRequired,
