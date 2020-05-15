@@ -37,7 +37,7 @@ class ChallengeMenu extends React.Component {
     const sections = this.sectionOrder.map(this.buildSections);
     return (
       <>
-        <div className="row"><img alt="zoom" src="/pics/zoom.png"/></div>
+        <div className="d-flex justify-content-center"><img alt="zoom" src="/pics/zoom.png"/></div>
         <div className="d-flex footer-padding">{sections}</div>;
         <footer class="navbar navbar-dark bg-dark fixed-bottom">
           <div>
