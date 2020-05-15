@@ -5,26 +5,46 @@ import Challenge from "./Challenge";
 import HiddenChallenge from "./HiddenChallenge";
 
 function ChallengeSection(props) {
-  const challenges = props.challenges.map((challenge, index) => {
-    if (challenge.unopened) {
+  const challenges = function (start, end) {
+    return  props.challenges.slice(start, end).map((challenge, index) => {
+      if (challenge.unopened) {
+        return (
+            <HiddenChallenge id={challenge.unopened} key={challenge.unopened}/>
+        );
+      }
+
       return (
-        <HiddenChallenge id={challenge.unopened} key={challenge.unopened} />
+            <Challenge
+                {...challenge}
+                authenticated={props.authenticated}
+                key={challenge.id}
+                onClick={props.onClick}
+                item_index={index+start}
+            />
       );
-    }
-    return (
-      <Challenge
-        {...challenge}
-        authenticated={props.authenticated}
-        key={challenge.id}
-        onClick={props.onClick}
-      />
-    );
-  });
-  const cssClass = props.title.replace(/ /g, "-");
+    });
+  };
+
+
   return (
-    <div className="col-xl-3 col-lg-4 col-md-6 col-sm-12 challenge-section">
-      <h2 className={`category-${cssClass}`}>{props.title}</h2>
-      {challenges}
+    <div >
+         <div className={"tablecontent"} >
+           <table>
+             <tbody>
+               <tr>
+                   {challenges(0,6)}
+               </tr>
+               <tr>
+                 {challenges(6,12)}
+               </tr>
+               <tr>
+                 {challenges(12,18)}
+               </tr>
+             </tbody>
+           </table>
+
+         </div>
+
     </div>
   );
 }

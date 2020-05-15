@@ -3,36 +3,58 @@ import exact from "prop-types-exact";
 import React from "react";
 
 function Challenge(props) {
-  const { authenticated, id, points, solveCount, solved, tags } = props;
+  const { authenticated, id, points, solveCount, solved, tags, item_index} = props;
 
-  const solve_status = `Completed by ${solveCount} team${
-    solveCount === 1 ? "" : "s"
-  }.`;
+
   let onClick = null;
   let classes = "challenge";
   if (authenticated) {
     classes += " challenge-authenticated";
     onClick = () => props.onClick(props);
   }
+  var styles;
+
   if (solved) {
-    classes += " challenge-solved";
+    classes += " closechall";
+    styles = {
+      backgroundImage: `url('pics/s/${item_index}.gif')`,
+    };
+  } else {
+    classes += " openchall";
+    styles = {
+      backgroundImage: `url('pics/a/${item_index}.gif')`,
+    };
   }
+  classes += " zoom-frame ";
+  const arrtags = tags.split(",");
+
+  const tagclass = arrtags.map((tag, index) => {
+    return (
+        <div className={`category-${tag.trim()}`}/>
+    );
+  });
+
   return (
-    <div
-      className={classes}
-      onClick={onClick}
-      onKeyPress={() => {}}
-      role="presentation"
-    >
-      <h3>{id}</h3>
-      <div className="d-flex justify-content-around">
-        <div>
-          <div>{tags}</div>
-          <div>{solve_status}</div>
+      <td  >
+        <div
+          className={classes}
+          onClick={onClick}
+          onKeyPress={() => {}}
+          role="presentation"
+          style={styles}
+        >
+
+          <div className="challtitle" >
+            <img src={"/pics/nomic.png"} alt={"nomic"}/> {id}
+          </div>
+          <div >
+            <div>
+              {tagclass}
+            </div>
+            <div className={"challscore"}>{points}</div>
+          </div>
         </div>
-        <div>{points} pts</div>
-      </div>
-    </div>
+      </td>
   );
 }
 Challenge.propTypes = exact({
@@ -42,6 +64,7 @@ Challenge.propTypes = exact({
   points: PropTypes.number.isRequired,
   solveCount: PropTypes.number.isRequired,
   solved: PropTypes.bool.isRequired,
-  tags: PropTypes.string.isRequired
+  tags: PropTypes.string.isRequired,
+  item_index: PropTypes.number.isRequired,
 });
 export default Challenge;

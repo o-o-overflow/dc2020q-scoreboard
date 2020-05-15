@@ -27,7 +27,6 @@ class ChallengeMenu extends React.Component {
       Array(this.props.unopened[sectionTitle] || 0),
       (_, i) => ({ unopened: i + 1000 })
     );
-
     return (
       <ChallengeSection
         authenticated={this.props.authenticated}
@@ -41,7 +40,28 @@ class ChallengeMenu extends React.Component {
 
   render() {
     const sections = this.sectionOrder.map(this.buildSections);
-    return <div className="row">{sections}</div>;
+    return (
+        <div className={"zoom-contents"}>
+          <div className={"mainTitle content"}> <img alt="zoom" height="58px" src="/pics/zoom.png"/></div>
+          <div className="zoom-elements">
+            <div className={"zoom-center"}>
+            {sections}
+            </div>
+          </div>
+          <div className={"zoom-footer"}>
+            <div className={"zoom-video-footer"}>
+                <img alt={"video"} src={"/pics/video_icons.png"}/>
+            </div>
+            <div className={"zoom-leave-footer"}>
+              Leave Meeting
+            </div>
+            <div className={"zoom-chat-footer"}>
+              <img alt={"video"} src={"/pics/chat.png"}/>
+            </div>
+
+          </div>
+        </div>
+  )
   }
 }
 ChallengeMenu.propTypes = exact({

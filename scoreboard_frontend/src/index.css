@@ -2,43 +2,188 @@
   z-index: 1021 !important;
 }
 
-.category-haiku:before {
+.category-pwn:before {
   content: "🍡";
-  padding-right: 0.25em;
+  padding-right: .25em;
+  font-size: 20pt;
+  display: inline-block;
+  float:left;
+
 }
 
-.category-sonnet:before {
+.category-reverse:before,
+.category-reversing:before {
   content: "🍴";
+  font-size: 20pt;
   padding-right: 0.25em;
+  display: inline-block;
+  float:left;
 }
 
-.category-balad:before {
+.category-web:before {
   content: "🍗";
+  font-size: 20pt;
   padding-right: 0.25em;
+  float:left;
 }
 
-.category-epic:before {
+.category-welcoming:before {
   content: "🍒";
+  font-size: 20pt;
   padding-right: 0.25em;
+  float:left;
 }
 
-.category-epitaph:before {
+.category-crypto:before {
   content: "🍜";
+  font-size: 20pt;
   padding-right: 0.25em;
+  float:left;
 }
 
-.category-limerick:before {
+.category-shellcoding:before {
   content: "🍳";
+  font-size: 20pt;
   padding-right: 0.25em;
+  float:left;
+}
+.alignleft {
+  float: left;
+}
+.alignright {
+  float: right;
 }
 
-.challenge {
-  border: 1px solid lightgrey;
-  margin-bottom: 10px;
+body {
+  background: #111111;
+}
+.zoom-contents {
+  height:100%;
+  width:100%;
+  position:relative;
+  display: inline-block;
+}
+.zoom-elements{
+  padding-top: 100px;
+  position: absolute;
+  top: 40px;
+  width: 100%;
+}
+.zoom-center{
+
+}
+.zoom-footer {
+  background: #202223;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70px;
 }
 
-.challenge h3 {
+.zoom-footer a {
+
+  vertical-align: middle;
+  padding: 12px 0;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 36px;
+}
+
+.zoom-video-footer {
+  padding-top: 10px;
+  float:left;
+  vertical-align: middle;
+  color: white;
+  font-size: 36px;
+}
+
+.zoom-chat-footer {
+  padding-top: 10px;
+  vertical-align: middle;
+  color: white;
+  margin-left:auto;
+  margin-right:auto;
+  width: 100px;
+}
+
+.zoom-leave-footer {
+  float:right;
+  vertical-align: middle;
+  color: red;
+  font-size: 24px;
+  padding-top: 15px;
+}
+
+.zoom-chat-footer a {
+
+  vertical-align: middle;
+
+}
+
+.content {
+  width: 1980px;
+  height: 1080px;
+  vertical-align:top;
+  position:relative;
   text-align: center;
+}
+.tablecontent{
+  position: absolute;
+  top:30px;
+}
+.mainTitle{
+  align-content: center;
+  position: absolute;
+  top:0;
+}
+
+.challenge{
+  position:relative;
+  height: 200px;
+  width: 300px;
+  background-size: 300px 200px;
+  background: #202223;
+}
+.openchall {
+  background-repeat: no-repeat;
+  border: 2px solid black;
+  cursor: pointer;
+  text-align:left;
+  vertical-align:bottom;
+  position:relative;
+}
+
+.challtitle {
+  background-color: #00000070;
+  color: white;
+  font-size:18px;
+  position: absolute;
+  left: 0;
+  width: 260px;
+  bottom: 0;
+}
+
+.challscore {
+  color: white;
+  font-size: 18px;
+  position: absolute;
+  background-color: #00000070;
+  right: 0;
+  width: 40px;
+  bottom: 0;
+
+}
+
+.closechall {
+  background-repeat: no-repeat;
+  background-size: 300px 200px;
+  border: 2px solid black;
+  background-color: #202223;
+}
+
+.openchall:hover {
+  border: 2px solid #a5d638;
 }
 
 .challenge-hidden {
@@ -64,3 +209,18 @@
   left: 0;
   background-color: white;
 }
+
+.masonry,
+.masonry .masonry-brick {
+  -webkit-transition-duration: 0.7s;
+  transition-duration: 0.7s;
+}
+.masonry {
+  -webkit-transition-property: height, width;
+  transition-property: height, width;
+}
+.masonry .masonry-brick {
+  -webkit-transition-property: left, right, top;
+  transition-property: left, right, top;
+}
+
