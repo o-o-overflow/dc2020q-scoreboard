@@ -3,8 +3,9 @@
 }
 
 .category:before {
+  float: left;
   font-size: 20pt;
-  padding-right: 0.25em;  
+  padding-right: 0.25em;
 }
 
 .category-crypto:before {
@@ -52,19 +53,26 @@
 }
 
 .challenge {
-  border: 1px solid lightgrey;
+  background-size: cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  font-size: 18px;
   height: 200px;
-  margin-bottom: 10px;
-  width: 400px;
-}
-
-.challenge h3 {
-  text-align: center;
+  margin: 3px;
+  position: relative;
+  width: 300px;
 }
 
 .challenge-hidden {
-  border-color: grey;
-  background-color: lightgrey;
+  background-color: #202223;
+}
+
+.challenge-score {
+  bottom: 0px;
+  color: white;
+  position: absolute;
+  right: 0px;
+  padding-right: 10px;
 }
 
 .challenge-section h2 {
@@ -74,6 +82,14 @@
 
 .challenge-solved {
   background-color: pink;
+}
+
+.challenge-title {
+  background-color: #00000070;
+  bottom: 0px;
+  color: white;
+  position: absolute;
+  width: 300px;
 }
 
 .footer-padding {

@@ -24,9 +24,8 @@ function Challenge(props) {
       backgroundImage: `url('pics/a/${item_index}.gif')`,
     };
   }
-  const arrtags = tags.split(",");
 
-  const tagclass = arrtags.map((tag, index) => {
+  const tag_divs = tags.split(",").map((tag, index) => {
     return (
         <div className={`category category-${tag.trim()}`} key={index}/>
     );
@@ -34,15 +33,12 @@ function Challenge(props) {
 
   return (
       <div className={classes} onClick={onClick} onKeyPress={() => {}} style={styles}>
-        <div className="challtitle" >
-          <img src={"/pics/nomic.png"} alt={"nomic"}/> {id}
+        <div>{tag_divs}</div>
+        <div className="challenge-title" >
+          <img src="/pics/nomic.png" alt="no microphone"/>
+          {id}
         </div>
-        <div >
-          <div>
-            {tagclass}
-          </div>
-          <div className={"challscore"}>{points}</div>
-        </div>
+        <div className="challenge-score">{points}</div>
       </div>
   );
 }
