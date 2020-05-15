@@ -4,16 +4,23 @@ import React from "react";
 
 function HiddenChallenge(props) {
   return (
-    <div className="challenge challenge-hidden">
-      <h3>CHALLENGE{props.id}</h3>
-      <div className="d-flex justify-content-around">
-        <div>
-          <div>tags</div>
-          <div>Access denied{props.id + 13}</div>
-        </div>
-        <div>some pts</div>
-      </div>
-    </div>
+      <td  >
+          <div
+              className={"challenge closechall"}
+              onKeyPress={() => {}}
+              role="presentation"
+          >
+              <div className="challtitle" >
+
+              </div>
+              <div >
+                  <div>
+
+                  </div>
+                  <div className={"challscore"}> </div>
+              </div>
+          </div>
+      </td>
   );
 }
 HiddenChallenge.propTypes = exact({
