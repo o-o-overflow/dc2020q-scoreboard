@@ -30,7 +30,7 @@ function Challenge(props) {
 
   const tagclass = arrtags.map((tag, index) => {
     return (
-        <div className={`category-${tag.trim()}`}/>
+        <div className={`category category-${tag.trim()}`}/>
     );
   });
 

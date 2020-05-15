@@ -236,7 +236,7 @@ class App extends React.Component {
           handleOpenLogInModal={this.handleOpenLogInModal}
           team={this.state.team}
         />
-        <main role="main" className="container-fluid">
+        <main role="main" className="container-fluid dark-background">
           <Route
             exact
             path="/"

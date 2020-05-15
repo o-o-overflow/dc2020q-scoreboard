@@ -1,221 +1,63 @@
-body {
-  color: #ccc;
-}
-.table {
-  color: #ccc;
-}
 .ReactModal__Overlay {
   z-index: 1021 !important;
 }
 
-.category-osint:before {
-  content: "🕵️";
-  padding-right: .25em;
+.category:before {
   font-size: 20pt;
-  display: inline-block;
-  float:left;
-}
-
-.category-misc:before {
-  content: "🤷";
-  padding-right: .25em;
-  font-size: 20pt;
-  display: inline-block;
-  float:left;
-}
-.category-pwn:before {
-  content: "🤼";
-  padding-right: .25em;
-  font-size: 20pt;
-  display: inline-block;
-  float:left;
-}
-.category-reverse:before,
-.category-reversing:before {
-  content: "🔄";
-  font-size: 20pt;
-  padding-right: 0.25em;
-  display: inline-block;
-  float:left;
-}
-
-.category-web:before {
-  content: "🌐";
-  font-size: 20pt;
-  padding-right: 0.25em;
-  float:left;
-}
-.category-golf:before {
-  content: "🏌️";
-  font-size: 20pt;
-  padding-right: 0.25em;
-  float:left;
-}
-.category-kernel:before {
-  content: "🌰";
-  font-size: 20pt;
-  padding-right: 0.25em;
-  float:left;
-}
-
-.category-welcoming:before {
-  content: "👋";
-  font-size: 20pt;
-  padding-right: 0.25em;
-  float:left;
+  padding-right: 0.25em;  
 }
 
 .category-crypto:before {
   content: "😭";
-  font-size: 20pt;
-  padding-right: 0.25em;
-  float:left;
+}
+
+.category-golf:before {
+  content: "🏌️";
+}
+
+.category-kernel:before {
+  content: "🌰";
+}
+
+.category-misc:before {
+  content: "🤷";
+}
+
+.category-osint:before {
+  content: "🕵️";
+}
+
+.category-pwn:before {
+  content: "🤼";
+}
+
+.category-reversing:before{
+  content: "🔄";
 }
 
 .category-shellcoding:before {
   content: "🐚";
-  font-size: 20pt;
-  padding-right: 0.25em;
-  float:left;
-}
-.alignleft {
-  float: left;
-}
-.alignright {
-  float: right;
 }
 
-body {
+.category-web:before {
+  content: "🌐";
+}
+
+.category-welcoming:before {
+  content: "👋";
+}
+
+.dark-background {
   background: #111111;
 }
-.zoom-contents {
-  height:100%;
-  width:100%;
-  position:relative;
-  display: inline-block;
-}
-.zoom-elements{
-  padding-top: 100px;
-  position: absolute;
-  top: 40px;
-  width: 100%;
-}
-.zoom-center{
 
-}
-.zoom-footer {
-  background: #202223;
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 70px;
+.challenge {
+  border: 1px solid lightgrey;
+  margin-bottom: 10px;
 }
 
-.zoom-footer a {
-
-  vertical-align: middle;
-  padding: 12px 0;
-  transition: all 0.3s ease;
-  color: white;
-  font-size: 36px;
-}
-
-.zoom-video-footer {
-  padding-top: 10px;
-  float:left;
-  vertical-align: middle;
-  color: white;
-  font-size: 36px;
-}
-
-.zoom-chat-footer {
-  padding-top: 10px;
-  vertical-align: middle;
-  color: white;
-  margin-left:auto;
-  margin-right:auto;
-  width: 100px;
-}
-
-.zoom-leave-footer {
-  float:right;
-  vertical-align: middle;
-  color: red;
-  font-size: 24px;
-  padding-top: 15px;
-}
-
-.zoom-chat-footer a {
-
-  vertical-align: middle;
-
-}
-
-.content {
-  width: 1980px;
-  height: 1080px;
-  vertical-align:top;
-  position:relative;
+.challenge h3 {
   text-align: center;
-}
-.tablecontent{
-  position: absolute;
-  top:30px;
-}
-.mainTitle{
-  align-content: center;
-  position: absolute;
-  top:0;
-}
-
-.challenge{
-  position:relative;
-  height: 200px;
-  width: 300px;
-  background-size: cover;
-  background: #202223;
-}
-.openchall {
-  background-size: cover;
-  background-repeat: no-repeat;
-  border: 2px solid black;
-  cursor: pointer;
-  text-align:left;
-  vertical-align:bottom;
-  position:relative;
-}
-
-.challtitle {
-  background-color: #00000070;
-  color: white;
-  font-size:18px;
-  position: absolute;
-  left: 0;
-  width: 260px;
-  bottom: 0;
-}
-
-.challscore {
-  color: white;
-  font-size: 18px;
-  position: absolute;
-  background-color: #00000070;
-  right: 0;
-  width: 40px;
-  bottom: 0;
-
-}
-
-.closechall {
-  background-repeat: no-repeat;
-  background-size: 300px 200px;
-  border: 2px solid black;
-  background-color: #202223;
-}
-
-.openchall:hover {
-  border: 2px solid #a5d638;
 }
 
 .challenge-hidden {
@@ -232,6 +74,10 @@ body {
   background-color: pink;
 }
 
+.footer-padding {
+  padding-bottom: 60px;
+}
+
 .modal-body {
   overflow: auto;
 }
@@ -241,18 +87,3 @@ body {
   left: 0;
   background-color: white;
 }
-
-.masonry,
-.masonry .masonry-brick {
-  -webkit-transition-duration: 0.7s;
-  transition-duration: 0.7s;
-}
-.masonry {
-  -webkit-transition-property: height, width;
-  transition-property: height, width;
-}
-.masonry .masonry-brick {
-  -webkit-transition-property: left, right, top;
-  transition-property: left, right, top;
-}
-

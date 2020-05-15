@@ -8,12 +8,7 @@ class ChallengeMenu extends React.Component {
     super(props);
 
     this.sectionOrder = [
-      "haiku",
-      "sonnet",
-      "balad",
-      "epic",
-      "epitaph",
-      "limerick"
+      "haiku"
     ];
   }
 
@@ -41,27 +36,20 @@ class ChallengeMenu extends React.Component {
   render() {
     const sections = this.sectionOrder.map(this.buildSections);
     return (
-        <div className={"zoom-contents"}>
-          <div className={"mainTitle content"}> <img alt="zoom" height="58px" src="/pics/zoom.png"/></div>
-          <div className="zoom-elements">
-            <div className={"zoom-center"}>
-            {sections}
-            </div>
+      <>
+        <div className="row"><img alt="zoom" src="/pics/zoom.png"/></div>
+        <div className="d-flex footer-padding">{sections}</div>;
+        <footer class="navbar navbar-dark bg-dark fixed-bottom">
+          <div>
+            <img alt="zoom-video" src="/pics/video_icons.png"/>
           </div>
-          <div className={"zoom-footer"}>
-            <div className={"zoom-video-footer"}>
-                <img alt={"video"} src={"/pics/video_icons.png"}/>
-            </div>
-            <div className={"zoom-leave-footer"}>
-              Leave Meeting
-            </div>
-            <div className={"zoom-chat-footer"}>
-              <img alt={"video"} src={"/pics/chat.png"}/>
-            </div>
-
+          <div>
+            <img alt="zoom-chat" src="/pics/chat.png"/>
           </div>
-        </div>
-  )
+          <h3><span class="badge badge-danger">Leave</span></h3>
+        </footer>
+      </>
+    )
   }
 }
 ChallengeMenu.propTypes = exact({
