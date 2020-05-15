@@ -27,7 +27,7 @@ function Challenge(props) {
 
   const tag_divs = tags.split(",").map((tag, index) => {
     return (
-        <div className={`category category-${tag.trim()}`} key={index}/>
+      <div title={`${tag.trim()}`} className={`category category-${tag.trim()}`} key={index}/>
     );
   });
 
