@@ -14,7 +14,6 @@ function Challenge(props) {
   }
 
   var styles;
-
   if (solved) {
     classes += " closechall";
     styles = {
@@ -52,7 +51,7 @@ function Challenge(props) {
             <div>
               {tagclass}
             </div>
-            <div className={"challsdcore"}>{points}</div>
+            <div className={"challscore"}>{points}</div>
           </div>
         </div>
       </td>
