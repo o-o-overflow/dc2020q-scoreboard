@@ -26,16 +26,16 @@ function Rules() {
         teams that solved the challenge). We <a href="https://github.com/o-o-overflow/scoring-playground">released a scoring playground</a> so that teams with questions or concerns about the exact scoring algorithm can see how that affects the overall ranking.
       </p>
 
-      <h2>New challenge category: GOLF 🏌️‍♀️ 🏌️‍♂️ ⛳</h2>
+      <h2>New challenge category: GOLF <span aria-label="woman golfing emoji" role="img">🏌️‍♀️</span><span aria-label="man golfing emoji" role="img">🏌️‍♂️</span><span aria-label="golf hole flag" role="img">⛳</span></h2>
       <p>
-      Last year, we challenged you with an <a href="https://scoreboard2019.oooverflow.io/#/leaderboard/speedrun-012">entire category of speedruns 🏎️</a>: bite-size problems designed for hacking races.
+      Last year, we challenged you with an <a href="https://scoreboard2019.oooverflow.io/#/leaderboard/speedrun-012">entire category of speedruns <span aria-label="racecar" role="img">🏎️</span></a>: bite-size problems designed for hacking races.
       Speedrun challenges added a twist by letting the top teams dictate awarded points by beating each other to the punch.
       </p>
 
       <p>What if they could also dictate the difficulty?</p>
 
       <p>
-      This year, the Order of the Overflow is excited to introduce a new style of CTF challenge: golf ⛳.
+      This year, the Order of the Overflow is excited to introduce a new style of CTF challenge: golf <span aria-label="golf hole flag" role="img">⛳</span>.
       In a golf challenge, teams race against time to solve a challenge that's gradually degrading in difficulty.
       The sooner they solve it, the more difficult it remains, the harder it is for other teams to catch up, and the more points it will be worth.
       Can you keep those points out of the hands of your competition?
@@ -82,7 +82,7 @@ function Rules() {
         Times change, and we must change with them. With <a href="https://forum.defcon.org/node/232005">DEF CON Safe Mode this year</a>,
         and doing so via discord, we're using discord for our idling this year.
         You can (and should) also hang out with us on the official DEF CON discord{" "}
-        <a href="https://discord.io/ctf">discord.io/ctf</a> in the CTF category!
+        <a href="https://discord.gg/defcon">discord.gg/defcon</a> in the CTF category!
       </p>
 
       <h2>Flag Submission Delay</h2>
