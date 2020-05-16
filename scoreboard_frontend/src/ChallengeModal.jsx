@@ -211,11 +211,13 @@ class ChallengeModal extends React.Component {
       );
     }
 
+    const solve_string = this.props.numSolved === 1 ? "1 solve" : `${this.props.numSolved} solves`
+
     return (
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">{`${this.props.challengeId} (${this.props.numSolved} solves)`}</h5>
+            <h5 className="modal-title">{`${this.props.challengeId} (${solve_string})`}</h5>
             <button
               aria-label="Close"
               className="close"
