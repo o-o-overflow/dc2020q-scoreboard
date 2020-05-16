@@ -146,7 +146,7 @@ def info_team(psql, team):
     now = datetime.datetime.now(datetime.timezone.utc)
     print("")
     print("\x1b[32m----------------------------------------------------------\x1b[0m")
-    print("\x1b[32m        Challenge       Wront Attempts     Solved \x1b[0m ")
+    print("\x1b[32m          Challenge       Wrong Attempts     Solved \x1b[0m ")
     with psql.cursor() as cursor:
         cursor.execute("SELECT id from challenges;")
         for (name,) in cursor.fetchall():
@@ -171,7 +171,7 @@ def info_team(psql, team):
                     wrong = "-"
                 else:
                     wrong = wrong[0]
-            print("\x1b[33m%20s\x1b[0m         %3s          %s" % (name, wrong, when))
+            print("\x1b[33m%23s\x1b[0m         %3s          %s" % (name, wrong, when))
     print("\x1b[32m----------------------------------------------------------\x1b[0m")
     print("")
 
@@ -263,7 +263,7 @@ def info_chall(psql, chall):
 def challs_table(psql):
     print("")
     print(
-        "\x1b[32m           Name       : Status  Solved  Wrong    Last  Open Since\x1b[0m"
+        "\x1b[32m           Name            : Status   Solved  Wrong    Last  Open Since\x1b[0m"
     )
     print(
         "\x1b[32m-----------------------------------------------------------------\x1b[0m"
@@ -297,7 +297,7 @@ def challs_table(psql):
                 diff = now - opentime
                 openfrom = diff_string(diff)
             print(
-                "\x1b[33m%20s\x1b[0m  :  OPEN    %3s    %5s %7s  %10s"
+                "\x1b[33m%25s\x1b[0m  :  OPEN    %4s    %5s %7s  %10s"
                 % (name, tot, wrong, last, openfrom)
             )
 
@@ -312,8 +312,9 @@ def blood(psql):
         # cursor.execute('SELECT id,team_name FROM users;')
         # for (team_id,team_name) in cursor.fetchall():
         #    print ('ID: %s, team: %s' % (team_id, team_name))
-        cursor.execute("SELECT id, name from challenges;")
-        for (chall, name) in cursor.fetchall():
+        cursor.execute("SELECT id from challenges;")
+        for chall in cursor.fetchall():
+            name = chall[0]
             with psql.cursor() as cursor2:
                 cursor2.execute("SELECT date_created FROM challenges WHERE id=%s;", (chall,))
                 opentime = cursor2.fetchone()
@@ -382,7 +383,7 @@ def stats(psql):
             max_solved = max_solved[-1][0]
 
     now = datetime.datetime.now(datetime.timezone.utc)
-    start = datetime.datetime(2019, 5, 11, 0, 0, 0, tzinfo=datetime.timezone.utc)
+    start = datetime.datetime(2020, 5, 16, 0, 0, 0, tzinfo=datetime.timezone.utc)
     diff = now - start
     diffm = diff.days * 24 * 60 + diff.seconds // 60
     progress = diffm * 100 / (48 * 60)
