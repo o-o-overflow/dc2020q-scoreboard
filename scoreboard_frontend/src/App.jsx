@@ -182,7 +182,6 @@ class App extends React.Component {
       const object = {
         id,
         points: pointsByChallenge[id],
-        solveCount: solvesByChallenge[id] || 0,
         solved: (solvesByTeam[this.state.team] || []).includes(id),
         tags
       };

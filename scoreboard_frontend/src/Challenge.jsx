@@ -3,7 +3,7 @@ import exact from "prop-types-exact";
 import React from "react";
 
 function Challenge(props) {
-  const { authenticated, id, points, solveCount, solved, tags, item_index} = props;
+  const { authenticated, id, points, solved, tags, item_index} = props;
 
 
   let onClick = null;
@@ -15,46 +15,31 @@ function Challenge(props) {
 
   var styles;
   if (solved) {
-    classes += " closechall";
+    classes += "challenge-solved";
     styles = {
       backgroundImage: `url('pics/d/${item_index}.gif')`,
     };
   } else {
-    classes += " openchall";
     styles = {
       backgroundImage: `url('pics/a/${item_index}.gif')`,
     };
   }
-  classes += " zoom-frame ";
-  const arrtags = tags.split(",");
 
-  const tagclass = arrtags.map((tag, index) => {
+  const tag_divs = tags.split(",").map((tag, index) => {
     return (
-        <div className={`category-${tag.trim()}`}/>
+      <div title={`${tag.trim()}`} className={`category category-${tag.trim()}`} key={index}/>
     );
   });
 
   return (
-      <td  >
-        <div
-          className={classes}
-          onClick={onClick}
-          onKeyPress={() => {}}
-          role="presentation"
-          style={styles}
-        >
-
-          <div className="challtitle" >
-            <img src={"/pics/nomic.png"} alt={"nomic"}/> {id}
-          </div>
-          <div >
-            <div>
-              {tagclass}
-            </div>
-            <div className={"challscore"}>{points}</div>
-          </div>
+      <div className={classes} onClick={onClick} onKeyPress={() => {}} style={styles}>
+        <div>{tag_divs}</div>
+        <div className="challenge-title" >
+          <img src="/pics/nomic.png" alt="no microphone"/>
+          {id}
         </div>
-      </td>
+        <div className="challenge-score">{points}</div>
+      </div>
   );
 }
 Challenge.propTypes = exact({
@@ -62,7 +47,6 @@ Challenge.propTypes = exact({
   id: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
   points: PropTypes.number.isRequired,
-  solveCount: PropTypes.number.isRequired,
   solved: PropTypes.bool.isRequired,
   tags: PropTypes.string.isRequired,
   item_index: PropTypes.number.isRequired,

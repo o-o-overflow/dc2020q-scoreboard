@@ -4,23 +4,7 @@ import React from "react";
 
 function HiddenChallenge(props) {
   return (
-      <td  >
-          <div
-              className={"challenge closechall"}
-              onKeyPress={() => {}}
-              role="presentation"
-          >
-              <div className="challtitle" >
-
-              </div>
-              <div >
-                  <div>
-
-                  </div>
-                  <div className={"challscore"}> </div>
-              </div>
-          </div>
-      </td>
+    <div className="challenge challenge-hidden"></div>
   );
 }
 HiddenChallenge.propTypes = exact({
