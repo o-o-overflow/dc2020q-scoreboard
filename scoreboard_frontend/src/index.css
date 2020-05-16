@@ -102,6 +102,7 @@ body {
 
 .modal-body {
   overflow: auto;
+  overflow-wrap: anywhere;
 }
 
 .sticky-left {
