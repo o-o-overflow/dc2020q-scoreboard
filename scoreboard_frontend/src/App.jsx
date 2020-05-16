@@ -30,6 +30,7 @@ class App extends React.Component {
       intervalID: -1,
       lastSolveTimeByTeam: {},
       openedByCategory: {},
+      solvesByChallenge: {},
       pointsByTeam: {},
       refreshToken: window.localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN) || "",
       showChallengeId: "",
@@ -220,6 +221,7 @@ class App extends React.Component {
       pointsByTeam,
       teamScoreboardOrder,
       solvesByTeam,
+      solvesByChallenge,
       unopened: data.unopened_by_category
     });
   };
@@ -312,6 +314,7 @@ class App extends React.Component {
               onTokenExpired={this.handleTokenExpired}
               onSolve={this.loadData}
               solved={solved}
+              numSolved={this.state.solvesByChallenge[this.state.showChallengeId] || 0}
               token={this.state.accessToken}
             />
           </ReactModal>

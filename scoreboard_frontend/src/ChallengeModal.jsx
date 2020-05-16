@@ -215,7 +215,7 @@ class ChallengeModal extends React.Component {
       <div className="modal-dialog" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">{this.props.challengeId}</h5>
+            <h5 className="modal-title">{`${this.props.challengeId} (${this.props.numSolved} solves)`}</h5>
             <button
               aria-label="Close"
               className="close"
@@ -250,6 +250,7 @@ ChallengeModal.propTypes = exact({
   onSolve: PropTypes.func.isRequired,
   onTokenExpired: PropTypes.func.isRequired,
   solved: PropTypes.bool.isRequired,
+  numSolved: PropTypes.number.isRequired,
   token: PropTypes.string.isRequired
 });
 export default ChallengeModal;
