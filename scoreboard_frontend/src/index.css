@@ -105,6 +105,11 @@ body {
   overflow-wrap: anywhere;
 }
 
+.modal-content {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
 .sticky-left {
   position: sticky;
   left: 0;
