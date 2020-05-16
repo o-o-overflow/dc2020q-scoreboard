@@ -176,7 +176,7 @@ class App extends React.Component {
     const pointsByChallenge = {};
     const challenges = {};
     data.open.forEach(([id, tags, category, _openTime]) => {
-      this.categoryByChallenge[id] = category;
+      this.categoryByChallenge[id] = tags;
       pointsByChallenge[id] = challengePoints(solvesByChallenge[id], category);
 
       const object = {
