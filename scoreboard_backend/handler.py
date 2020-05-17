@@ -153,7 +153,7 @@ def challenge_update(event, _context):
     return api_response(200)
 
 
-def challenges(event, _context):
+def challenges(_event, _context):
     with psql_connection(DB_PASSWORD, "scoreboard") as psql:
         with psql.cursor() as cursor:
             cursor.execute(
@@ -400,6 +400,22 @@ def submit(data, stage):
         psql.commit()
 
     return api_response(status, message)
+
+
+def teams(_event, _context):
+    with psql_connection(DB_PASSWORD, "scoreboard") as psql:
+        with psql.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT DISTINCT team_name, ctf_time_team_id
+                FROM users
+                JOIN solves
+                ON user_id=id
+                WHERE ctf_time_team_id IS NOT NULL
+                """
+            )
+            mapping = dict(cursor.fetchall())
+    return api_response(200, {"teams": mapping}, log_message=False)
 
 
 def test_email(_event, context):

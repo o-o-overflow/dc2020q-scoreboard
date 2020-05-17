@@ -39,6 +39,13 @@ functions:
           method: POST
           path: submit
     handler: handler.submit
+  teams:
+    events:
+      - http:
+          cors: true
+          method: GET
+          path: teams
+    handler: handler.teams
   test_email:
     handler: handler.test_email
   token:
