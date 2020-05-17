@@ -22,11 +22,19 @@ function Scoreboard(props) {
     solves: team.solves.map(id => categoryIcon(props.categoryByChallenge, id))
   }));
 
+  function ctfTimeLink(teamName) {
+    const ctfTimeTeamID = props.teams[teamName];
+    if (ctfTimeTeamID !== undefined) {
+      return <a href={`https://ctftime.org/team/${ctfTimeTeamID}`} target="_blank" rel="noopener noreferrer">{teamName}</a>
+    }
+    return teamName;
+  }
+
   const teamRows = teams.map(team => (
     <tr key={team.name} id={team.name}>
       <td>{team.num}</td>
       <td>{team.points}</td>
-      <td>{team.name}</td>
+      <td>{ctfTimeLink(team.name)}</td>
       <td>{team.solves}</td>
     </tr>
   ));
@@ -68,6 +76,7 @@ Scoreboard.propTypes = {
   lastSolveTimeByTeam: PropTypes.objectOf(PropTypes.number).isRequired,
   pointsByTeam: PropTypes.objectOf(PropTypes.number).isRequired,
   solvesByTeam: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))
-    .isRequired
+    .isRequired,
+  teams: PropTypes.objectOf(PropTypes.number).isRequired
 };
 export default Scoreboard;

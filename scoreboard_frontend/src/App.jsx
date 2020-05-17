@@ -37,6 +37,7 @@ class App extends React.Component {
       showModal: null,
       solvesByTeam: {},
       team: window.localStorage.getItem(LOCAL_STORAGE_TEAM) || "",
+      teams: {},
       teamScoreboardOrder: [],
       unopened: {}
     };
@@ -44,13 +45,14 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.loadData();
-    const intervalId = setInterval(this.loadData, 60000);
-    this.setState({ intervalId: intervalId });
+    this.loadChallenges();
+    this.loadTeams()
+    const challengesIntervalId = setInterval(this.loadChallenges, 60000);
+    this.setState({ challengesIntervalId: challengesIntervalId });
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.intervalId);
+    clearInterval(this.state.challengesIntervalId);
   }
 
   setAuthentication = data => {
@@ -63,7 +65,7 @@ class App extends React.Component {
     window.localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, data.refresh_token);
     window.localStorage.setItem(LOCAL_STORAGE_TEAM, data.team);
     this.handleCloseModal();
-    this.loadData();
+    this.loadChallenges();
   };
 
   handleCloseModal = () => {
@@ -80,7 +82,7 @@ class App extends React.Component {
     window.localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
     window.localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN);
     window.localStorage.removeItem(LOCAL_STORAGE_TEAM);
-    this.loadData();
+    this.loadChallenges();
   };
 
   handleOpenChallengeModal = event => {
@@ -127,7 +129,7 @@ class App extends React.Component {
     });
   }
 
-  loadData = () => {
+  loadChallenges = () => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/challenges`, { method: "GET" })
       .then(response =>
         response.json().then(body => ({ body, status: response.status }))
@@ -138,14 +140,32 @@ class App extends React.Component {
           console.log(body.message);
           return;
         }
-        this.processData(body.message);
+        this.processChallenges(body.message);
       })
       .catch(error => {
         console.log(error);
       });
   };
 
-  processData = data => {
+    loadTeams = () => {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/teams`, { method: "GET" })
+      .then(response =>
+        response.json().then(body => ({ body, status: response.status }))
+      )
+      .then(({ body, status }) => {
+        if (status !== 200) {
+          console.log(status);
+          console.log(body.message);
+          return;
+        }
+        this.setState({teams: body.message.teams})
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  processChallenges = data => {
     const lastSolveTimeByTeam = {};
     const solvesByChallenge = {};
     const solvesByTeam = {};
@@ -263,6 +283,7 @@ class App extends React.Component {
                 solvesByTeam={this.state.solvesByTeam}
                 teamScoreboardOrder={this.state.teamScoreboardOrder}
                 team={this.state.team}
+                teams={this.state.teams}
               />
             )}
           />
@@ -312,7 +333,7 @@ class App extends React.Component {
               challengeId={this.state.showChallengeId}
               onClose={this.handleCloseModal}
               onTokenExpired={this.handleTokenExpired}
-              onSolve={this.loadData}
+              onSolve={this.loadChallenges}
               solved={solved}
               numSolved={this.state.solvesByChallenge[this.state.showChallengeId] || 0}
               token={this.state.accessToken}
