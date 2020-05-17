@@ -44,7 +44,7 @@ class ChallengeMenu extends React.Component {
             <img alt="zoom-video" src="/pics/video_icons.png"/>
           </div>
           <div>
-            <a href="https://discord.gg/defcon" target="_blank" rel="noopener noreferrer"><img alt="zoom-chat" src="/pics/chat.png"/></a>
+            <a href="https://discord.gg/yTjdTH" target="_blank" rel="noopener noreferrer"><img alt="zoom-chat" src="/pics/chat.png"/></a>
           </div>
           <h3><a href="https://oooverflow.io/"><span className="badge badge-danger">Leave</span></a></h3>
         </footer>

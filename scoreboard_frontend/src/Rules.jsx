@@ -82,7 +82,7 @@ function Rules() {
         Times change, and we must change with them. With <a href="https://forum.defcon.org/node/232005">DEF CON Safe Mode this year</a>,
         and doing so via discord, we're using discord for our idling this year.
         You can (and should) also hang out with us on the official DEF CON discord{" "}
-        <a href="https://discord.gg/defcon">discord.gg/defcon</a> in the CTF category!
+        <a href="https://discord.gg/yTjdTH">discord.gg/yTjdTH</a> in the CTF category!
       </p>
 
       <h2>Flag Submission Delay</h2>
