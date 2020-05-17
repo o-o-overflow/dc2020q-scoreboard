@@ -293,6 +293,7 @@ class App extends React.Component {
             render={() => (
               <GameMatrix
                 challenges={this.state.challenges}
+                solvesByChallenge={this.state.solvesByChallenge}
                 teamScoreboardOrder={this.state.teamScoreboardOrder}
               />
             )}

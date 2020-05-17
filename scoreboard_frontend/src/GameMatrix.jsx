@@ -18,7 +18,7 @@ class GameMatrix extends React.Component {
     const theHeaders = this.challenges.map(id => {
       return (
         <th key={id} scope="row">
-          {id}
+          {id} ({this.props.solvesByChallenge[id] || 0})
         </th>
       );
     });
