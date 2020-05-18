@@ -42,7 +42,7 @@ def psql_connection(db_password, environment="prod"):
         dbname="scoreboard",
         host=DB_HOST[environment],
         password=db_password,
-        user="dc2019qmaster",
+        user="scoreboard",
     )
     try:
         yield psql

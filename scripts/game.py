@@ -9,6 +9,7 @@ import boto3
 import psycopg2
 import yaml
 import datetime
+from time import sleep
 
 DB_HOST = {
     "dev": "sb-dev.cgwgx6ftjwg2.us-east-2.rds.amazonaws.com",
@@ -39,6 +40,9 @@ def main(argv):
     elif argv[1] == "timeline":
         with psql_connection(db_password) as psql:
             timeline(psql)
+    elif argv[1] == "solcount":
+        with psql_connection(db_password) as psql:
+            solcount(psql)
     elif argv[1] == "challs":
         with psql_connection(db_password) as psql:
             challs_table(psql)
@@ -51,44 +55,37 @@ def main(argv):
             sys.exit(1)
         with psql_connection(db_password) as psql:
             info_chall(psql, argv[2])
-    elif argv[1] == "last":
-        if len(argv) != 3:
-            n = 20
+    elif argv[1] == "log":
+        blacklist = []
+        if len(argv) < 3:
+            n = 30
         else:
             n = int(argv[2])
         with psql_connection(db_password) as psql:
-            last(psql, n)
+            log(psql, n)
     elif argv[1] == "tinfo":
         if len(argv) != 3:
             print("You need to specify one team id")
             sys.exit(1)
         with psql_connection(db_password) as psql:
             info_team(psql, argv[2])
-    elif argv[1] == "teacheck":
-        with psql_connection(db_password) as psql:
-            teacheck(psql)
+#    elif argv[1] == "teacheck":
+#        with psql_connection(db_password) as psql:
+#            teacheck(psql)
     elif argv[1] == "blood":
         with psql_connection(db_password) as psql:
             blood(psql)
     else:
         print("\nUse:")
-        print(
-            " %s               \x1b[33m# Generic Info about the game\x1b[0m" % argv[0]
-        )
-        print(" %s challs        \x1b[33m# Info about open challengs\x1b[0m" % argv[0])
-        print(" %s last <n>      \x1b[33m# List of last n solutions\x1b[0m" % argv[0])
-        print(" %s teams         \x1b[33m# Info about all teams\x1b[0m" % argv[0])
-        print(
-            " %s cinfo <chall> \x1b[33m# Detailed info about one chall\x1b[0m" % argv[0]
-        )
-        print(
-            " %s tinfo <team>  \x1b[33m# Provides info about one team\x1b[0m" % argv[0]
-        )
-        print(
-            " %s timeline      \x1b[33m# Prints a hourly timeline of the game\x1b[0m"
-            % argv[0]
-        )
-        print(" %s blood         \x1b[33m# First blood \x1b[0m" % argv[0])
+        print(" %s                     \x1b[33m# Generic Info about the game\x1b[0m" % argv[0])
+        print(" %s challs              \x1b[33m# Info about open challengs\x1b[0m" % argv[0])
+        print(" %s log <threshold>     \x1b[33m# Tail -f the solutions\x1b[0m" % argv[0])
+        print(" %s teams               \x1b[33m# Info about all teams\x1b[0m" % argv[0])
+        print(" %s cinfo <chall>       \x1b[33m# Detailed info about one chall\x1b[0m" % argv[0])
+        print(" %s tinfo <team>        \x1b[33m# Provides info about one team\x1b[0m" % argv[0])
+        print(" %s timeline            \x1b[33m# Prints a hourly timeline of the game\x1b[0m" % argv[0])
+        print(" %s blood               \x1b[33m# First blood \x1b[0m" % argv[0])
+        print(" %s solcount            \x1b[33m# Solutions count \x1b[0m" % argv[0])
         print("")
         sys.exit(0)
 
@@ -116,23 +113,69 @@ def psql_connection(db_password):
         dbname="scoreboard",
         host=DB_HOST[ENVIRONMENT],
         password=db_password,
-        user="dc2019qmaster",
+        user="scoreboard",
     )
     try:
         yield psql
     finally:
         psql.close()
 
+def log(psql, maxn):
+    with psql.cursor() as cursor2:
+        last = 0
+        challs = {}
+        cursor2.execute( "SELECT solves.date_created, team_name, challenge_id FROM solves,users WHERE solves.user_id = users.id order by solves.date_created")
+        for time, team, chall in cursor2.fetchall():
+            if chall not in challs: challs[chall]=0
+            challs[chall]+=1
+            if challs[chall]==1:
+                print("\x1b[31m >>> FIRST BLOOD! %s from %s <<<\x1b[0m" % (chall, team))
+            elif challs[chall]<=maxn:
+                print("%s | %s solved %s (solved %d times)" % (time, team, chall, challs[chall]))
+            if challs[chall]==maxn:
+                print("\x1b[32m> %s reached %d solves. It wont be printed anymore \x1b[0m" % (chall, maxn))
+        last = time
+        while True:
+            cursor2.execute( "SELECT solves.date_created, team_name, challenge_id FROM solves,users WHERE solves.date_created > '%s' and solves.user_id = users.id order by solves.date_created"%last)
+            for time, team, chall in cursor2.fetchall():
+                if chall not in challs: challs[chall]=0
+                challs[chall]+=1
+                if challs[chall]==1:
+                    print("\x1b[31m >>> FIRST BLOOD! %s from %s <<<\x1b[0m" % (chall, team))
+                elif challs[chall]<=maxn:
+                    print("%s | %s solved %s (solved %d times)" % (time, team, chall, challs[chall]))
+                if challs[chall]==maxn:
+                    print("\x1b[32m> %s reached %d solves. It wont be printed anymore \x1b[0m" % (chall, maxn))
+            last = time
+            sleep(5)
 
-def last(psql, n):
+def last(psql, n, blacklist):
     with psql.cursor() as cursor2:
         cursor2.execute(
             "SELECT solves.date_created, team_name, challenge_id FROM solves,users WHERE solves.user_id = users.id order by solves.date_created desc limit %d;"
             % n
         )
         for time, team, chall in cursor2.fetchall():
-            print("\x1b[32m %35s \x1b[0m from %s" % (chall, team))
+            dontprint = False
+            for no in blacklist:
+                if no in chall: 
+                    dontprint = True
+                    break
+            if dontprint==False:
+                print("\x1b[32m %35s \x1b[0m from %s" % (chall, team))
 
+def solcount(psql):
+    with psql.cursor() as cursor2:
+        cursor2.execute(
+            "SELECT team_name, count(challenge_id) FROM solves,users WHERE solves.user_id = users.id group by team_name;"
+        )
+        count = {}
+        for team, chall in cursor2.fetchall():
+            if chall not in count: count[chall]=0
+            count[chall]+= 1
+        print("Solved   Teams")
+        for c in sorted(count.keys(), reverse=True):
+            print("\x1b[32m %2d \x1b[0m       %s" % (c, count[c]))
 
 def info_team(psql, team):
     with psql.cursor() as cursor2:
@@ -178,11 +221,11 @@ def info_team(psql, team):
 
 def timeline(psql):
     now = datetime.datetime.now(datetime.timezone.utc)
-    start = datetime.datetime(2019, 5, 11, 0, 0, 0, tzinfo=datetime.timezone.utc)
+    start = datetime.datetime(2020, 5, 16, 0, 0, 0, tzinfo=datetime.timezone.utc)
     slots = [[0, set()] for i in range(49)]
     diff = now - start
     current = int(diff.total_seconds() // 60 // 60)
-    print("\x1b[32mHour      Correct Submissions    Active Teams\x1b[0m")
+    print("\x1b[32mHour     Solved      Active Teams\x1b[0m")
     with psql.cursor() as cursor2:
         cursor2.execute("SELECT solves.date_created, user_id FROM solves;")
         for when, who in cursor2.fetchall():
@@ -194,12 +237,12 @@ def timeline(psql):
     for i in range(len(slots)):
         if i == current:
             print(
-                "\x1b[32mNOW>\x1b[0m           %5s               %5s"
+                "\x1b[32mNOW>\x1b[0m     %5s          %5s"
                 % (slots[i][0], len(slots[i][1]))
             )
         else:
             print(
-                " %2d            %5s               %5s"
+                " %2d      %5s          %5s"
                 % (i, slots[i][0], len(slots[i][1]))
             )
 
@@ -251,8 +294,8 @@ def info_chall(psql, chall):
         else:
             errors.sort(key=lambda x: x[0])
             print("\x1b[32m Wrong Flag Submitted:\x1b[0m %d" % len(errors))
-            print("\x1b[32m Last 10 wrong submissions:\x1b[0m")
-            for when, team, flag in errors[-10:][::-1]:
+            print("\x1b[32m Last 20 wrong submissions:\x1b[0m")
+            for when, team, flag in errors[-20:][::-1]:
                 diff = now - when
                 when = diff_string(diff)
                 print("      '%s' from %s, %s ago" % (flag, team, when))
@@ -296,6 +339,8 @@ def challs_table(psql):
                 opentime = cursor2.fetchone()[0]
                 diff = now - opentime
                 openfrom = diff_string(diff)
+            if (wrong == 0): wrong = "-"
+            if (tot == 0): tot = "-"
             print(
                 "\x1b[33m%25s\x1b[0m  :  OPEN    %4s    %5s %7s  %10s"
                 % (name, tot, wrong, last, openfrom)
@@ -304,7 +349,7 @@ def challs_table(psql):
     with psql.cursor() as cursor:
         cursor.execute("SELECT id from unopened_challenges;")
         for name in cursor.fetchall():
-            print("%20s  :  CLOSE     -        -       -" % name)
+            print("%25s  :  CLOSE      -        -       -" % name)
     print("")
 
 def blood(psql):
@@ -312,7 +357,7 @@ def blood(psql):
         # cursor.execute('SELECT id,team_name FROM users;')
         # for (team_id,team_name) in cursor.fetchall():
         #    print ('ID: %s, team: %s' % (team_id, team_name))
-        cursor.execute("SELECT id from challenges;")
+        cursor.execute("SELECT id from challenges order by date_created;")
         for chall in cursor.fetchall():
             name = chall[0]
             with psql.cursor() as cursor2:
@@ -333,16 +378,16 @@ def blood(psql):
                     print("\x1b[32m %30s \x1b[0m %s in %s" % ( name, solvedby[0][1], when))
 
 
-def teacheck(psql):
-    with psql.cursor() as cursor:
-        # cursor.execute('SELECT id,team_name FROM users;')
-        # for (team_id,team_name) in cursor.fetchall():
-        #    print ('ID: %s, team: %s' % (team_id, team_name))
-        cursor.execute(
-            "SELECT date_created, user_id, challenge_id, flag FROM submissions WHERE challenge_id='throwback' and user_id=177;"
-        )
-        for (date_created, user_id, challenge_id, flag) in cursor.fetchall():
-            print('Time: %s, flag: "%s"' % (date_created, flag))
+#def teacheck(psql):
+#    with psql.cursor() as cursor:
+#        # cursor.execute('SELECT id,team_name FROM users;')
+#        # for (team_id,team_name) in cursor.fetchall():
+#        #    print ('ID: %s, team: %s' % (team_id, team_name))
+#        cursor.execute(
+#            "SELECT date_created, user_id, challenge_id, flag FROM submissions WHERE challenge_id='throwback' and user_id=177;"
+#        )
+#        for (date_created, user_id, challenge_id, flag) in cursor.fetchall():
+#            print('Time: %s, flag: "%s"' % (date_created, flag))
 
 
 def stats(psql):
