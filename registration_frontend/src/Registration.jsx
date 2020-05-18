@@ -1,6 +1,6 @@
 import React from "react";
 
-const strip = text => text.replace(/^\s+|\s+$/g, "");
+const strip = (text) => text.replace(/^\s+|\s+$/g, "");
 
 class Registration extends React.Component {
   constructor(props) {
@@ -12,11 +12,11 @@ class Registration extends React.Component {
       password: "",
       passwordConfirmation: "",
       status: "",
-      teamName: ""
+      teamName: "",
     };
     this.hashTimestamp = null;
     this.worker = new Worker("worker.js");
-    this.worker.onmessage = message => {
+    this.worker.onmessage = (message) => {
       if (message.data.complete) {
         this.register(message.data.nonce);
       } else {
@@ -25,25 +25,25 @@ class Registration extends React.Component {
     };
   }
 
-  handleCtfTimeTeamIdChange = event => {
+  handleCtfTimeTeamIdChange = (event) => {
     this.setState({ ...this.state, ctfTimeTeamId: strip(event.target.value) });
   };
 
-  handleEmailChange = event => {
+  handleEmailChange = (event) => {
     this.setState({ ...this.state, email: strip(event.target.value) });
   };
 
-  handleKeyPress = event => {
+  handleKeyPress = (event) => {
     if (!this.state.buttonDisabled && event.key === "Enter") {
       this.handleRegister();
     }
   };
 
-  handlePasswordChange = event => {
+  handlePasswordChange = (event) => {
     this.setState({ ...this.state, password: event.target.value });
   };
 
-  handlePasswordConfirmationChange = event => {
+  handlePasswordConfirmationChange = (event) => {
     this.setState({ ...this.state, passwordConfirmation: event.target.value });
   };
 
@@ -73,52 +73,50 @@ class Registration extends React.Component {
       this.setState({
         ...this.state,
         buttonDisabled: true,
-        status: "computing proof of work"
+        status: "computing proof of work",
       });
       this.worker.postMessage({
         prefix: "012345",
-        value: `${this.state.email}!${this.hashTimestamp}`
+        value: `${this.state.email}!${this.hashTimestamp}`,
       });
       return;
     }
     this.setState({ ...this.state, status: validation });
   };
 
-  handleTeamNameChange = event => {
+  handleTeamNameChange = (event) => {
     this.setState({ ...this.state, teamName: strip(event.target.value) });
   };
 
-  register = nonce => {
+  register = (nonce) => {
     const requestData = {
       ctf_time_team_id: this.state.ctfTimeTeamId,
       email: this.state.email,
       nonce,
       password: this.state.password,
       team_name: this.state.teamName,
-      timestamp: this.hashTimestamp
+      timestamp: this.hashTimestamp,
     };
     this.setState({ ...this.state, status: "submitting registration" });
     fetch(`${process.env.REACT_APP_BACKEND_URL}/user_register`, {
       body: JSON.stringify(requestData),
       headers: { "Content-Type": "application/json" },
-      method: "POST"
+      method: "POST",
     })
-      .then(response =>
-        response.json().then(body => ({ body, status: response.status }))
+      .then((response) =>
+        response.json().then((body) => ({ body, status: response.status }))
       )
       .then(({ body, status }) => {
         let message;
         let reset = {};
         if (status === 201) {
-          message = `Registration for ${
-            this.state.email
-          } received. Please follow the link in your email to complete the registration process.`;
+          message = `Registration for ${this.state.email} received. Please follow the link in your email to complete the registration process.`;
           reset = {
             ctfTimeTeamId: "",
             email: "",
             password: "",
             passwordConfirmation: "",
-            teamName: ""
+            teamName: "",
           };
         } else {
           message = body.message;
@@ -127,14 +125,14 @@ class Registration extends React.Component {
           ...this.state,
           ...reset,
           buttonDisabled: false,
-          status: message
+          status: message,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
           ...this.state,
           buttonDisabled: false,
-          status: "(error) see console for info"
+          status: "(error) see console for info",
         });
         console.log(error);
       });

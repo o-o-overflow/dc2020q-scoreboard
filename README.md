@@ -3,38 +3,36 @@
 This repository contains a number of [React](https://reactjs.org/) frontends
 applications:
 
-* countdown_frontend
-* registration_frontend
-* scoreboard_frontend
+- countdown_frontend
+- registration_frontend
+- scoreboard_frontend
 
 Additionally, the `scoreboard_backend` directory contains a
 [serverless](https://serverless.com/) application for managing the server-side
 components that run in AWS lambda.
 
+# Table of Contents
 
-Table of Contents
-=================
-
-   * [Qualifier Scoreboard](#qualifier-scoreboard)
-   * [Table of Contents](#table-of-contents)
-   * [Deployment Prerequisites](#deployment-prerequisites)
-      * [AWS Configuration](#aws-configuration)
-      * [Frontend Dependencies](#frontend-dependencies)
-   * [Frontend Applications](#frontend-applications)
-      * [Countdown](#countdown)
-         * [Development](#development)
-         * [Deployment](#deployment)
-      * [Registration](#registration)
-         * [Development](#development-1)
-         * [Deployment](#deployment-1)
-         * [Production Deployment](#production-deployment)
-      * [Scoreboard](#scoreboard)
-         * [Development](#development-2)
-         * [Deployment](#deployment-2)
-            * [Production Deployment](#production-deployment-1)
-   * [scoreboard_backend](#scoreboard_backend)
-      * [Development](#development-3)
-      * [Setting the challenges](#setting-the-challenges)
+- [Qualifier Scoreboard](#qualifier-scoreboard)
+- [Table of Contents](#table-of-contents)
+- [Deployment Prerequisites](#deployment-prerequisites)
+  - [AWS Configuration](#aws-configuration)
+  - [Frontend Dependencies](#frontend-dependencies)
+- [Frontend Applications](#frontend-applications)
+  - [Countdown](#countdown)
+    - [Development](#development)
+    - [Deployment](#deployment)
+  - [Registration](#registration)
+    - [Development](#development-1)
+    - [Deployment](#deployment-1)
+    - [Production Deployment](#production-deployment)
+  - [Scoreboard](#scoreboard)
+    - [Development](#development-2)
+    - [Deployment](#deployment-2)
+      - [Production Deployment](#production-deployment-1)
+- [scoreboard_backend](#scoreboard_backend)
+  - [Development](#development-3)
+  - [Setting the challenges](#setting-the-challenges)
 
 # Deployment Prerequisites
 
@@ -77,7 +75,6 @@ npm install -g serverless
 npm install --save-dev serverless-kms-secrets
 ```
 
-
 # Frontend Applications
 
 The frontend applications each build to static html, css, and javascript. The
@@ -88,8 +85,8 @@ S3 bucket under the `dev` and `prod` prefixes.
 Cloudfront distributions are configured to serve files out of that S3 bucket
 mapped to an appropriate prefix.
 
-* (production) https://scoreboard.oooverflow.io
-* (development) https://d2b8nk094e89za.cloudfront.net
+- (production) https://scoreboard.oooverflow.io
+- (development) https://d2b8nk094e89za.cloudfront.net
 
 The S3 bucket is accessible via `Coudfront` through the `access-identity`
 Origin Access Identity:
@@ -207,7 +204,6 @@ You will be prompted to confirm that you want to deploy to production.
 The `index.html` file is set to be cached for 60 seconds so everyone should be
 able to see updates within a minute of deployment.
 
-
 # scoreboard_backend
 
 This directory contains a [serverless](https://serverless.com/) application for
@@ -217,7 +213,6 @@ If you're not familiar with lambda, each function is its own program. Some
 functions are mapped to API endpoints, and others (`migrate`, `scoreboard_set`)
 are only meant to be invoked directly.
 
-
 ## Development
 
 By default, all the commands listed below are set up to deploy to the
@@ -225,15 +220,13 @@ By default, all the commands listed below are set up to deploy to the
 `sls deploy`, or `sls deploy -f FUNCTION` to quickly push code changes to a
 single function. Then re-run the test suite via `pytest`.
 
-__Note__: If you make changes to registration, run the slow tests via `pytest
---runslow`.
+**Note**: If you make changes to registration, run the slow tests via `pytest --runslow`.
 
 Once the tests have passed on development (you've written new tests for your
-changes, right?), deploy to production via `sls deploy --stage
-production`. Make sure you've coordinated the release of any respective
+changes, right?), deploy to production via `sls deploy --stage production`. Make sure you've coordinated the release of any respective
 front-end changes as well.
 
-__Note__: For all the following `sls` commands, add `--stage production` in
+**Note**: For all the following `sls` commands, add `--stage production` in
 order to issue that command in the production environment.
 
 ## Setting the challenges
@@ -249,7 +242,6 @@ cd scoreboard_backend
 sls invoke -lf challenges_set --path SCOREBOARD_JSON_PATH
 ```
 
-
 ## Opening a challenge
 
 Run the following:
@@ -258,7 +250,6 @@ Run the following:
 cd scoreboard_backend
 sls invoke -lf challenge_open -d '{"id": "CHALLENGE_ID"}'
 ```
-
 
 ## Helper Scripts
 
@@ -271,8 +262,6 @@ STAGE=production ./scripts/reset_password.sh USERNAME PASSWORD
 
 Note: the password must be at least 10 characters
 
-
-
 ## Other Comments
 
 Run `terraform apply` in `./terraform` to build/update the scoreboard infrastructure in AWS.
@@ -281,6 +270,6 @@ After running for the first time a few values have to be updated:
 
 In `serverless.yml`
 
-* `securityGroupIds` needs to be set to the ID of the lambda security group
-* `subnetIds` needs to be set to all of the private subnet ids
-* `DB_HOST` needs to be updated to the endpoint of the RDS instance
+- `securityGroupIds` needs to be set to the ID of the lambda security group
+- `subnetIds` needs to be set to all of the private subnet ids
+- `DB_HOST` needs to be updated to the endpoint of the RDS instance

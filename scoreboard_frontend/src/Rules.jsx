@@ -23,26 +23,60 @@ function Rules() {
       <p>
         All challenges will be adaptive scoring based on the number of solves:
         starting at 500 and decreasing from there (based on the total number of
-        teams that solved the challenge). We <a href="https://github.com/o-o-overflow/scoring-playground">released a scoring playground</a> so that teams with questions or concerns about the exact scoring algorithm can see how that affects the overall ranking.
+        teams that solved the challenge). We{" "}
+        <a href="https://github.com/o-o-overflow/scoring-playground">
+          released a scoring playground
+        </a>{" "}
+        so that teams with questions or concerns about the exact scoring
+        algorithm can see how that affects the overall ranking.
       </p>
 
-      <h2>New challenge category: GOLF <span aria-label="woman golfing emoji" role="img">🏌️‍♀️</span><span aria-label="man golfing emoji" role="img">🏌️‍♂️</span><span aria-label="golf hole flag" role="img">⛳</span></h2>
+      <h2>
+        New challenge category: GOLF{" "}
+        <span aria-label="woman golfing emoji" role="img">
+          🏌️‍♀️
+        </span>
+        <span aria-label="man golfing emoji" role="img">
+          🏌️‍♂️
+        </span>
+        <span aria-label="golf hole flag" role="img">
+          ⛳
+        </span>
+      </h2>
       <p>
-      Last year, we challenged you with an <a href="https://scoreboard2019.oooverflow.io/#/leaderboard/speedrun-012">entire category of speedruns <span aria-label="racecar" role="img">🏎️</span></a>: bite-size problems designed for hacking races.
-      Speedrun challenges added a twist by letting the top teams dictate awarded points by beating each other to the punch.
+        Last year, we challenged you with an{" "}
+        <a href="https://scoreboard2019.oooverflow.io/#/leaderboard/speedrun-012">
+          entire category of speedruns{" "}
+          <span aria-label="racecar" role="img">
+            🏎️
+          </span>
+        </a>
+        : bite-size problems designed for hacking races. Speedrun challenges
+        added a twist by letting the top teams dictate awarded points by beating
+        each other to the punch.
       </p>
 
       <p>What if they could also dictate the difficulty?</p>
 
       <p>
-      This year, the Order of the Overflow is excited to introduce a new style of CTF challenge: golf <span aria-label="golf hole flag" role="img">⛳</span>.
-      In a golf challenge, teams race against time to solve a challenge that's gradually degrading in difficulty.
-      The sooner they solve it, the more difficult it remains, the harder it is for other teams to catch up, and the more points it will be worth.
-      Can you keep those points out of the hands of your competition?
+        This year, the Order of the Overflow is excited to introduce a new style
+        of CTF challenge: golf{" "}
+        <span aria-label="golf hole flag" role="img">
+          ⛳
+        </span>
+        . In a golf challenge, teams race against time to solve a challenge
+        that's gradually degrading in difficulty. The sooner they solve it, the
+        more difficult it remains, the harder it is for other teams to catch up,
+        and the more points it will be worth. Can you keep those points out of
+        the hands of your competition?
       </p>
 
       <p>
-      More information on <a href="https://oooverflow.io/dc-ctf-2020-quals/">Golf Challenges here</a>.
+        More information on{" "}
+        <a href="https://oooverflow.io/dc-ctf-2020-quals/">
+          Golf Challenges here
+        </a>
+        .
       </p>
 
       <h2>Flag Format</h2>
@@ -70,19 +104,26 @@ function Rules() {
         Do not expect hints. Particularly if a service is already pwned, it
         would be unfair to give one team a hint when it's already solved. If we
         feel that something is significantly wrong, then we will update the
-        description and tweet about it. If you ask for hints on <del>IRC</del> or discord, expect to be referred to this URL. 
+        description and tweet about it. If you ask for hints on <del>IRC</del>{" "}
+        or discord, expect to be referred to this URL.
       </p>
 
-      <h2>Twitter and <del>IRC</del>discord</h2>
+      <h2>
+        Twitter and <del>IRC</del>discord
+      </h2>
       <p>
         All game announcements will be made through our Twitter account{" "}
         <a href="https://twitter.com/oooverflow">@oooverflow</a>
       </p>
       <p>
-        Times change, and we must change with them. With <a href="https://forum.defcon.org/node/232005">DEF CON Safe Mode this year</a>,
-        and doing so via discord, we're using discord for our idling this year.
-        You can (and should) also hang out with us on the official DEF CON discord{" "}
-        <a href="https://discord.gg/yTjdTH">discord.gg/yTjdTH</a> in the CTF category!
+        Times change, and we must change with them. With{" "}
+        <a href="https://forum.defcon.org/node/232005">
+          DEF CON Safe Mode this year
+        </a>
+        , and doing so via discord, we're using discord for our idling this
+        year. You can (and should) also hang out with us on the official DEF CON
+        discord <a href="https://discord.gg/yTjdTH">discord.gg/yTjdTH</a> in the
+        CTF category!
       </p>
 
       <h2>Flag Submission Delay</h2>

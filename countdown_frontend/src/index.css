@@ -3,52 +3,52 @@
 }
 
 a {
-    color: #ae1c30;
-    text-decoration: none;
+  color: #ae1c30;
+  text-decoration: none;
 }
 
 body {
-    background: #222b2f;
-    color: #eaeaea;
-    font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
-    margin: 0;
-    padding: 0;
-    -webkit-font-smoothing: antialiased;
+  background: #222b2f;
+  color: #eaeaea;
+  font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal,
+    monospace;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
 header {
-    border-bottom: 1px dashed #ae1c30;
-    margin: 0 0 40px 0;
-    padding: 20px 0;
+  border-bottom: 1px dashed #ae1c30;
+  margin: 0 0 40px 0;
+  padding: 20px 0;
 }
 
 header h1 {
-    color: #caa851;
-    font-size: 30px;
-    font-weight: bold;
-    letter-spacing: -1px;
-    line-height: 1.5;
-    margin: 0 0 20px 0;
+  color: #caa851;
+  font-size: 30px;
+  font-weight: bold;
+  letter-spacing: -1px;
+  line-height: 1.5;
+  margin: 0 0 20px 0;
 }
 
 header h1:before {
-    content: "./ ";
-    font-size: 24px;
-    margin: 0 0 0 -40px;
+  content: "./ ";
+  font-size: 24px;
+  margin: 0 0 0 -40px;
 }
 
 header img {
-    float: right;
-    width: 172px;
+  float: right;
+  width: 172px;
 }
 
-
 .container {
-    margin: 0 auto;
-    max-width: 1000px;
-    width: 90%;
+  margin: 0 auto;
+  max-width: 1000px;
+  width: 90%;
 }
 
 .countdown {
-    font-size: 20px;
+  font-size: 20px;
 }

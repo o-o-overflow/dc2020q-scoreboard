@@ -2,7 +2,7 @@ import React from "react";
 
 class GameMatrix extends React.Component {
   body() {
-    return this.props.teamScoreboardOrder.map(team => {
+    return this.props.teamScoreboardOrder.map((team) => {
       return (
         <tr key={team.name}>
           <td className="sticky-left" key={team.name}>
@@ -15,7 +15,7 @@ class GameMatrix extends React.Component {
   }
 
   header() {
-    const theHeaders = this.challenges.map(id => {
+    const theHeaders = this.challenges.map((id) => {
       return (
         <th key={id} scope="row">
           {id} ({this.props.solvesByChallenge[id] || 0})
@@ -27,15 +27,15 @@ class GameMatrix extends React.Component {
   }
 
   solvedRow(solves) {
-    return this.challenges.map(id => {
+    return this.challenges.map((id) => {
       return <td key={id}>{solves.has(id) ? "✔" : "❌"}</td>;
     });
   }
 
   render() {
     this.challenges = [];
-    Object.keys(this.props.challenges).map(cat => {
-      return this.props.challenges[cat].map(chall => {
+    Object.keys(this.props.challenges).map((cat) => {
+      return this.props.challenges[cat].map((chall) => {
         return this.challenges.push(chall.id);
       });
     });

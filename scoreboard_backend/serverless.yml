@@ -97,7 +97,7 @@ provider:
     JWT_SECRET: ${ssm:/${opt:stage, self:provider.stage}/jwt_secret~true}
   iamRoleStatements:
     - Action:
-      - ses:SendEmail
+        - ses:SendEmail
       Effect: Allow
       Resource: "*"
   memorySize: 128

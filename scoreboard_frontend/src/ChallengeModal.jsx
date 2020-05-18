@@ -10,13 +10,13 @@ class ChallengeModal extends React.Component {
       buttonDisabled: false,
       description: "",
       flag: "",
-      status: ""
+      status: "",
     };
     this.countDown = null;
     this.hashTimestamp = null;
     this.timerID = null;
     this.worker = new Worker("worker.js");
-    this.worker.onmessage = message => {
+    this.worker.onmessage = (message) => {
       if (message.data.complete) {
         this.submit(message.data.nonce);
       } else {
@@ -39,11 +39,11 @@ class ChallengeModal extends React.Component {
 
   controller = new AbortController();
 
-  handleFlagChange = event => {
+  handleFlagChange = (event) => {
     this.setState({ flag: event.target.value });
   };
 
-  handleKeyPress = event => {
+  handleKeyPress = (event) => {
     if (!this.state.buttonDisabled && event.key === "Enter") {
       this.handleSubmit();
     }
@@ -57,13 +57,11 @@ class ChallengeModal extends React.Component {
       this.hashTimestamp = parseInt(Date.now() / 1000, 10);
       this.setState({
         buttonDisabled: true,
-        status: "computing proof of work"
+        status: "computing proof of work",
       });
       this.worker.postMessage({
         prefix: "0123",
-        value: `${this.props.challengeId}!${this.state.flag}!${
-          this.props.token
-        }!${this.hashTimestamp}`
+        value: `${this.props.challengeId}!${this.state.flag}!${this.props.token}!${this.hashTimestamp}`,
       });
       return;
     }
@@ -73,13 +71,11 @@ class ChallengeModal extends React.Component {
   loadData = () => {
     this.setState({ description: "Loading..." });
     fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/challenge/${
-        this.props.challengeId
-      }/${this.props.token}`,
+      `${process.env.REACT_APP_BACKEND_URL}/challenge/${this.props.challengeId}/${this.props.token}`,
       { method: "GET", signal: this.controller.signal }
     )
-      .then(response =>
-        response.json().then(body => ({ body, status: response.status }))
+      .then((response) =>
+        response.json().then((body) => ({ body, status: response.status }))
       )
       .then(({ body, status }) => {
         if (status === 401) {
@@ -93,35 +89,35 @@ class ChallengeModal extends React.Component {
         }
         const converter = new showdown.Converter({
           literalMidWordUnderscores: true,
-          simplifiedAutoLink: true
+          simplifiedAutoLink: true,
         });
         const description = converter.makeHtml(body.message);
         this.setState({ description });
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.name !== "AbortError") {
           console.log(error);
         }
       });
   };
 
-  submit = nonce => {
+  submit = (nonce) => {
     const requestData = {
       challenge_id: this.props.challengeId,
       flag: this.state.flag,
       nonce,
       timestamp: this.hashTimestamp,
-      token: this.props.token
+      token: this.props.token,
     };
     this.setState({ status: "submitting flag" });
     fetch(`${process.env.REACT_APP_BACKEND_URL}/submit`, {
       body: JSON.stringify(requestData),
       headers: { "Content-Type": "application/json" },
       method: "POST",
-      signal: this.controller.signal
+      signal: this.controller.signal,
     })
-      .then(response =>
-        response.json().then(body => ({ body, status: response.status }))
+      .then((response) =>
+        response.json().then((body) => ({ body, status: response.status }))
       )
       .then(({ body, status }) => {
         if (status === 201) {
@@ -138,14 +134,14 @@ class ChallengeModal extends React.Component {
         }
         this.setState({
           buttonDisabled: false,
-          status: body.message
+          status: body.message,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         if (error.name !== "AbortError") {
           this.setState({
             buttonDisabled: false,
-            status: "(error) see console for info"
+            status: "(error) see console for info",
           });
           console.log(error);
         }
@@ -160,14 +156,12 @@ class ChallengeModal extends React.Component {
       this.timerID = null;
       this.setState({
         buttonDisabled: false,
-        status: "Okay, you may try again now."
+        status: "Okay, you may try again now.",
       });
       return;
     }
     const plural = this.countDown === 1 ? "" : "s";
-    const status = `You are submitting too frequently. Try again in ${
-      this.countDown
-    } second${plural}.`;
+    const status = `You are submitting too frequently. Try again in ${this.countDown} second${plural}.`;
     this.setState({ status });
   }
 
@@ -211,7 +205,8 @@ class ChallengeModal extends React.Component {
       );
     }
 
-    const solve_string = this.props.numSolved === 1 ? "1 solve" : `${this.props.numSolved} solves`
+    const solve_string =
+      this.props.numSolved === 1 ? "1 solve" : `${this.props.numSolved} solves`;
 
     return (
       <div className="modal-dialog" role="document">
@@ -253,6 +248,6 @@ ChallengeModal.propTypes = exact({
   onTokenExpired: PropTypes.func.isRequired,
   solved: PropTypes.bool.isRequired,
   numSolved: PropTypes.number.isRequired,
-  token: PropTypes.string.isRequired
+  token: PropTypes.string.isRequired,
 });
 export default ChallengeModal;

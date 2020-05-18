@@ -3,8 +3,7 @@ import exact from "prop-types-exact";
 import React from "react";
 
 function Challenge(props) {
-  const { authenticated, id, points, solved, tags, item_index} = props;
-
+  const { authenticated, id, points, solved, tags, item_index } = props;
 
   let onClick = null;
   let classes = "challenge";
@@ -27,19 +26,28 @@ function Challenge(props) {
 
   const tag_divs = tags.split(",").map((tag, index) => {
     return (
-      <div title={`${tag.trim()}`} className={`category category-${tag.trim()}`} key={index}/>
+      <div
+        title={`${tag.trim()}`}
+        className={`category category-${tag.trim()}`}
+        key={index}
+      />
     );
   });
 
   return (
-      <div className={classes} onClick={onClick} onKeyPress={() => {}} style={styles}>
-        <div>{tag_divs}</div>
-        <div className="challenge-title" >
-          <img src="/pics/nomic.png" alt="no microphone"/>
-          {id}
-        </div>
-        <div className="challenge-score">{points}</div>
+    <div
+      className={classes}
+      onClick={onClick}
+      onKeyPress={() => {}}
+      style={styles}
+    >
+      <div>{tag_divs}</div>
+      <div className="challenge-title">
+        <img src="/pics/nomic.png" alt="no microphone" />
+        {id}
       </div>
+      <div className="challenge-score">{points}</div>
+    </div>
   );
 }
 Challenge.propTypes = exact({

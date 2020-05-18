@@ -25,28 +25,30 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      accessToken: window.localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN) || "",
+      accessToken:
+        window.localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN) || "",
       challenges: {},
       intervalID: -1,
       lastSolveTimeByTeam: {},
       openedByCategory: {},
       solvesByChallenge: {},
       pointsByTeam: {},
-      refreshToken: window.localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN) || "",
+      refreshToken:
+        window.localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN) || "",
       showChallengeId: "",
       showModal: null,
       solvesByTeam: {},
       team: window.localStorage.getItem(LOCAL_STORAGE_TEAM) || "",
       teams: {},
       teamScoreboardOrder: [],
-      unopened: {}
+      unopened: {},
     };
     this.categoryByChallenge = {};
   }
 
   componentDidMount() {
     this.loadChallenges();
-    this.loadTeams()
+    this.loadTeams();
     const challengesIntervalId = setInterval(this.loadChallenges, 60000);
     this.setState({ challengesIntervalId: challengesIntervalId });
   }
@@ -55,14 +57,17 @@ class App extends React.Component {
     clearInterval(this.state.challengesIntervalId);
   }
 
-  setAuthentication = data => {
+  setAuthentication = (data) => {
     this.setState({
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
-      team: data.team
+      team: data.team,
     });
     window.localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN, data.access_token);
-    window.localStorage.setItem(LOCAL_STORAGE_REFRESH_TOKEN, data.refresh_token);
+    window.localStorage.setItem(
+      LOCAL_STORAGE_REFRESH_TOKEN,
+      data.refresh_token
+    );
     window.localStorage.setItem(LOCAL_STORAGE_TEAM, data.team);
     this.handleCloseModal();
     this.loadChallenges();
@@ -77,7 +82,7 @@ class App extends React.Component {
       accessToken: "",
       refreshToken: "",
       showModal: null,
-      team: ""
+      team: "",
     });
     window.localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
     window.localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN);
@@ -85,54 +90,54 @@ class App extends React.Component {
     this.loadChallenges();
   };
 
-  handleOpenChallengeModal = event => {
+  handleOpenChallengeModal = (event) => {
     this.setState({
       showChallengeId: event.id,
-      showModal: "challenge"
+      showModal: "challenge",
     });
   };
 
   handleOpenLogInModal = () => {
     this.setState({
-      showModal: "logIn"
+      showModal: "logIn",
     });
   };
 
   handleTokenExpired = (success_callback) => {
     const requestData = {
-      token: this.state.refreshToken
+      token: this.state.refreshToken,
     };
     fetch(`${process.env.REACT_APP_BACKEND_URL}/token_refresh`, {
       body: JSON.stringify(requestData),
       headers: { "Content-Type": "application/json" },
-      method: "POST"
+      method: "POST",
     })
-    .then(response =>
-      response.json().then(body => ({ body, status: response.status }))
-    )
-    .then(({ body, status }) => {
-      if (status !== 200) {
-        console.log(status);
-        console.log(body.message);
-        alert("You have unexpectedly been logged out.");
-        this.handleLogOut();
-        return;
-      }
-      this.setState({
-        accessToken: body.message.access_token
+      .then((response) =>
+        response.json().then((body) => ({ body, status: response.status }))
+      )
+      .then(({ body, status }) => {
+        if (status !== 200) {
+          console.log(status);
+          console.log(body.message);
+          alert("You have unexpectedly been logged out.");
+          this.handleLogOut();
+          return;
+        }
+        this.setState({
+          accessToken: body.message.access_token,
+        });
+        success_callback();
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("An unexpected error occurred. Please try again.");
       });
-      success_callback();
-    })
-    .catch(error => {
-      console.log(error);
-      alert("An unexpected error occurred. Please try again.");
-    });
-  }
+  };
 
   loadChallenges = () => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/challenges`, { method: "GET" })
-      .then(response =>
-        response.json().then(body => ({ body, status: response.status }))
+      .then((response) =>
+        response.json().then((body) => ({ body, status: response.status }))
       )
       .then(({ body, status }) => {
         if (status !== 200) {
@@ -142,15 +147,15 @@ class App extends React.Component {
         }
         this.processChallenges(body.message);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
-    loadTeams = () => {
+  loadTeams = () => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/teams`, { method: "GET" })
-      .then(response =>
-        response.json().then(body => ({ body, status: response.status }))
+      .then((response) =>
+        response.json().then((body) => ({ body, status: response.status }))
       )
       .then(({ body, status }) => {
         if (status !== 200) {
@@ -158,14 +163,14 @@ class App extends React.Component {
           console.log(body.message);
           return;
         }
-        this.setState({teams: body.message.teams})
+        this.setState({ teams: body.message.teams });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
-  processChallenges = data => {
+  processChallenges = (data) => {
     const lastSolveTimeByTeam = {};
     const solvesByChallenge = {};
     const solvesByTeam = {};
@@ -204,7 +209,7 @@ class App extends React.Component {
         id,
         points: pointsByChallenge[id],
         solved: (solvesByTeam[this.state.team] || []).includes(id),
-        tags
+        tags,
       };
       if (category in challenges) {
         challenges[category].push(object);
@@ -214,19 +219,19 @@ class App extends React.Component {
     });
 
     const pointsByTeam = {};
-    Object.keys(solvesByTeam).forEach(team => {
+    Object.keys(solvesByTeam).forEach((team) => {
       let points = 0;
-      solvesByTeam[team].forEach(id => {
+      solvesByTeam[team].forEach((id) => {
         points += pointsByChallenge[id];
       });
       pointsByTeam[team] = points;
     });
 
-    const teamScoreboardOrder = Object.keys(pointsByTeam).map(name => ({
+    const teamScoreboardOrder = Object.keys(pointsByTeam).map((name) => ({
       lastSolveTime: lastSolveTimeByTeam[name],
       name,
       points: pointsByTeam[name],
-      solves: solvesByTeam[name]
+      solves: solvesByTeam[name],
     }));
     teamScoreboardOrder.sort((a, b) => {
       if (a.points === b.points) {
@@ -242,7 +247,7 @@ class App extends React.Component {
       teamScoreboardOrder,
       solvesByTeam,
       solvesByChallenge,
-      unopened: data.unopened_by_category
+      unopened: data.unopened_by_category,
     });
   };
 
@@ -336,7 +341,9 @@ class App extends React.Component {
               onTokenExpired={this.handleTokenExpired}
               onSolve={this.loadChallenges}
               solved={solved}
-              numSolved={this.state.solvesByChallenge[this.state.showChallengeId] || 0}
+              numSolved={
+                this.state.solvesByChallenge[this.state.showChallengeId] || 0
+              }
               token={this.state.accessToken}
             />
           </ReactModal>

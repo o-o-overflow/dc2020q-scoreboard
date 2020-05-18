@@ -36,7 +36,7 @@ body {
   content: "🤼";
 }
 
-.category-reversing:before{
+.category-reversing:before {
   content: "🔄";
 }
 
@@ -106,8 +106,8 @@ body {
 }
 
 .modal-content {
-    max-height: 80vh;
-    overflow-y: auto;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .sticky-left {

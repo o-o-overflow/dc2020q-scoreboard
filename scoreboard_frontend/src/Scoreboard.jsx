@@ -2,7 +2,9 @@ import PropTypes from "prop-types";
 import React from "react";
 
 function categoryIcon(categoryByChallenge, challengeId) {
-  const cssClass = categoryByChallenge[challengeId].split(",")[0].replace(/ /g, "-");
+  const cssClass = categoryByChallenge[challengeId]
+    .split(",")[0]
+    .replace(/ /g, "-");
   return (
     <span
       className={`category-${cssClass}`}
@@ -14,23 +16,33 @@ function categoryIcon(categoryByChallenge, challengeId) {
 
 function Scoreboard(props) {
   var num = 1;
-  const teams = props.teamScoreboardOrder.map(team => ({
+  const teams = props.teamScoreboardOrder.map((team) => ({
     lastSolveTime: team.lastSolveTime,
     name: team.name,
     num: num++,
     points: props.pointsByTeam[team.name],
-    solves: team.solves.map(id => categoryIcon(props.categoryByChallenge, id))
+    solves: team.solves.map((id) =>
+      categoryIcon(props.categoryByChallenge, id)
+    ),
   }));
 
   function ctfTimeLink(teamName) {
     const ctfTimeTeamID = props.teams[teamName];
     if (ctfTimeTeamID !== undefined) {
-      return <a href={`https://ctftime.org/team/${ctfTimeTeamID}`} target="_blank" rel="noopener noreferrer">{teamName}</a>
+      return (
+        <a
+          href={`https://ctftime.org/team/${ctfTimeTeamID}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {teamName}
+        </a>
+      );
     }
     return teamName;
   }
 
-  const teamRows = teams.map(team => (
+  const teamRows = teams.map((team) => (
     <tr key={team.name} id={team.name}>
       <td>{team.num}</td>
       <td>{team.points}</td>
@@ -44,7 +56,7 @@ function Scoreboard(props) {
     if (element) {
       window.scroll({
         behavior: "smooth",
-        top: element.offsetTop
+        top: element.offsetTop,
       });
     }
   }
@@ -77,6 +89,6 @@ Scoreboard.propTypes = {
   pointsByTeam: PropTypes.objectOf(PropTypes.number).isRequired,
   solvesByTeam: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))
     .isRequired,
-  teams: PropTypes.objectOf(PropTypes.number).isRequired
+  teams: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 export default Scoreboard;

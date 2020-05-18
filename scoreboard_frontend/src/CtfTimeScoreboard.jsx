@@ -5,10 +5,10 @@ function CtfTimeScoreboard(props) {
   ctfTimeOutput["tasks"] = Object.keys(props.categoryByChallenge);
 
   var num = 1;
-  ctfTimeOutput["standings"] = props.teamScoreboardOrder.map(team => ({
+  ctfTimeOutput["standings"] = props.teamScoreboardOrder.map((team) => ({
     team: team.name,
     pos: num++,
-    score: props.pointsByTeam[team.name]
+    score: props.pointsByTeam[team.name],
   }));
 
   return <pre>{JSON.stringify(ctfTimeOutput, null, " ")}</pre>;

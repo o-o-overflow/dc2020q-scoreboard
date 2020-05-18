@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import exact from "prop-types-exact";
 import React from "react";
 
-const strip = text => text.replace(/^\s+|\s+$/g, "");
+const strip = (text) => text.replace(/^\s+|\s+$/g, "");
 
 class LogInModal extends React.Component {
   constructor(props) {
@@ -11,11 +11,11 @@ class LogInModal extends React.Component {
       buttonDisabled: false,
       email: "",
       password: "",
-      status: ""
+      status: "",
     };
     this.hashTimestamp = null;
     this.worker = new Worker("worker.js");
-    this.worker.onmessage = message => {
+    this.worker.onmessage = (message) => {
       if (message.data.complete) {
         this.logIn(message.data.nonce);
       } else {
@@ -28,11 +28,11 @@ class LogInModal extends React.Component {
     this.worker.terminate();
   }
 
-  handleEmailChange = event => {
+  handleEmailChange = (event) => {
     this.setState({ email: strip(event.target.value) });
   };
 
-  handleKeyPress = event => {
+  handleKeyPress = (event) => {
     if (!this.state.buttonDisabled && event.key === "Enter") {
       this.handleLogIn();
     }
@@ -56,38 +56,36 @@ class LogInModal extends React.Component {
       this.hashTimestamp = parseInt(Date.now() / 1000, 10);
       this.setState({
         buttonDisabled: true,
-        status: "computing proof of work"
+        status: "computing proof of work",
       });
       this.worker.postMessage({
         prefix: "0123",
-        value: `${this.state.email}!${this.state.password}!${
-          this.hashTimestamp
-        }`
+        value: `${this.state.email}!${this.state.password}!${this.hashTimestamp}`,
       });
       return;
     }
     this.setState({ status: validation });
   };
 
-  handlePasswordChange = event => {
+  handlePasswordChange = (event) => {
     this.setState({ password: event.target.value });
   };
 
-  logIn = nonce => {
+  logIn = (nonce) => {
     const requestData = {
       email: this.state.email,
       nonce,
       password: this.state.password,
-      timestamp: this.hashTimestamp
+      timestamp: this.hashTimestamp,
     };
     this.setState({ status: "logging in" });
     fetch(`${process.env.REACT_APP_BACKEND_URL}/token`, {
       body: JSON.stringify(requestData),
       headers: { "Content-Type": "application/json" },
-      method: "POST"
+      method: "POST",
     })
-      .then(response =>
-        response.json().then(body => ({ body, status: response.status }))
+      .then((response) =>
+        response.json().then((body) => ({ body, status: response.status }))
       )
       .then(({ body, status }) => {
         if (status === 200) {
@@ -96,13 +94,13 @@ class LogInModal extends React.Component {
         }
         this.setState({
           buttonDisabled: false,
-          status: body.message
+          status: body.message,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({
           buttonDisabled: false,
-          status: "(error) see console for info"
+          status: "(error) see console for info",
         });
         console.log(error);
       });
@@ -182,6 +180,6 @@ class LogInModal extends React.Component {
 }
 LogInModal.propTypes = exact({
   onClose: PropTypes.func.isRequired,
-  setAuthentication: PropTypes.func.isRequired
+  setAuthentication: PropTypes.func.isRequired,
 });
 export default LogInModal;
