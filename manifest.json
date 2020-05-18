@@ -1,0 +1,15 @@
+{
+  "short_name": "Quals",
+  "name": "OOO DEF CON Quals",
+  "icons": [
+    {
+      "src": "ooo.png",
+      "sizes": "192x192 144x144 96x96 72x72 48x48 36x36 24x24",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#b5e853",
+  "background_color": "#000000"
+}
