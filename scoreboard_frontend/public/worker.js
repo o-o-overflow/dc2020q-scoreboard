@@ -288,5 +288,5 @@ function sha256Digest(data) {
 }
 
 onmessage = function (message) {
-  postMessage({ complete: true, digest: sha256Digest(message.data) });
+ai  postMessage({ complete: true, digest: sha256Digest(message.data) });
 };

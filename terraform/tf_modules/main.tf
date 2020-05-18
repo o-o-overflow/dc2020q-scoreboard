@@ -229,9 +229,10 @@ resource "aws_db_instance" "scoreboard" {
   apply_immediately           = false
   auto_minor_version_upgrade  = true
   db_subnet_group_name        = aws_db_subnet_group.group.id
-  deletion_protection         = true
+  deletion_protection         = false
   engine                      = "postgres"
   engine_version              = "10.6"
+  final_snapshot_identifier   = "sb-${var.environment}"
   identifier                  = "sb-${var.environment}"
   instance_class              = var.db_instance_class
   multi_az                    = true
