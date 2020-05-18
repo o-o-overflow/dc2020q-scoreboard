@@ -1,25 +1,25 @@
 {
   "adventure-on-lifebooox": {
     "authors": ["trickE"],
-    "description": "LifebOOOx is a gaming platform built on GoL, which creates a virtual computer inside a virtual life. And OOO brings you one of its most difficult games yet, Adventure. Can you get all the keys and escape the castle? \n\n`adventure-on-lifebooox.challenges.ooo 37451`\n\nFiles:\n * [lifebooox.zip](https://s3.us-east-2.amazonaws.com/oooverflow-challs/fc02300c203461262e84976d9dbcc9af9e0280b6e836e530d8266bfca86a2880/lifebooox.zip) c844d17451f80037501374946d3f82c0f28a5ed55efab0994355e8dbf7c0f24d",
+    "description": "LifebOOOx is a gaming platform built on GoL, which creates a virtual computer inside a virtual life. And OOO brings you one of its most difficult games yet, Adventure. Can you get all the keys and escape the castle? \n\n`adventure-on-lifebooox.challenges.ooo 37451`\n\nFiles:\n * [lifebooox.zip](/challenge_files/fc02300c203461262e84976d9dbcc9af9e0280b6e836e530d8266bfca86a2880/lifebooox.zip) c844d17451f80037501374946d3f82c0f28a5ed55efab0994355e8dbf7c0f24d",
     "flag_hash": "c8d84d507ddcc50875e93b274c1eb2eef5cdd5f8b1a5d78c436e4cadd3f33c95",
     "tags": ["pwn", "reversing"]
   },
   "cursed": {
     "authors": ["nullptr"],
-    "description": "Accursed who brings to light of day the writings I have cast away.\n\n\n`cursed.challenges.ooo 29696`\n\nFiles:\n * [cursed](https://s3.us-east-2.amazonaws.com/oooverflow-challs/16912f392c208c102e8ab8d29fe536f619d8a2a271a0626e3d7cee1183c7e06a/cursed) dd82ae01e0fd2a465bd4a5bf750dd85d4d286af94ee4e25955eb4768f212cae4",
+    "description": "Accursed who brings to light of day the writings I have cast away.\n\n\n`cursed.challenges.ooo 29696`\n\nFiles:\n * [cursed](/challenge_files/16912f392c208c102e8ab8d29fe536f619d8a2a271a0626e3d7cee1183c7e06a/cursed) dd82ae01e0fd2a465bd4a5bf750dd85d4d286af94ee4e25955eb4768f212cae4",
     "flag_hash": "0682aead15debe8b63a0b4503d81cd35bece320bc29aa55185f24ed653775f69",
     "tags": ["shellcoding", "reversing"]
   },
   "flag-hunting": {
     "authors": ["balzaroth"],
-    "description": "You can't see the flag.. but you can follow its track.\n\nFiles:\n * [flag-hunting.tar.bz2](https://s3.us-east-2.amazonaws.com/oooverflow-challs/d368e696d412e7f36108714753ee936717239404d4076bbc0db02a42fcf42bbb/flag-hunting.tar.bz2) 809e958e70885cafd4d2d725b75c7bd5432e02ce6ae8db8d29b0a969cdf05e87",
+    "description": "You can't see the flag.. but you can follow its track.\n\nFiles:\n * [flag-hunting.tar.bz2](/challenge_files/d368e696d412e7f36108714753ee936717239404d4076bbc0db02a42fcf42bbb/flag-hunting.tar.bz2) 809e958e70885cafd4d2d725b75c7bd5432e02ce6ae8db8d29b0a969cdf05e87",
     "flag_hash": "3150ce1b83639e66764e9316f59a6672853dc0ebc8d95f9f8ac7274d32e863e6",
     "tags": ["reversing"]
   },
   "fountain-ooo-reliving": {
     "authors": ["trickE"],
-    "description": "We have found the fountain OOO RElive.  By discovering its secrets, you will restart the game of life with a chance to do it all over again. This challenge is in memory of John Conway (26 December 1937 \u2013 11 April 2020).\n\nFiles:\n * [fountain-ooo-relive](https://s3.us-east-2.amazonaws.com/oooverflow-challs/b6abfff7ba2939b42644341f2ad307c3900382773999c67c7f8f5a67ae6179ad/fountain-ooo-relive) ee9ac9cde6915708df0ba814f07bdadcf009bb7dabdb2374d220bec4c8d26f22",
+    "description": "We have found the fountain OOO RElive.  By discovering its secrets, you will restart the game of life with a chance to do it all over again. This challenge is in memory of John Conway (26 December 1937 \u2013 11 April 2020).\n\nFiles:\n * [fountain-ooo-relive](/challenge_files/b6abfff7ba2939b42644341f2ad307c3900382773999c67c7f8f5a67ae6179ad/fountain-ooo-relive) ee9ac9cde6915708df0ba814f07bdadcf009bb7dabdb2374d220bec4c8d26f22",
     "flag_hash": "e54c49c1e8136cddab9d0963b00031b1abbb2f0a1f1bfe708813207b116d5418",
     "tags": ["reversing"]
   },
@@ -31,13 +31,13 @@
   },
   "keml": {
     "authors": ["mike_pizza"],
-    "description": "introducing TOCTOU resistant memory. * flag is in /root/flag * pow solver for your convenience: http://oooverflow.io/pow.py\n\n`keml.challenges.ooo 5000`\n\nFiles:\n * [keml.tgz](https://s3.us-east-2.amazonaws.com/oooverflow-challs/02d7b1f84226431d6ff4991b3796bfaedcc20a427d719586cf5b3b2742f74eb9/keml.tgz) c852b8b0aec436530372f1caf7ad661197c4b49c779cf6d5676be13de433e3b5",
+    "description": "introducing TOCTOU resistant memory. * flag is in /root/flag * pow solver for your convenience: http://oooverflow.io/pow.py\n\n`keml.challenges.ooo 5000`\n\nFiles:\n * [keml.tgz](/challenge_files/02d7b1f84226431d6ff4991b3796bfaedcc20a427d719586cf5b3b2742f74eb9/keml.tgz) c852b8b0aec436530372f1caf7ad661197c4b49c779cf6d5676be13de433e3b5",
     "flag_hash": "c49cd250b9d6827fdc316d7810e587821ee7b31e86d3ee326dfe17e53c049c34",
     "tags": ["pwn"]
   },
   "maybe": {
     "authors": ["balzaroth"],
-    "description": "Is the flag in there? Maybe\n\n`maybe.challenges.ooo 5000`\n\nFiles:\n * [maybe](https://s3.us-east-2.amazonaws.com/oooverflow-challs/90c810f77de70e3290bfddbed1384aaf56ffb26168e709fc7309af4108700d39/maybe) 16421799040391d199c8629545da41747c9ea1ac9a30e92a8b7f3eabba1f9617\n * [vault.bf](https://s3.us-east-2.amazonaws.com/oooverflow-challs/90c810f77de70e3290bfddbed1384aaf56ffb26168e709fc7309af4108700d39/vault.bf) 990b79a705b826e999eacd1bf85f551d644715b796cdeef1e4b2f7f9dd4fc36c",
+    "description": "Is the flag in there? Maybe\n\n`maybe.challenges.ooo 5000`\n\nFiles:\n * [maybe](/challenge_files/90c810f77de70e3290bfddbed1384aaf56ffb26168e709fc7309af4108700d39/maybe) 16421799040391d199c8629545da41747c9ea1ac9a30e92a8b7f3eabba1f9617\n * [vault.bf](/challenge_files/90c810f77de70e3290bfddbed1384aaf56ffb26168e709fc7309af4108700d39/vault.bf) 990b79a705b826e999eacd1bf85f551d644715b796cdeef1e4b2f7f9dd4fc36c",
     "flag_hash": "fc79e45aa45c08a8b743334b72f55792f3f99cb9a28a1e63f6ab80e8e01bad7f",
     "tags": ["pwn"]
   },
@@ -49,7 +49,7 @@
   },
   "notbefoooled": {
     "authors": ["tiffanyb"],
-    "description": "What's the trick to not be foooled?\n\n`notbefoooled.challenges.ooo 5000`\n\nFiles:\n * [service.sage](https://s3.us-east-2.amazonaws.com/oooverflow-challs/7c9de7dd773635a6f68fc54bcc40585642fceb0dad0136da06008f4d8d173c37/service.sage) 6d8c4057a0fe0f86c9ebfced1787f4be75cbc3084908e3708d5b9e6c1bd3e63e",
+    "description": "What's the trick to not be foooled?\n\n`notbefoooled.challenges.ooo 5000`\n\nFiles:\n * [service.sage](/challenge_files/7c9de7dd773635a6f68fc54bcc40585642fceb0dad0136da06008f4d8d173c37/service.sage) 6d8c4057a0fe0f86c9ebfced1787f4be75cbc3084908e3708d5b9e6c1bd3e63e",
     "flag_hash": "fd73f96fc8e9f909403624a0f7af60ce474a9502053827d15aa4bc4139d6cadd",
     "tags": ["crypto"]
   },
@@ -61,7 +61,7 @@
   },
   "ooo-flag-sharing": {
     "authors": ["zardus"],
-    "description": "Share flags safely with the latest OOO service!\n\n`ooo-flag-sharing.challenges.ooo 5000`\n\nFiles:\n * [chal.py](https://s3.us-east-2.amazonaws.com/oooverflow-challs/45faf497328cf7d3d6a7a4fc88554a6f29783eace48f9cb530c413b3b1ada043/chal.py) 5f5ea357d2504d94f620b8f16f3cea408521e7b7634372537f897ec6c416f9e9",
+    "description": "Share flags safely with the latest OOO service!\n\n`ooo-flag-sharing.challenges.ooo 5000`\n\nFiles:\n * [chal.py](/challenge_files/45faf497328cf7d3d6a7a4fc88554a6f29783eace48f9cb530c413b3b1ada043/chal.py) 5f5ea357d2504d94f620b8f16f3cea408521e7b7634372537f897ec6c416f9e9",
     "flag_hash": "ba4c40eff2c24ff6074c2b1c5adc2ffb061854993d5530e4fc14c7974a729c56",
     "tags": ["crypto"]
   },
@@ -73,13 +73,13 @@
   },
   "uploooadit": {
     "authors": ["bboe"],
-    "description": "https://uploooadit.oooverflow.io/\n\nFiles:\n * [app.py](https://s3.us-east-2.amazonaws.com/oooverflow-challs/152d87877ea6311d828326a0d81c3ef56df03d520600c21599a3ab94fa6c3a4f/app.py) 358c19d6478e1f66a25161933566d7111dd293f02d9916a89c56e09268c2b54c\n * [store.py](https://s3.us-east-2.amazonaws.com/oooverflow-challs/152d87877ea6311d828326a0d81c3ef56df03d520600c21599a3ab94fa6c3a4f/store.py) dd5cee877ee73966c53f0577dc85be1705f2a13f12eb58a56a500f1da9dc49c0",
+    "description": "https://uploooadit.oooverflow.io/\n\nFiles:\n * [app.py](/challenge_files/152d87877ea6311d828326a0d81c3ef56df03d520600c21599a3ab94fa6c3a4f/app.py) 358c19d6478e1f66a25161933566d7111dd293f02d9916a89c56e09268c2b54c\n * [store.py](/challenge_files/152d87877ea6311d828326a0d81c3ef56df03d520600c21599a3ab94fa6c3a4f/store.py) dd5cee877ee73966c53f0577dc85be1705f2a13f12eb58a56a500f1da9dc49c0",
     "flag_hash": "6e5edd3a6189c8c242acea4191495370f2213f835dbddbe72113bdb8376ff837",
     "tags": ["web"]
   },
   "welcome-to-dc2020-quals": {
     "authors": ["ooo"],
-    "description": "Welcome to the 2020 DEF CON CTF quals! Let's start it out with an (almost-)free flag in the file below :)\n\nFiles:\n * [welcome.txt](https://s3.us-east-2.amazonaws.com/oooverflow-challs/8a40c3a2ec3ef13216c5b3fd45b6631f1ad5b42497eda1ba618518f80f46712d/welcome.txt) 2d29b87082872757c3fe771ff262c96f522d3d6a7c7cff24c59b8170203fda3e",
+    "description": "Welcome to the 2020 DEF CON CTF quals! Let's start it out with an (almost-)free flag in the file below :)\n\nFiles:\n * [welcome.txt](/challenge_files/8a40c3a2ec3ef13216c5b3fd45b6631f1ad5b42497eda1ba618518f80f46712d/welcome.txt) 2d29b87082872757c3fe771ff262c96f522d3d6a7c7cff24c59b8170203fda3e",
     "flag_hash": "58c118b46172532bc640ab6f517839ff283e6f9f6d28cb5b844bd3913fc6506c",
     "tags": ["welcoming"]
   },
@@ -97,73 +97,73 @@
   },
   "babymaze": {
     "authors": ["anton00b"],
-    "description": "The flag is on the wings of the flying plane. It is possible to get the flag without instrumenting or modifying the binary. Tested on Ubuntu 16.04, Ubuntu 18.04, and Ubuntu 20.04. You should use a system able to run the game at approximately 60 fps. It requires: sudo apt-get install freeglut3\n\n`babymaze.challenges.ooo 7777`\n\nFiles:\n * [BabyMaze](https://s3.us-east-2.amazonaws.com/oooverflow-challs/626c9621bbdac5aaf0552b9e25bc37db88bcd5f8d2f1d106004961192cd366f1/BabyMaze) 4d7aabfb62d46ea98379254a62023f178c1922c0908f3ff19634ca8c22f97cef",
+    "description": "The flag is on the wings of the flying plane. It is possible to get the flag without instrumenting or modifying the binary. Tested on Ubuntu 16.04, Ubuntu 18.04, and Ubuntu 20.04. You should use a system able to run the game at approximately 60 fps. It requires: sudo apt-get install freeglut3\n\n`babymaze.challenges.ooo 7777`\n\nFiles:\n * [BabyMaze](/challenge_files/626c9621bbdac5aaf0552b9e25bc37db88bcd5f8d2f1d106004961192cd366f1/BabyMaze) 4d7aabfb62d46ea98379254a62023f178c1922c0908f3ff19634ca8c22f97cef",
     "flag_hash": "4b39c5ceb284f3264768118ae0a08bbfc996bab37c342f9ecb6b415783306bd2",
     "tags": ["reversing"]
   },
   "biooosless": {
     "authors": ["reyammer"],
-    "description": "Q: can you read from a floppy?\n\nA: LOL, yes, just mount it and read its content ...\n\nQ: OK. But what if there is no OS?\n\nA: ahah, ROFLT, yes, just invoke BIOS routines and read it ...\n\nQ: OK. But if there is no BIOS?\n\nA: F. M. L.\n\nHint: this is mostly a shellcoding challenge, not a reversing one.\n\nHint #2: the files in the bundle allow you to test everything locally -- no need to hammer the server. Please be nice!\n\n`biooosless.challenges.ooo 6543`\n\nFiles:\n * [local-setup.tgz](https://s3.us-east-2.amazonaws.com/oooverflow-challs/e0881dd23a9581c9693c38010a521317c8404db0b84beac9ced9b7270f84c4b3/local-setup.tgz) 6a0364e9e4462365112ede26398098d5c6cc44837a37ece5ff8a04fb5b39e6b4",
+    "description": "Q: can you read from a floppy?\n\nA: LOL, yes, just mount it and read its content ...\n\nQ: OK. But what if there is no OS?\n\nA: ahah, ROFLT, yes, just invoke BIOS routines and read it ...\n\nQ: OK. But if there is no BIOS?\n\nA: F. M. L.\n\nHint: this is mostly a shellcoding challenge, not a reversing one.\n\nHint #2: the files in the bundle allow you to test everything locally -- no need to hammer the server. Please be nice!\n\n`biooosless.challenges.ooo 6543`\n\nFiles:\n * [local-setup.tgz](/challenge_files/e0881dd23a9581c9693c38010a521317c8404db0b84beac9ced9b7270f84c4b3/local-setup.tgz) 6a0364e9e4462365112ede26398098d5c6cc44837a37ece5ff8a04fb5b39e6b4",
     "flag_hash": "ac15d8d2e1259d7973e8e48c2ff35d59d9f41158e248916be5efca93266c0288",
     "tags": ["shellcoding", "reversing"]
   },
   "nooopsled": {
     "authors": ["zardus"],
-    "description": "It's time to slide further into insanity. Threshold starts at 1, and after an 8-hour grace period, ticks up by 1 every 84 seconds.\n\n`nooopsled.challenges.ooo 5000`\n\nFiles:\n * [Dockerfile](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/Dockerfile) 02d317ea2a4d4f0157815c9c62180a739b21838c284b6b9e4aa9053aeef65253\n * [banner_fail](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/banner_fail) bc174ee9b6f4a3c2e30034d707db1bc1b9d1cb4e9119f8d87017ded34a2b7840\n * [launcher-aarch64](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/launcher-aarch64) ebcc88cec87c587ce896ca1215a3510cf4eceb4f4c3e781ef8312c5595516c3b\n * [launcher-riscv64](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/launcher-riscv64) 4e75d630c0306f0b0574dc54ef2a569b7c1408a5128c5d1805c80e683ac98f45\n * [service.conf](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/service.conf) dc2fc5ae055eefb7a36a0ab25125f5912a5f374c6a420868acc96c77b21a84ec\n * [service.py](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/service.py) 48ee301f379c2fc8f0882f166c56ee33c1d421496ae89711ceb9b888f6116c0a\n * [shuffler](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/shuffler) 1a01ddbfa146dc88d5c25548f31c689732f99e42e07071bc8bbaf551beee613a\n * [wrapper](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/wrapper) 0d25b91b007aa1ba87e8a059b0b5b2e41947d301b75cac565525636e0401219e",
+    "description": "It's time to slide further into insanity. Threshold starts at 1, and after an 8-hour grace period, ticks up by 1 every 84 seconds.\n\n`nooopsled.challenges.ooo 5000`\n\nFiles:\n * [Dockerfile](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/Dockerfile) 02d317ea2a4d4f0157815c9c62180a739b21838c284b6b9e4aa9053aeef65253\n * [banner_fail](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/banner_fail) bc174ee9b6f4a3c2e30034d707db1bc1b9d1cb4e9119f8d87017ded34a2b7840\n * [launcher-aarch64](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/launcher-aarch64) ebcc88cec87c587ce896ca1215a3510cf4eceb4f4c3e781ef8312c5595516c3b\n * [launcher-riscv64](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/launcher-riscv64) 4e75d630c0306f0b0574dc54ef2a569b7c1408a5128c5d1805c80e683ac98f45\n * [service.conf](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/service.conf) dc2fc5ae055eefb7a36a0ab25125f5912a5f374c6a420868acc96c77b21a84ec\n * [service.py](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/service.py) 48ee301f379c2fc8f0882f166c56ee33c1d421496ae89711ceb9b888f6116c0a\n * [shuffler](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/shuffler) 1a01ddbfa146dc88d5c25548f31c689732f99e42e07071bc8bbaf551beee613a\n * [wrapper](/challenge_files/ddddb90f6690d07fd00b0fc1723065a398c75a246ec60c109f52058fd8b60db6/wrapper) 0d25b91b007aa1ba87e8a059b0b5b2e41947d301b75cac565525636e0401219e",
     "flag_hash": "587f23639b0842120af639e7c42d38015174a81163cbe2c535a7edf67228d587",
     "tags": ["shellcoding", "golf"]
   },
   "fungez": {
     "authors": ["slipper"],
-    "description": "read the secret in /flag\n\n`fungez.challenges.ooo 10101`\n\nFiles:\n * [Image](https://s3.us-east-2.amazonaws.com/oooverflow-challs/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/Image) f1f979aabf063d2d0855c52a4c84f2a609cdaa315980651a9d40eb81134dfb44\n * [rootfs.img](https://s3.us-east-2.amazonaws.com/oooverflow-challs/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/rootfs.img) f9525cdc07ab5334f30a0fdcc41dcc76d77419753ced7ee77e48a31bfd9ba3da\n * [run.sh](https://s3.us-east-2.amazonaws.com/oooverflow-challs/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/run.sh) ba382489e51635238a89281d9014a716a5d54aeb195760cd00bd1715f39a921f\n * [skip_mbind.c](https://s3.us-east-2.amazonaws.com/oooverflow-challs/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/skip_mbind.c) 613c1581dbaa635137767e17f0717f0ae19b1641d172ffe0874f17b77ae1ea6f\n * [skip_mbind.so](https://s3.us-east-2.amazonaws.com/oooverflow-challs/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/skip_mbind.so) 7c5dd87defc82880f57142917ed827d611cbd6fc999f2ed780ae2c06331e43f2",
+    "description": "read the secret in /flag\n\n`fungez.challenges.ooo 10101`\n\nFiles:\n * [Image](/challenge_files/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/Image) f1f979aabf063d2d0855c52a4c84f2a609cdaa315980651a9d40eb81134dfb44\n * [rootfs.img](/challenge_files/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/rootfs.img) f9525cdc07ab5334f30a0fdcc41dcc76d77419753ced7ee77e48a31bfd9ba3da\n * [run.sh](/challenge_files/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/run.sh) ba382489e51635238a89281d9014a716a5d54aeb195760cd00bd1715f39a921f\n * [skip_mbind.c](/challenge_files/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/skip_mbind.c) 613c1581dbaa635137767e17f0717f0ae19b1641d172ffe0874f17b77ae1ea6f\n * [skip_mbind.so](/challenge_files/d1c9cde38ef71c3478b9d16570342eebd90b7391609cce2af533d0e45beaa900/skip_mbind.so) 7c5dd87defc82880f57142917ed827d611cbd6fc999f2ed780ae2c06331e43f2",
     "flag_hash": "0f3ff38ea1e9f34d7fd76ab56fa54ec7598203b1b2d22e3e1499d41c9465028b",
     "tags": ["pwn"]
   },
   "ooofs": {
     "authors": ["crowell"],
-    "description": "pwn the vfs read the flag from the real fs /root/flag\n\n`ooofs.challenges.ooo 5000`\n\nFiles:\n * [ooofs.tar.gz](https://s3.us-east-2.amazonaws.com/oooverflow-challs/efe1c2824caff26f8372a07dcb81c34c9df408d3fd218dfc49dbb77063da2a87/ooofs.tar.gz) c0a4ba5c1e709e78e24563d141471df4f92090339e7e37a881a451f137c1d267",
+    "description": "pwn the vfs read the flag from the real fs /root/flag\n\n`ooofs.challenges.ooo 5000`\n\nFiles:\n * [ooofs.tar.gz](/challenge_files/efe1c2824caff26f8372a07dcb81c34c9df408d3fd218dfc49dbb77063da2a87/ooofs.tar.gz) c0a4ba5c1e709e78e24563d141471df4f92090339e7e37a881a451f137c1d267",
     "flag_hash": "3dbff879ec9ee51173f6c99d720aeef5c9d1c1f0d38de43b2ef810f7daa8c735",
     "tags": ["pwn"]
   },
   "mamamaze": {
     "authors": ["anton00b"],
-    "description": "Since you had a lot of fun with BabyMaze, we created a new version: MamaMaze! The flag is on the wings of the flying plane. It is possible to get the flag without instrumenting or modifying the binary. Tested on Ubuntu 16.04, Ubuntu 18.04, and Ubuntu 20.04. You should use a system able to run the game at approximately 60 fps. It requires: sudo apt-get install freeglut3\n\n`mamamaze.challenges.ooo 7877`\n\nFiles:\n * [MamaMaze](https://s3.us-east-2.amazonaws.com/oooverflow-challs/ac51a5b9a24305cc7bb3d71040e596154e5099eb7bedbc03cb504a369e81306b/MamaMaze) 2af4701225eeaf9df1123dd0852d5e7239885be3c486ff56a8e2ee296d7b3ca5",
+    "description": "Since you had a lot of fun with BabyMaze, we created a new version: MamaMaze! The flag is on the wings of the flying plane. It is possible to get the flag without instrumenting or modifying the binary. Tested on Ubuntu 16.04, Ubuntu 18.04, and Ubuntu 20.04. You should use a system able to run the game at approximately 60 fps. It requires: sudo apt-get install freeglut3\n\n`mamamaze.challenges.ooo 7877`\n\nFiles:\n * [MamaMaze](/challenge_files/ac51a5b9a24305cc7bb3d71040e596154e5099eb7bedbc03cb504a369e81306b/MamaMaze) 2af4701225eeaf9df1123dd0852d5e7239885be3c486ff56a8e2ee296d7b3ca5",
     "flag_hash": "fd1982a1d42c3d335b18b62a63c4d1a5f8c346b6c361fb074316c41950f18c5c",
     "tags": ["reversing"]
   },
   "supersafecalc": {
     "authors": ["anton00b"],
-    "description": "A really safe calculator. The flag is in /flag\n\n`supersafecalc.challenges.ooo 6789`\n\nFiles:\n * [stub](https://s3.us-east-2.amazonaws.com/oooverflow-challs/fba787a26a81c8a617e8119783df1ca9a332e52f155097eb863931b55230dc70/stub) 2ce25c64afbe1aafc9d330644a43bfeb5a9cb39b1fccfa4a1c174699b2b9dfc2\n * [supersafecalc.pyc](https://s3.us-east-2.amazonaws.com/oooverflow-challs/fba787a26a81c8a617e8119783df1ca9a332e52f155097eb863931b55230dc70/supersafecalc.pyc) c48725eeb15f6eb2aac76248203fefdfcce0dfbbace2aa57f6e0166b3ec4f1c9",
+    "description": "A really safe calculator. The flag is in /flag\n\n`supersafecalc.challenges.ooo 6789`\n\nFiles:\n * [stub](/challenge_files/fba787a26a81c8a617e8119783df1ca9a332e52f155097eb863931b55230dc70/stub) 2ce25c64afbe1aafc9d330644a43bfeb5a9cb39b1fccfa4a1c174699b2b9dfc2\n * [supersafecalc.pyc](/challenge_files/fba787a26a81c8a617e8119783df1ca9a332e52f155097eb863931b55230dc70/supersafecalc.pyc) c48725eeb15f6eb2aac76248203fefdfcce0dfbbace2aa57f6e0166b3ec4f1c9",
     "flag_hash": "c9ea492821f7dfd07407b69994a7fb964f10a2d3288bc94b77bcd0223fde9475",
     "tags": ["pwn", "reversing"]
   },
   "blursed": {
     "authors": ["nullptr"],
-    "description": "Sometimes you eat the bear, and sometimes, well, he eats you.\n\n\n`blursed.challenges.ooo 29696`\n\nFiles:\n * [blursed](https://s3.us-east-2.amazonaws.com/oooverflow-challs/afe9a13053a7407e5868950f335458908fa0b901d3a7bd10ba0a04de9d91f46b/blursed) dd82ae01e0fd2a465bd4a5bf750dd85d4d286af94ee4e25955eb4768f212cae4",
+    "description": "Sometimes you eat the bear, and sometimes, well, he eats you.\n\n\n`blursed.challenges.ooo 29696`\n\nFiles:\n * [blursed](/challenge_files/afe9a13053a7407e5868950f335458908fa0b901d3a7bd10ba0a04de9d91f46b/blursed) dd82ae01e0fd2a465bd4a5bf750dd85d4d286af94ee4e25955eb4768f212cae4",
     "flag_hash": "ab0ae1f6d18fa7365a9adabed88545b2f0925ff323b3b7edc757ed29110e3680",
     "tags": ["shellcoding", "reversing"]
   },
   "coooppersmith": {
     "authors": ["tiffanyb"],
-    "description": "I was told by a cooopersmith that I should send hackers encrypted messages because it is secure.\n\n`coooppersmith.challenges.ooo 5000`\n\nFiles:\n * [service](https://s3.us-east-2.amazonaws.com/oooverflow-challs/7acce4a22d2788916a757202bd3e6ad4825b285b44af6301d3c5760c95e011b3/service) 057fb5e86bfe7d617c91b23f308beb6e71358da8e02b6d9fc65aa2c7f5840efe",
+    "description": "I was told by a cooopersmith that I should send hackers encrypted messages because it is secure.\n\n`coooppersmith.challenges.ooo 5000`\n\nFiles:\n * [service](/challenge_files/7acce4a22d2788916a757202bd3e6ad4825b285b44af6301d3c5760c95e011b3/service) 057fb5e86bfe7d617c91b23f308beb6e71358da8e02b6d9fc65aa2c7f5840efe",
     "flag_hash": "b9847bd3da087aec5536f931d1e8fad4a64c737ce0c21400b1115b1ea6e0a45c",
     "tags": ["reversing", "crypto"]
   },
   "bytecoooding": {
     "authors": ["adamd"],
-    "description": "if u thought shellcoding was fun, wait until you try bytecoooding\n\nThreshold starts at 8, and decrements by 1 approximately every 5 hours.\n\n\n`bytecoooding.challenges.ooo 5000`\n\nFiles:\n * [bytecode-docker.tar.gz](https://s3.us-east-2.amazonaws.com/oooverflow-challs/207e484cd975dee4af075a4ed699a580acecd4887fa992f46bdf6f851414739a/bytecode-docker.tar.gz) e0a8fceb31e4fdd0a2dfe586909886e4f6db3174b46d4ca60c183019f883ed37",
+    "description": "if u thought shellcoding was fun, wait until you try bytecoooding\n\nThreshold starts at 8, and decrements by 1 approximately every 5 hours.\n\n\n`bytecoooding.challenges.ooo 5000`\n\nFiles:\n * [bytecode-docker.tar.gz](/challenge_files/207e484cd975dee4af075a4ed699a580acecd4887fa992f46bdf6f851414739a/bytecode-docker.tar.gz) e0a8fceb31e4fdd0a2dfe586909886e4f6db3174b46d4ca60c183019f883ed37",
     "flag_hash": "15fb78746f629f2d530bbdffe004aecc5ba18e9a86e240be3b81fb703a130e0f",
     "tags": ["shellcoding", "golf"]
   },
   "fungezz": {
     "authors": ["slipper"],
-    "description": "find your flag in the treasure map -->  see fungez\n\nNotice: sha256(flag) != 16763d780a05aaf57467e776be17d39f08ab5a62f6caaabe2656d01057b91540\ncheck the updated map\n\nNotice+: there is only one unexpected solution to the old map, sha256(wrong_flag_works_old_map_not_new_map) = e125fb41bc9c1f1d5c2a3a0477ed3ee843122873675c4e91dc8341324347c940, sha256(wrong_flag_works_on_no_map) = 16763d780a05aaf57467e776be17d39f08ab5a62f6caaabe2656d01057b91540\n\nFiles:\n * [map](https://s3.us-east-2.amazonaws.com/oooverflow-challs/309c6e4ffbd6a2380617d78c34ca6d9caba4cea8802b922defba9136d6331791/map) 7c1f9a8da7a47b10ffe9f57a5e23049273c62942470d235b2561b0b49d2ebb63",
+    "description": "find your flag in the treasure map -->  see fungez\n\nNotice: sha256(flag) != 16763d780a05aaf57467e776be17d39f08ab5a62f6caaabe2656d01057b91540\ncheck the updated map\n\nNotice+: there is only one unexpected solution to the old map, sha256(wrong_flag_works_old_map_not_new_map) = e125fb41bc9c1f1d5c2a3a0477ed3ee843122873675c4e91dc8341324347c940, sha256(wrong_flag_works_on_no_map) = 16763d780a05aaf57467e776be17d39f08ab5a62f6caaabe2656d01057b91540\n\nFiles:\n * [map](/challenge_files/309c6e4ffbd6a2380617d78c34ca6d9caba4cea8802b922defba9136d6331791/map) 7c1f9a8da7a47b10ffe9f57a5e23049273c62942470d235b2561b0b49d2ebb63",
     "flag_hash": "e90bd8075d53917528f3f70938b47d1830585a7c06d916df90e3683c0591ded7",
     "tags": ["reversing"]
   },
   "floood": {
     "authors": ["nullptr"],
-    "description": "There is a tide in the affairs of men, which taken at the flood, leads on to\nfortune. Omitted, all the voyage of their life is bound in shallows and in\nmiseries. On such a full sea are we now afloat. And we must take the current\nwhen it serves, or lose our ventures.\n\n\n`floood.challenges.ooo control on 19696, tap on 19697`\n\nFiles:\n * [9f8a7fbf00c53257.docx](https://s3.us-east-2.amazonaws.com/oooverflow-challs/839a20b838d514f1b1a7b9de31df460fede98078c35b2a6d52809500354a08c8/9f8a7fbf00c53257.docx) ccc6e789d7d262f19998428cf0f4a512f4158433ec009bf8180587edabdb544d",
+    "description": "There is a tide in the affairs of men, which taken at the flood, leads on to\nfortune. Omitted, all the voyage of their life is bound in shallows and in\nmiseries. On such a full sea are we now afloat. And we must take the current\nwhen it serves, or lose our ventures.\n\n\n`floood.challenges.ooo control on 19696, tap on 19697`\n\nFiles:\n * [9f8a7fbf00c53257.docx](/challenge_files/839a20b838d514f1b1a7b9de31df460fede98078c35b2a6d52809500354a08c8/9f8a7fbf00c53257.docx) ccc6e789d7d262f19998428cf0f4a512f4158433ec009bf8180587edabdb544d",
     "flag_hash": "2c961cefea3ce40bc569877b78321b9bf63912b2a95f85a0abfa7e0a157e6868",
     "tags": ["pwn", "reversing"]
   },
@@ -175,13 +175,13 @@
   },
   "dogooos": {
     "authors": ["trickE"],
-    "description": "DogOOOs is a new website where members can rate pictures of dogs. We think there might still be a few bugs, can you check it out? In this challenge, the flag is located in the root directory of the server at /flag.  http://dogooos.challenges.ooo:37453\n\n`dogooos.challenges.ooo 37453`\n\nFiles:\n * [dogooo_comments.py](https://s3.us-east-2.amazonaws.com/oooverflow-challs/7018e163fa14f87fc6f5a22799ecc116ef63f15ee243834a198487fcf7105425/dogooo_comments.py) a881e06d1d70809ffdc9149a5be5b5de6796542f2ed2225fd43d451fde2c8c78\n * [loaddata.py](https://s3.us-east-2.amazonaws.com/oooverflow-challs/7018e163fa14f87fc6f5a22799ecc116ef63f15ee243834a198487fcf7105425/loaddata.py) 0b57622ec86e02c0d8726538161dffb1e13ba1a18b7538354c12f762e4947c23",
+    "description": "DogOOOs is a new website where members can rate pictures of dogs. We think there might still be a few bugs, can you check it out? In this challenge, the flag is located in the root directory of the server at /flag.  http://dogooos.challenges.ooo:37453\n\n`dogooos.challenges.ooo 37453`\n\nFiles:\n * [dogooo_comments.py](/challenge_files/7018e163fa14f87fc6f5a22799ecc116ef63f15ee243834a198487fcf7105425/dogooo_comments.py) a881e06d1d70809ffdc9149a5be5b5de6796542f2ed2225fd43d451fde2c8c78\n * [loaddata.py](/challenge_files/7018e163fa14f87fc6f5a22799ecc116ef63f15ee243834a198487fcf7105425/loaddata.py) 0b57622ec86e02c0d8726538161dffb1e13ba1a18b7538354c12f762e4947c23",
     "flag_hash": "c2016127acbde1f7b1c77819de71d660ae60065eabda85fea357e164f04784ae",
     "tags": ["web"]
   },
   "interrupted": {
     "authors": ["SirGoon"],
-    "description": "The Space Vault 9000 helps store your precious data above the cloud, IN SPACE\n\n`interrupted.challenges.ooo 5000`\n\nFiles:\n * [re_notes.txt](https://s3.us-east-2.amazonaws.com/oooverflow-challs/957d5481091d89cffc75955e92b969eafe53f2a6d940959e1a9722676ed076c8/re_notes.txt) 965b69a95db0ce67f3bf02abb8e28462ea973d258ecc08da86e9ead4302d5042\n * [service.rom](https://s3.us-east-2.amazonaws.com/oooverflow-challs/957d5481091d89cffc75955e92b969eafe53f2a6d940959e1a9722676ed076c8/service.rom) 5c47c459ccf9e8c6cef6a78979d4e2102d3fc0f3b3398b731ca24186eb5b7a24\n * [vmips](https://s3.us-east-2.amazonaws.com/oooverflow-challs/957d5481091d89cffc75955e92b969eafe53f2a6d940959e1a9722676ed076c8/vmips) 32a18f9ec860703db84ffce4b87655d05675cfd94f6b9fc43dbea575683357a1",
+    "description": "The Space Vault 9000 helps store your precious data above the cloud, IN SPACE\n\n`interrupted.challenges.ooo 5000`\n\nFiles:\n * [re_notes.txt](/challenge_files/957d5481091d89cffc75955e92b969eafe53f2a6d940959e1a9722676ed076c8/re_notes.txt) 965b69a95db0ce67f3bf02abb8e28462ea973d258ecc08da86e9ead4302d5042\n * [service.rom](/challenge_files/957d5481091d89cffc75955e92b969eafe53f2a6d940959e1a9722676ed076c8/service.rom) 5c47c459ccf9e8c6cef6a78979d4e2102d3fc0f3b3398b731ca24186eb5b7a24\n * [vmips](/challenge_files/957d5481091d89cffc75955e92b969eafe53f2a6d940959e1a9722676ed076c8/vmips) 32a18f9ec860703db84ffce4b87655d05675cfd94f6b9fc43dbea575683357a1",
     "flag_hash": "979271b5457ddb2c76a131cdd10c3f48ab1d38cc1c6de491f9c2403b2b6301ef",
     "tags": ["pwn", "reversing"]
   },
