@@ -4,17 +4,12 @@ import { Route } from "react-router-dom";
 import ChallengeMenu from "./ChallengeMenu";
 import ChallengeModal from "./ChallengeModal";
 import GameMatrix from "./GameMatrix";
-import LogInModal from "./LogInModal";
 import Navbar from "./Navbar";
 import Rules from "./Rules";
 import Scoreboard from "./Scoreboard";
 import CtfTimeScoreboard from "./CtfTimeScoreboard";
 
 ReactModal.setAppElement("#root");
-
-const LOCAL_STORAGE_ACCESS_TOKEN = "dc28_access_token";
-const LOCAL_STORAGE_REFRESH_TOKEN = "dc28_refresh_token";
-const LOCAL_STORAGE_TEAM = "dc28_team";
 
 function challengePoints(solvers, category) {
   if (!Number.isInteger(solvers) || solvers < 2) return 500;
@@ -25,19 +20,14 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      accessToken:
-        window.localStorage.getItem(LOCAL_STORAGE_ACCESS_TOKEN) || "",
       challenges: {},
       lastSolveTimeByTeam: {},
       openedByCategory: {},
       solvesByChallenge: {},
       pointsByTeam: {},
-      refreshToken:
-        window.localStorage.getItem(LOCAL_STORAGE_REFRESH_TOKEN) || "",
       showChallengeId: "",
       showModal: null,
       solvesByTeam: {},
-      team: window.localStorage.getItem(LOCAL_STORAGE_TEAM) || "",
       teams: {},
       teamScoreboardOrder: [],
       unopened: {},
@@ -50,37 +40,8 @@ class App extends React.Component {
     this.loadTeams();
   }
 
-  setAuthentication = (data) => {
-    this.setState({
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      team: data.team,
-    });
-    window.localStorage.setItem(LOCAL_STORAGE_ACCESS_TOKEN, data.access_token);
-    window.localStorage.setItem(
-      LOCAL_STORAGE_REFRESH_TOKEN,
-      data.refresh_token
-    );
-    window.localStorage.setItem(LOCAL_STORAGE_TEAM, data.team);
-    this.handleCloseModal();
-    this.loadChallenges();
-  };
-
   handleCloseModal = () => {
     this.setState({ showModal: null });
-  };
-
-  handleLogOut = () => {
-    this.setState({
-      accessToken: "",
-      refreshToken: "",
-      showModal: null,
-      team: "",
-    });
-    window.localStorage.removeItem(LOCAL_STORAGE_ACCESS_TOKEN);
-    window.localStorage.removeItem(LOCAL_STORAGE_REFRESH_TOKEN);
-    window.localStorage.removeItem(LOCAL_STORAGE_TEAM);
-    this.loadChallenges();
   };
 
   handleOpenChallengeModal = (event) => {
@@ -88,43 +49,6 @@ class App extends React.Component {
       showChallengeId: event.id,
       showModal: "challenge",
     });
-  };
-
-  handleOpenLogInModal = () => {
-    this.setState({
-      showModal: "logIn",
-    });
-  };
-
-  handleTokenExpired = (success_callback) => {
-    const requestData = {
-      token: this.state.refreshToken,
-    };
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/token_refresh`, {
-      body: JSON.stringify(requestData),
-      headers: { "Content-Type": "application/json" },
-      method: "POST",
-    })
-      .then((response) =>
-        response.json().then((body) => ({ body, status: response.status }))
-      )
-      .then(({ body, status }) => {
-        if (status !== 200) {
-          console.log(status);
-          console.log(body.message);
-          alert("You have unexpectedly been logged out.");
-          this.handleLogOut();
-          return;
-        }
-        this.setState({
-          accessToken: body.message.access_token,
-        });
-        success_callback();
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("An unexpected error occurred. Please try again.");
-      });
   };
 
   loadChallenges = () => {
@@ -249,19 +173,13 @@ class App extends React.Component {
     const solved = teamSolves.includes(this.state.showChallengeId);
     return (
       <>
-        <Navbar
-          authenticated={this.state.accessToken !== ""}
-          handleLogOut={this.handleLogOut}
-          handleOpenLogInModal={this.handleOpenLogInModal}
-          team={this.state.team}
-        />
+        <Navbar />
         <main role="main" className="container-fluid">
           <Route
             exact
             path="/"
             render={() => (
               <ChallengeMenu
-                authenticated={this.state.accessToken !== ""}
                 challenges={this.state.challenges}
                 onClick={this.handleOpenChallengeModal}
                 onUnload={this.handleCloseModal}
@@ -312,17 +230,6 @@ class App extends React.Component {
           />
 
           <ReactModal
-            className="anthing-but-the-default"
-            contentLabel="Log In Modal"
-            isOpen={this.state.showModal === "logIn"}
-            onRequestClose={this.handleCloseModal}
-          >
-            <LogInModal
-              onClose={this.handleCloseModal}
-              setAuthentication={this.setAuthentication}
-            />
-          </ReactModal>
-          <ReactModal
             className="anything-but-the-default"
             contentLabel="Challenge Modal"
             isOpen={this.state.showModal === "challenge"}
@@ -331,13 +238,11 @@ class App extends React.Component {
             <ChallengeModal
               challengeId={this.state.showChallengeId}
               onClose={this.handleCloseModal}
-              onTokenExpired={this.handleTokenExpired}
               onSolve={this.loadChallenges}
               solved={solved}
               numSolved={
                 this.state.solvesByChallenge[this.state.showChallengeId] || 0
               }
-              token={this.state.accessToken}
             />
           </ReactModal>
         </main>

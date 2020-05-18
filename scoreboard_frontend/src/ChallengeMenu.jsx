@@ -22,7 +22,6 @@ class ChallengeMenu extends React.Component {
     );
     return (
       <ChallengeSection
-        authenticated={this.props.authenticated}
         challenges={openChallenges.concat(unopenedChallenges)}
         key={sectionTitle}
         onClick={this.props.onClick}
@@ -66,7 +65,6 @@ class ChallengeMenu extends React.Component {
   }
 }
 ChallengeMenu.propTypes = exact({
-  authenticated: PropTypes.bool.isRequired,
   challenges: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.object))
     .isRequired,
   onClick: PropTypes.func.isRequired,
