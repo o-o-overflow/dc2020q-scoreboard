@@ -287,19 +287,6 @@ function sha256Digest(data) {
   return sha256EncodeHex();
 }
 
-function computeNonce(data) {
-  var nonce = -1;
-  var proofOfWork = "";
-  while (!proofOfWork.startsWith(data.prefix)) {
-    nonce += 1;
-    proofOfWork = sha256Digest(`${data.value}!${nonce}`);
-    if (nonce % 100000 === 0) {
-      postMessage({ complete: false });
-    }
-  }
-  return nonce;
-}
-
 onmessage = function (message) {
-  postMessage({ complete: true, nonce: computeNonce(message.data) });
+  postMessage({ complete: true, digest: sha256Digest(message.data) });
 };
