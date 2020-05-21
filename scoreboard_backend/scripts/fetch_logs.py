@@ -40,7 +40,7 @@ def main():
     lambda_client = session.client("lambda")
     log_client = session.client("logs")
 
-    #run_export(log_client, "/ecs/uploaadit")
+    # run_export(log_client, "/ecs/uploaadit")
 
     for function in lambda_functions(lambda_client):
         print(f"\n{function}")
